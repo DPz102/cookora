@@ -1,0 +1,1 @@
+enum ScanMode { ingredient, dish }

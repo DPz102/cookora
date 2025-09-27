@@ -1,0 +1,31 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // === COMMUNITY POST IMAGES ===
+    // Path: posts/{userId}/{postId}.jpg (theo CommunityDataSourceImpl)
+    match /posts/{userId}/{allPaths=**} {
+      // Bất kỳ ai đăng nhập đều có thể đọc ảnh post
+      allow read: if request.auth != null;
+      
+      // Chỉ chủ sở hữu mới được upload ảnh vào thư mục của mình
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // === USER AVATARS ===
+    // Path: user_avatars/{userId}.jpg
+    match /user_avatars/{userId}/{allPaths=**} {
+      // Bất kỳ ai đăng nhập đều có thể đọc ảnh đại diện
+      allow read: if request.auth != null;
+      
+      // Chỉ chủ sở hữu mới được upload/cập nhật ảnh đại diện của mình
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // === DEFAULT RULE ===
+    // Từ chối mọi truy cập khác
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

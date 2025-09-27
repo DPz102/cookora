@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch (dev)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "debug",
+      "args": ["--flavor", "dev", "--dart-define=FLAVOR=dev"]
+    },
+    {
+      "name": "Launch (prod)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "debug",
+      "args": ["--flavor", "prod", "--dart-define=FLAVOR=prod"]
+    }
+  ]
+}
