@@ -1,0 +1,60 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "🚀 Cookora (DEV)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "debug",
+      "args": ["--flavor", "dev", "--dart-define=FLAVOR=dev"]
+    },
+    {
+      "name": "📦 Cookora (PROD - Debug)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "debug",
+      "args": ["--flavor", "prod", "--dart-define=FLAVOR=prod"]
+    },
+    {
+      "name": "📦 Cookora (PROD - Profile)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile",
+      "args": ["--flavor", "prod", "--dart-define=FLAVOR=prod"]
+    },
+    {
+      "name": "📦 Cookora (PROD - Release)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release",
+      "args": ["--flavor", "prod", "--dart-define=FLAVOR=prod"]
+    },
+    {
+      "name": "🔨 Build AppBundle (PROD)",
+      "request": "launch",
+      "type": "dart",
+      "program": "flutter",
+      "args": [
+        "build",
+        "appbundle",
+        "--flavor",
+        "prod",
+        "--dart-define=FLAVOR=prod"
+      ]
+    },
+    {
+      "name": "🔥 Deploy (DEV)",
+      "request": "launch",
+      "type": "node",
+      "program": "npx",
+      "args": ["firebase", "deploy", "functions", "-P", "dev"]
+    },
+    {
+      "name": "🔥 Deploy (PROD)",
+      "request": "launch",
+      "type": "node",
+      "program": "npx",
+      "args": ["firebase", "deploy", "functions", "-P", "prod"]
+    }
+  ]
+}

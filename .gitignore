@@ -146,6 +146,9 @@ firebase-debug.log*
 
 # Firebase config files
 lib/firebase_options.dart
+lib/firebase_options_dev.dart
+lib/firebase_options_prod.dart
+lib/firebase_options_manager.dart
 android/app/google-services.json
 android/app/src/*/google-services.json
 **/google-services.json

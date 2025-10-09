@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/foundation.dart';
 
-import 'package:cookora/firebase_options.dart';
+import 'package:cookora/firebase_options_manager.dart';
 import 'package:cookora/my_app.dart';
 
 import 'package:cookora/core/di/service_locator.dart';
@@ -13,7 +13,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Khởi tạo Firebase
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(options: FirebaseOptionsManager.currentPlatform);
 
   await FirebaseAppCheck.instance.activate(
     providerAndroid: kDebugMode
