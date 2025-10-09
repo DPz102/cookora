@@ -1,0 +1,177 @@
+# ===================== Environment Variables =====================
+.env
+.env.*
+.env.local
+.env.development
+.env.test
+.env.production
+
+# ===================== Flutter & Dart =====================
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub/
+.pub-cache/
+/doc/api/
+pubspec.lock
+
+# Symbolication & Obfuscation
+app.*.symbols
+app.*.map.json
+
+# ========================= Android Specific =========================
+# Build & Gradle
+/android/.gradle/
+/android/.cxx/
+/android/captures/
+/android/gradle.properties.bak
+android/gradle-wrapper.jar
+android/gradlew
+android/gradlew.bat
+
+# Build outputs
+/android/app/debug
+/android/app/profile
+/android/app/release
+/android/build/
+android/GeneratedPluginRegistrant.java
+
+# Android signing keys and properties
+*.keystore
+*.jks
+key.properties
+android/key.properties
+/android/local.properties
+
+# NDK & CMake
+android/.externalNativeBuild/
+android/ndkBuild/
+android/cmake-build-*/
+
+# ProGuard
+android/proguard/
+android/app/proguard-rules.pro.bak
+
+# APK/Bundle files
+*.apk
+*.aab
+*.ap_
+
+# DexGuard
+*.dg
+
+# ========================= iOS Specific =========================
+/ios/Flutter/flutter_assets/
+/ios/Flutter/flutter_export_environment.sh
+/ios/ServiceDefinitions.json
+/ios/Runner/GeneratedPluginRegistrant.*
+ios/Pods/
+ios/Podfile.lock
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+xcuserdata/
+*.xccheckout
+*.moved-aside
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# ================= Cấu hình IDE (IDE Configuration) =================
+# IntelliJ & Android Studio
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Visual Studio Code
+.vscode/*
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/settings.json
+.swiftpm/
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# ========== Build, Test & Output Artifacts ==========
+/build/
+/coverage/
+dist/
+out/
+lib-cov/
+.nyc_output/
+test_driver/screenshots/
+
+# ============== Hệ điều hành và file rác (OS & Junk Files) ==============
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.log
+*.swp
+*.class
+*.pyc
+.atom/
+.buildlog/
+.history
+migrate_working_dir/
+*.tmp
+*.temp
+
+# ================= Node.js / Cloud Functions =================
+node_modules/
+functions/node_modules/
+package-lock.json
+functions/package-lock.json
+*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+firebase-debug.log*
+*.log
+
+# ===================== Firebase =====================
+.firebaserc
+
+# Firebase config files
+lib/firebase_options.dart
+android/app/google-services.json
+android/app/src/*/google-services.json
+**/google-services.json
+ios/Runner/GoogleService-Info.plist
+**/GoogleService-Info.plist
+ios/firebase_app_id_file.json
+
+# Firebase Emulator data
+.firebase/
+.firestore/
+.storage/
+.emulator/
+
+# Cloud Functions service account keys
+functions/serviceAccountKey.json
+functions/.runtimeconfig.json
+
+# ===================== Web Specific =====================
+web/dist/
+web/build/
+web/.firebase/
+
+# ===================== Testing =====================
+test/.test_coverage.dart
+coverage/lcov.info
+.test_coverage.dart
+
+# ===================== Documentation =====================
+doc/api/

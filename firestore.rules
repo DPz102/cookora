@@ -1,0 +1,103 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // === HELPER FUNCTIONS ===
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidTimestamp() {
+      return request.time == request.resource.data.createdAt;
+    }
+
+    // === USERS COLLECTION ===
+    match /users/{userId} {
+      // Cho phép đọc profile public cho users đã đăng nhập
+      allow read: if isAuthenticated();
+      
+      // Cho phép user cập nhật profile của mình + Cloud Functions với App Check update scanCount/lastScanTime
+      allow update: if isOwner(userId) 
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['username', 'photoURL'])
+        || (isAuthenticated() && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['scanCount', 'lastScanTime']));
+      
+      // Cho phép Cloud Functions với App Check tạo user mới
+      allow create: if request.auth != null;
+      
+      // Không cho phép xóa user
+      allow delete: if false;
+
+      // Pantry sub-collection - theo code PantryDataSourceImpl
+      match /pantry/{ingredientId} {
+        allow read, write: if isOwner(userId);
+      }
+      
+      // Kitchen log sub-collection - user's cooking history
+      match /kitchen_log/{logId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // === RECIPES COLLECTION ===
+    match /recipes/{recipeId} {
+      // Ai cũng có thể xem công thức (theo scanDish.js logic)
+      allow read: if isAuthenticated();
+      
+      // Cloud Functions với App Check được tạo recipes (từ scanDish function)
+      allow create: if request.auth != null;
+      
+      // Không cho phép update/delete recipes do chỉ có từ AI scan
+      allow update, delete: if false;
+    }
+
+    // === RECIPE_CACHE COLLECTION ===
+    match /recipe_cache/{hashId} {
+      // Cho phép đọc cache cho optimization
+      allow read: if isAuthenticated();
+      
+      // Cloud Functions với App Check được ghi cache (từ scanDish function)
+      allow write: if request.auth != null;
+    }
+
+    // === POSTS COLLECTION ===
+    match /posts/{postId} {
+      // Ai cũng xem được bài đăng (theo CommunityDataSourceImpl)
+      allow read: if isAuthenticated();
+      
+      function isValidPost() {
+        let post = request.resource.data;
+        return post.imageUrl is string
+          && post.imageUrl.matches('https://.*')
+          && post.caption is string
+          && post.caption.size() <= 500
+          && post.authorId is string
+          && post.likes is list;
+      }
+      
+      // Cho phép tạo bài đăng - fix field authorId thay vì createdBy
+      allow create: if isAuthenticated()
+        && isValidPost()
+        && request.resource.data.authorId == request.auth.uid;
+      
+      // Cho phép cập nhật likes array (theo updateLike method)
+      allow update: if isAuthenticated()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes']);
+      
+      // Chỉ người tạo được xóa bài (authorId field)
+      allow delete: if isAuthenticated() 
+        && resource.data.authorId == request.auth.uid;
+    }
+
+    // === DEFAULT RULE ===
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

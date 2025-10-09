@@ -1,0 +1,289 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
+// ignore_for_file: type=lint
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
+
+part of 'ingredient_entity.dart';
+
+// **************************************************************************
+// FreezedGenerator
+// **************************************************************************
+
+// dart format off
+T _$identity<T>(T value) => value;
+
+/// @nodoc
+mixin _$IngredientEntity {
+
+ String get uid; String get id; String get name; double get quantity; String get unit;
+/// Create a copy of IngredientEntity
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$IngredientEntityCopyWith<IngredientEntity> get copyWith => _$IngredientEntityCopyWithImpl<IngredientEntity>(this as IngredientEntity, _$identity);
+
+  /// Serializes this IngredientEntity to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is IngredientEntity&&(identical(other.uid, uid) || other.uid == uid)&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.quantity, quantity) || other.quantity == quantity)&&(identical(other.unit, unit) || other.unit == unit));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,uid,id,name,quantity,unit);
+
+@override
+String toString() {
+  return 'IngredientEntity(uid: $uid, id: $id, name: $name, quantity: $quantity, unit: $unit)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $IngredientEntityCopyWith<$Res>  {
+  factory $IngredientEntityCopyWith(IngredientEntity value, $Res Function(IngredientEntity) _then) = _$IngredientEntityCopyWithImpl;
+@useResult
+$Res call({
+ String uid, String id, String name, double quantity, String unit
+});
+
+
+
+
+}
+/// @nodoc
+class _$IngredientEntityCopyWithImpl<$Res>
+    implements $IngredientEntityCopyWith<$Res> {
+  _$IngredientEntityCopyWithImpl(this._self, this._then);
+
+  final IngredientEntity _self;
+  final $Res Function(IngredientEntity) _then;
+
+/// Create a copy of IngredientEntity
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? uid = null,Object? id = null,Object? name = null,Object? quantity = null,Object? unit = null,}) {
+  return _then(_self.copyWith(
+uid: null == uid ? _self.uid : uid // ignore: cast_nullable_to_non_nullable
+as String,id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,quantity: null == quantity ? _self.quantity : quantity // ignore: cast_nullable_to_non_nullable
+as double,unit: null == unit ? _self.unit : unit // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [IngredientEntity].
+extension IngredientEntityPatterns on IngredientEntity {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _IngredientEntity value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _IngredientEntity() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _IngredientEntity value)  $default,){
+final _that = this;
+switch (_that) {
+case _IngredientEntity():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _IngredientEntity value)?  $default,){
+final _that = this;
+switch (_that) {
+case _IngredientEntity() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String uid,  String id,  String name,  double quantity,  String unit)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _IngredientEntity() when $default != null:
+return $default(_that.uid,_that.id,_that.name,_that.quantity,_that.unit);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String uid,  String id,  String name,  double quantity,  String unit)  $default,) {final _that = this;
+switch (_that) {
+case _IngredientEntity():
+return $default(_that.uid,_that.id,_that.name,_that.quantity,_that.unit);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String uid,  String id,  String name,  double quantity,  String unit)?  $default,) {final _that = this;
+switch (_that) {
+case _IngredientEntity() when $default != null:
+return $default(_that.uid,_that.id,_that.name,_that.quantity,_that.unit);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _IngredientEntity implements IngredientEntity {
+  const _IngredientEntity({this.uid = '', this.id = '', this.name = '', this.quantity = 0.0, this.unit = ''});
+  factory _IngredientEntity.fromJson(Map<String, dynamic> json) => _$IngredientEntityFromJson(json);
+
+@override@JsonKey() final  String uid;
+@override@JsonKey() final  String id;
+@override@JsonKey() final  String name;
+@override@JsonKey() final  double quantity;
+@override@JsonKey() final  String unit;
+
+/// Create a copy of IngredientEntity
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$IngredientEntityCopyWith<_IngredientEntity> get copyWith => __$IngredientEntityCopyWithImpl<_IngredientEntity>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$IngredientEntityToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _IngredientEntity&&(identical(other.uid, uid) || other.uid == uid)&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.quantity, quantity) || other.quantity == quantity)&&(identical(other.unit, unit) || other.unit == unit));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,uid,id,name,quantity,unit);
+
+@override
+String toString() {
+  return 'IngredientEntity(uid: $uid, id: $id, name: $name, quantity: $quantity, unit: $unit)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$IngredientEntityCopyWith<$Res> implements $IngredientEntityCopyWith<$Res> {
+  factory _$IngredientEntityCopyWith(_IngredientEntity value, $Res Function(_IngredientEntity) _then) = __$IngredientEntityCopyWithImpl;
+@override @useResult
+$Res call({
+ String uid, String id, String name, double quantity, String unit
+});
+
+
+
+
+}
+/// @nodoc
+class __$IngredientEntityCopyWithImpl<$Res>
+    implements _$IngredientEntityCopyWith<$Res> {
+  __$IngredientEntityCopyWithImpl(this._self, this._then);
+
+  final _IngredientEntity _self;
+  final $Res Function(_IngredientEntity) _then;
+
+/// Create a copy of IngredientEntity
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? uid = null,Object? id = null,Object? name = null,Object? quantity = null,Object? unit = null,}) {
+  return _then(_IngredientEntity(
+uid: null == uid ? _self.uid : uid // ignore: cast_nullable_to_non_nullable
+as String,id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,quantity: null == quantity ? _self.quantity : quantity // ignore: cast_nullable_to_non_nullable
+as double,unit: null == unit ? _self.unit : unit // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+// dart format on
