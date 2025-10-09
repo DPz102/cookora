@@ -28,33 +28,6 @@
       "type": "dart",
       "flutterMode": "release",
       "args": ["--flavor", "prod", "--dart-define=FLAVOR=prod"]
-    },
-    {
-      "name": "🔨 Build AppBundle (PROD)",
-      "request": "launch",
-      "type": "dart",
-      "program": "flutter",
-      "args": [
-        "build",
-        "appbundle",
-        "--flavor",
-        "prod",
-        "--dart-define=FLAVOR=prod"
-      ]
-    },
-    {
-      "name": "🔥 Deploy (DEV)",
-      "request": "launch",
-      "type": "node",
-      "program": "npx",
-      "args": ["firebase", "deploy", "functions", "-P", "dev"]
-    },
-    {
-      "name": "🔥 Deploy (PROD)",
-      "request": "launch",
-      "type": "node",
-      "program": "npx",
-      "args": ["firebase", "deploy", "functions", "-P", "prod"]
     }
   ]
 }
