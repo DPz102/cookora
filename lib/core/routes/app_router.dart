@@ -47,7 +47,7 @@ GoRouter appRouter(AuthBloc authBloc) {
       if (authState is Authenticated) {
         // Nếu họ đang ở các trang không cần đăng nhập, chuyển vào home
         return publicPathsWithSplash.contains(state.matchedLocation)
-            ? '/pantry'
+            ? '/community'
             : null;
       }
 

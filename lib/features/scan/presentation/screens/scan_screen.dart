@@ -1,31 +1,29 @@
 import 'dart:io';
-import 'package:camera/camera.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 
+import 'package:camera/camera.dart';
 // Core & DI
 import 'package:cookora/core/di/service_locator.dart';
 import 'package:cookora/core/utils/async_state.dart';
 import 'package:cookora/core/utils/snackbar_helper.dart';
-
 // Features
 import 'package:cookora/features/kitchen_log/presentation/bloc/kitchen_log_bloc.dart';
 import 'package:cookora/features/pantry/presentation/bloc/pantry_bloc.dart';
-
+import 'package:cookora/features/scan/domain/entities/scan_result.dart';
 // Scan Feature - Bloc
 import 'package:cookora/features/scan/domain/enums/scan_mode.dart' as scan_enum;
-import 'package:cookora/features/scan/domain/entities/scan_result.dart';
 import 'package:cookora/features/scan/presentation/bloc/camera/camera_bloc.dart';
 import 'package:cookora/features/scan/presentation/bloc/scan/scan_bloc.dart';
 import 'package:cookora/features/scan/presentation/bloc/scan/scan_event.dart';
 import 'package:cookora/features/scan/presentation/bloc/scan/scan_state.dart';
-
 // Scan Feature - Widgets
 import 'package:cookora/features/scan/presentation/widgets/camera_controls.dart';
 import 'package:cookora/features/scan/presentation/widgets/camera_preview.dart';
 import 'package:cookora/features/scan/presentation/widgets/dish_result_dialog.dart';
 import 'package:cookora/features/scan/presentation/widgets/ingredient_result_dialog.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ScanScreen extends StatelessWidget {
   const ScanScreen({super.key});
@@ -54,6 +52,64 @@ class _ScanView extends StatefulWidget {
 class _ScanViewState extends State<_ScanView> {
   final ImagePicker _picker = ImagePicker();
   scan_enum.ScanMode _scanMode = scan_enum.ScanMode.ingredient;
+  FlashMode _flashMode = FlashMode.off;
+  double _currentZoom = 1.0;
+  double _maxZoom = 1.0;
+  final List<double> _zoomLevels = [1.0, 2.0, 3.0];
+
+  void _toggleFlash(CameraController? controller) {
+    if (controller == null) return;
+    setState(() {
+      switch (_flashMode) {
+        case FlashMode.off:
+          _flashMode = FlashMode.auto;
+          break;
+        case FlashMode.auto:
+          _flashMode = FlashMode.torch; // Bật đèn pin
+          break;
+        case FlashMode.torch:
+          _flashMode = FlashMode.off;
+          break;
+        default:
+          _flashMode = FlashMode.off;
+      }
+    });
+    controller.setFlashMode(_flashMode);
+  }
+
+  // Hàm mới để cycle qua các mức zoom
+  void _cycleZoom(CameraController? controller) {
+    if (controller == null) return;
+
+    // Tìm index của mức zoom hiện tại
+    final currentIndex = _zoomLevels.indexOf(_currentZoom);
+    // Chuyển sang mức zoom tiếp theo, quay vòng lại nếu hết
+    final nextIndex = (currentIndex + 1) % _zoomLevels.length;
+    final newZoom = _zoomLevels[nextIndex];
+
+    // Chỉ cập nhật nếu mức zoom mới không vượt quá giới hạn của camera
+    if (newZoom <= _maxZoom) {
+      setState(() {
+        _currentZoom = newZoom;
+      });
+      controller.setZoomLevel(newZoom);
+    } else {
+      // Nếu vượt quá, quay về 1x
+      setState(() {
+        _currentZoom = 1.0;
+      });
+      controller.setZoomLevel(1.0);
+    }
+  }
+
+  // Hàm mới để đổi chế độ scan
+  void _cycleScanMode() {
+    setState(() {
+      _scanMode = _scanMode == scan_enum.ScanMode.ingredient
+          ? scan_enum.ScanMode.dish
+          : scan_enum.ScanMode.ingredient;
+    });
+  }
 
   void _onTakePicture(CameraController? controller) async {
     if (controller == null ||
@@ -66,7 +122,16 @@ class _ScanViewState extends State<_ScanView> {
     if (scanBloc.state.isScanning) return;
 
     try {
+      // Tắt flash trước khi chụp nếu đang ở chế độ torch
+      if (_flashMode == FlashMode.torch) {
+        await controller.setFlashMode(FlashMode.off);
+      }
       final image = await controller.takePicture();
+      // Bật lại flash nếu cần
+      if (_flashMode == FlashMode.torch) {
+        await controller.setFlashMode(FlashMode.torch);
+      }
+
       scanBloc.add(
         ScanEvent.recognizeImage(imageFile: File(image.path), mode: _scanMode),
       );
@@ -160,19 +225,29 @@ class _ScanViewState extends State<_ScanView> {
                 ),
               ),
               loadSuccess: (controller) {
+                controller.getMaxZoomLevel().then((max) => _maxZoom = max);
                 return BlocBuilder<ScanBloc, ScanState>(
                   builder: (context, scanState) {
                     return Stack(
                       fit: StackFit.expand,
                       children: [
-                        CameraPreviewWidget(controller: controller),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            vertical: 60.h,
+                            horizontal: 20.w, // Thêm padding trái phải
+                          ),
+                          child: CameraPreviewWidget(controller: controller),
+                        ),
                         CameraControls(
                           scanStatus: scanState.scanStatus,
                           currentMode: _scanMode,
-                          onModeChanged: (mode) =>
-                              setState(() => _scanMode = mode),
+                          flashMode: _flashMode,
+                          currentZoom: _currentZoom,
                           onTakePicture: () => _onTakePicture(controller),
                           onPickFromGallery: _onPickFromGallery,
+                          onToggleFlash: () => _toggleFlash(controller),
+                          onCycleZoom: () => _cycleZoom(controller),
+                          onCycleMode: _cycleScanMode, // Truyền hàm mới
                         ),
                       ],
                     );
