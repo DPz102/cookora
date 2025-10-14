@@ -11,6 +11,7 @@ class PantryFilterBar extends StatefulWidget {
 class _PantryFilterBarState extends State<PantryFilterBar> {
   int _selectedIndex = 0;
   final List<String> _filters = const [
+    'Tất cả',
     'Rau củ',
     'Trái cây',
     'Đồ tươi sống',

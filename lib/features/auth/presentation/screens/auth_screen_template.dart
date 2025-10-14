@@ -107,7 +107,7 @@ class AuthScreenTemplate extends StatelessWidget {
                             padding: EdgeInsets.symmetric(horizontal: 16.w),
                             child: Text(
                               'hoặc',
-                              style: textTheme.titleSmall?.copyWith(
+                              style: textTheme.titleMedium?.copyWith(
                                 color: colorScheme.onSurface,
                               ),
                             ),

@@ -268,7 +268,7 @@ class _BlogCard extends StatelessWidget {
             children: [
               Text(
                 'Đọc thêm',
-                style: textTheme.labelLarge?.copyWith(
+                style: textTheme.labelMedium?.copyWith(
                   color: colorScheme.primary,
                 ),
               ),

@@ -18,42 +18,59 @@ class CustomSearchBar extends StatelessWidget {
       automaticallyImplyLeading: false,
       titleSpacing: 0,
       title: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: GlassmorphicContainer(
-          height: 43.h,
+          height: 45.h,
           borderRadius: 27.r,
-          child: Row(
-            children: [
-              Container(
-                width: 43.r,
-                height: 43.r,
-                decoration: BoxDecoration(
-                  color: colorScheme.primary,
-                  shape: BoxShape.circle,
-                ),
-                child: Center(
-                  child: SvgPicture.asset(
-                    'assets/icons/search.svg',
-                    width: 29.51.r,
-                    height: 29.51.r,
-                    colorFilter: ColorFilter.mode(
-                      colorScheme.onPrimary,
-                      BlendMode.srcIn,
+          blurSigma: 10.0,
+          gradient: LinearGradient(
+            colors: [Colors.white.withAlpha(51), Colors.white.withAlpha(26)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          border: Border.all(color: Colors.white.withAlpha(77), width: 0.8),
+          shadowColor: Colors.black.withAlpha(38),
+          shadowElevation: 4.0,
+          child: TextField(
+            textAlignVertical: TextAlignVertical.center,
+            style: textTheme.titleMedium?.copyWith(
+              color: colorScheme.primary,
+              fontSize: 12.sp,
+            ),
+            decoration: InputDecoration(
+              isCollapsed: true,
+              filled: false,
+              border: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              hintText: 'Tìm kiếm công thức, món ăn...',
+              // Dùng prefixIcon cho icon tìm kiếm
+              prefixIcon: Padding(
+                // Thêm padding để vòng tròn không bị dính sát cạnh
+                padding: EdgeInsets.only(right: 9.w),
+                child: Container(
+                  width: 43.r,
+                  height: 43.r,
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: SvgPicture.asset(
+                      'assets/icons/search.svg',
+                      width: 29.51.r,
+                      height: 29.51.r,
+                      colorFilter: ColorFilter.mode(
+                        colorScheme.onPrimary,
+                        BlendMode.srcIn,
+                      ),
                     ),
                   ),
                 ),
               ),
-              SizedBox(width: 9.w),
-              Expanded(
-                child: Text(
-                  'Tìm kiếm công thức',
-                  style: textTheme.titleMedium?.copyWith(
-                    color: colorScheme.primary,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.w),
+              // Dùng suffixIcon cho icon micro
+              suffixIcon: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 9.w),
                 child: SvgPicture.asset(
                   'assets/icons/mic.svg',
                   width: 24.r,
@@ -64,7 +81,10 @@ class CustomSearchBar extends StatelessWidget {
                   ),
                 ),
               ),
-            ],
+              hintStyle: textTheme.titleMedium?.copyWith(
+                color: colorScheme.primary,
+              ),
+            ),
           ),
         ),
       ),

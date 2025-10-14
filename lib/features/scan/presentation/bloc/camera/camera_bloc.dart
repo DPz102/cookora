@@ -18,26 +18,27 @@ class CameraBloc extends Bloc<CameraEvent, CameraState>
     WidgetsBinding.instance.addObserver(this);
   }
 
+  // presentation/bloc/camera/camera_bloc.dart -> ĐÃ SỬA
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
 
-    final currentController = state is CameraLoadSuccess
-        ? (state as CameraLoadSuccess).controller
-        : null;
+    final currentCameraState = this.state;
 
-    // Chỉ xử lý nếu đã có controller
-    if (currentController == null || !currentController.value.isInitialized) {
+    // 1. Xử lý khi app không hoạt động:
+    if (state == AppLifecycleState.inactive) {
+      if (currentCameraState is CameraLoadSuccess) {
+        add(const DisposeCamera());
+      }
       return;
     }
 
-    // Nếu app không active, dispose camera để giải phóng tài nguyên
-    if (state == AppLifecycleState.inactive) {
-      add(const DisposeCamera());
-    }
-    // Nếu app quay trở lại, khởi tạo lại camera
-    else if (state == AppLifecycleState.resumed) {
-      add(const InitializeCamera());
+    // 2. Xử lý khi app hoạt động trở lại:
+    if (state == AppLifecycleState.resumed) {
+      if (this.state is CameraInitial) {
+        add(const InitializeCamera());
+      }
     }
   }
 

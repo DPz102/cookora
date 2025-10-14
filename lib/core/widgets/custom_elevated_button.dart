@@ -6,6 +6,7 @@ class CustomElevatedButton extends StatelessWidget {
   final String text;
   final bool isLoading;
   final ButtonStyle? style;
+  final TextStyle? textStyle;
 
   const CustomElevatedButton({
     super.key,
@@ -13,6 +14,7 @@ class CustomElevatedButton extends StatelessWidget {
     required this.text,
     this.isLoading = false,
     this.style,
+    this.textStyle,
   });
 
   @override
@@ -27,10 +29,12 @@ class CustomElevatedButton extends StatelessWidget {
               width: 48.h,
               child: CircularProgressIndicator(
                 strokeWidth: 3,
-                color: Theme.of(context).colorScheme.surface,
+                color:
+                    style?.foregroundColor?.resolve({}) ??
+                    Theme.of(context).colorScheme.primary,
               ),
             )
-          : Text(text),
+          : Text(text, style: textStyle),
     );
   }
 }

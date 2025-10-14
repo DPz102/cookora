@@ -182,8 +182,8 @@ class _RecipeCard extends StatelessWidget {
   Widget _buildInfoSection(ColorScheme colorScheme, TextTheme textTheme) {
     return Positioned(
       bottom: 0,
-      left: 12.w,
-      right: 12.w,
+      left: 0,
+      right: 0,
       child: Container(
         height: infoHeight.h,
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),

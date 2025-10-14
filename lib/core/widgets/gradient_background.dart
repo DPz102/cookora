@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
-
 import 'package:cookora/core/themes/extensions/app_gradient.dart';
+import 'package:flutter/material.dart';
 
 class GradientBackground extends StatelessWidget {
   const GradientBackground({super.key});

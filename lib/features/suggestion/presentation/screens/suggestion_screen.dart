@@ -1,4 +1,6 @@
-import 'package:cookora/core/widgets/gradient_background.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:cookora/features/suggestion/presentation/widgets/custom_search_bar.dart';
 import 'package:cookora/features/suggestion/presentation/widgets/filter_chip_bar.dart';
 import 'package:cookora/features/suggestion/presentation/widgets/horizontal_blog_section.dart';
@@ -6,15 +8,16 @@ import 'package:cookora/features/suggestion/presentation/widgets/horizontal_reci
 import 'package:cookora/features/suggestion/presentation/widgets/pantry_suggestions_section.dart';
 import 'package:cookora/features/suggestion/presentation/widgets/sliver_section_title.dart';
 import 'package:cookora/features/suggestion/presentation/widgets/today_suggestion_card.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SuggestionScreen extends StatelessWidget {
   const SuggestionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: _SuggestionView());
+    return const Scaffold(
+      backgroundColor: Colors.transparent,
+      body: _SuggestionView(),
+    );
   }
 }
 
@@ -27,13 +30,10 @@ class _SuggestionView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // Lớp 1: Nền gradient màu
-        const GradientBackground(),
-
-        // Lớp 2: Ảnh nền
+        // Lớp 1: Ảnh nền
         _buildBackgroundImage(),
 
-        // Lớp 3: Toàn bộ nội dung có thể cuộn
+        // Lớp 2: Toàn bộ nội dung có thể cuộn
         SafeArea(
           child: CustomScrollView(
             slivers: [
@@ -74,7 +74,7 @@ class _SuggestionView extends StatelessWidget {
 
               const HorizontalBlogSection(),
 
-              SliverPadding(padding: EdgeInsets.only(bottom: 50.h)),
+              SliverPadding(padding: EdgeInsets.only(bottom: 130.h)),
             ],
           ),
         ),

@@ -54,7 +54,7 @@ Future<void> showMarkdownBottomSheet(
                         padding: EdgeInsets.only(
                           left: 24.w,
                           right: 24.w,
-                          bottom: 40.h,
+                          bottom: 90.h,
                         ),
                         styleSheet: MarkdownStyleSheet.fromTheme(theme),
                       );

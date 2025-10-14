@@ -1,12 +1,13 @@
-import 'package:cookora/core/utils/snackbar_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:cookora/core/utils/async_state.dart';
+import 'package:cookora/core/utils/snackbar_helper.dart';
 import 'package:cookora/core/utils/validators.dart';
 import 'package:cookora/core/widgets/custom_elevated_button.dart';
+import 'package:cookora/core/widgets/glassmorphic_container.dart';
 
 import 'package:cookora/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:cookora/features/auth/presentation/bloc/auth_event.dart';
@@ -47,14 +48,12 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ),
-        title: Text('Đổi mật khẩu'),
-      ),
+      backgroundColor: Colors.transparent,
       body: BlocListener<AuthBloc, AuthState>(
         listenWhen: (p, c) =>
             p.requestStatus != c.requestStatus ||
@@ -69,84 +68,158 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
             context.pop();
           }
           final status = state.requestStatus;
-
           if (status is AsyncFailure) {
             context.showSnackBar(status.error, type: SnackBarType.error);
             context.read<AuthBloc>().add(const ClearAuthRequestState());
           }
         },
-
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                _buildPasswordField(
-                  controller: _currentPasswordController,
-                  labelText: 'Mật khẩu hiện tại',
-                  isVisible: _isCurrentPasswordVisible,
-                  onToggleVisibility: () {
-                    setState(
-                      () => _isCurrentPasswordVisible =
-                          !_isCurrentPasswordVisible,
-                    );
-                  },
-                ),
-                SizedBox(height: 20.h),
-                _buildPasswordField(
-                  controller: _newPasswordController,
-                  labelText: 'Mật khẩu mới',
-                  isVisible: _isNewPasswordVisible,
-                  onToggleVisibility: () {
-                    setState(
-                      () => _isNewPasswordVisible = !_isNewPasswordVisible,
-                    );
-                  },
-                ),
-                SizedBox(height: 8.h),
-                Text('Mật khẩu phải có ít nhất 6 ký tự.'),
-                const Spacer(),
-                BlocBuilder<AuthBloc, AuthState>(
-                  buildWhen: (p, c) => p.requestStatus != c.requestStatus,
-                  builder: (context, state) {
-                    final isLoading = state.requestStatus is AsyncLoading;
-                    return CustomElevatedButton(
-                      text: 'Xác nhận',
-                      isLoading: isLoading,
-                      onPressed: _onSubmit,
-                    );
-                  },
-                ),
-
-                SizedBox(height: 20.h),
-              ],
+        child: Stack(
+          children: [
+            SafeArea(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8.w),
+                    child: AppBar(
+                      leading: IconButton(
+                        icon: const Icon(Icons.arrow_back),
+                        onPressed: () => context.pop(),
+                      ),
+                      title: Text(
+                        'Đổi mật khẩu',
+                        style: textTheme.headlineSmall?.copyWith(
+                          color: colorScheme.primary,
+                        ),
+                      ),
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
+                      centerTitle: true,
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24.w),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            _buildGlassmorphicPasswordField(
+                              controller: _currentPasswordController,
+                              labelText: 'Mật khẩu hiện tại',
+                              isVisible: _isCurrentPasswordVisible,
+                              onToggleVisibility: () => setState(
+                                () => _isCurrentPasswordVisible =
+                                    !_isCurrentPasswordVisible,
+                              ),
+                            ),
+                            SizedBox(height: 20.h),
+                            _buildGlassmorphicPasswordField(
+                              controller: _newPasswordController,
+                              labelText: 'Mật khẩu mới',
+                              isVisible: _isNewPasswordVisible,
+                              onToggleVisibility: () => setState(
+                                () => _isNewPasswordVisible =
+                                    !_isNewPasswordVisible,
+                              ),
+                            ),
+                            SizedBox(height: 12.h),
+                            Text(
+                              'Mật khẩu phải có ít nhất 6 ký tự.',
+                              style: textTheme.bodyMedium?.copyWith(
+                                color: colorScheme.inversePrimary,
+                              ),
+                            ),
+                            const Spacer(),
+                            BlocBuilder<AuthBloc, AuthState>(
+                              buildWhen: (p, c) =>
+                                  p.requestStatus != c.requestStatus,
+                              builder: (context, state) {
+                                final isLoading =
+                                    state.requestStatus is AsyncLoading;
+                                return SizedBox(
+                                  width: double.infinity,
+                                  child: CustomElevatedButton(
+                                    text: 'Xác nhận',
+                                    isLoading: isLoading,
+                                    onPressed: _onSubmit,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: colorScheme.primary,
+                                    ),
+                                    textStyle: textTheme.labelLarge?.copyWith(
+                                      color: colorScheme.onPrimary,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            SizedBox(height: 70.h),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildPasswordField({
+  Widget _buildGlassmorphicPasswordField({
     required TextEditingController controller,
     required String labelText,
     required bool isVisible,
     required VoidCallback onToggleVisibility,
   }) {
-    return TextFormField(
-      controller: controller,
-      obscureText: !isVisible,
-      decoration: InputDecoration(
-        labelText: labelText,
-        prefixIcon: const Icon(Icons.lock_outline),
-        suffixIcon: IconButton(
-          icon: Icon(isVisible ? Icons.visibility_off : Icons.visibility),
-          onPressed: onToggleVisibility,
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return GlassmorphicContainer(
+      borderRadius: 12.r,
+      blurSigma: 10.0,
+      // Yêu cầu 1: Sửa lại cách dùng opacity
+      backgroundColor: colorScheme.surface.withAlpha(51), // 20% opacity
+      shadowColor: Colors.black.withAlpha(38), // 15% opacity
+      shadowElevation: 4,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 8.w),
+        child: TextFormField(
+          controller: controller,
+          obscureText: !isVisible,
+          style: TextStyle(color: colorScheme.onSurface),
+          decoration: InputDecoration(
+            // Yêu cầu 2: Tắt màu nền mặc định của TextFormField
+            filled: false,
+            labelText: labelText,
+            hintText: '••••••',
+            prefixIcon: Icon(
+              Icons.lock_outline,
+              color: colorScheme.inversePrimary,
+            ),
+            suffixIcon: IconButton(
+              icon: Icon(
+                isVisible
+                    ? Icons.visibility_off_outlined
+                    : Icons.visibility_outlined,
+                color: colorScheme.inversePrimary,
+              ),
+              onPressed: onToggleVisibility,
+            ),
+            border: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            errorBorder: InputBorder.none,
+            focusedErrorBorder: InputBorder.none,
+            labelStyle: TextStyle(color: colorScheme.inversePrimary),
+            hintStyle: TextStyle(
+              color: colorScheme.inversePrimary.withAlpha(179),
+            ), // 70% opacity
+          ),
+          validator: Validators.validatePassword,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
         ),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.r)),
       ),
-      validator: Validators.validatePassword,
     );
   }
 }

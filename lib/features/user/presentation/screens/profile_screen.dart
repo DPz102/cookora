@@ -1,34 +1,29 @@
+import 'package:cookora/core/widgets/async_state_builder.dart';
+import 'package:cookora/core/widgets/custom_network_image.dart';
+import 'package:cookora/core/widgets/glassmorphic_container.dart';
+import 'package:cookora/core/widgets/gradient_background.dart';
+import 'package:cookora/features/community/domain/entities/post_entity.dart';
+import 'package:cookora/features/user/domain/entities/user_entity.dart';
+import 'package:cookora/features/user/presentation/bloc/user_bloc.dart';
+import 'package:cookora/features/user/presentation/bloc/user_event.dart';
+import 'package:cookora/features/user/presentation/bloc/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:cookora/core/widgets/async_state_builder.dart';
-import 'package:cookora/core/widgets/custom_network_image.dart';
-
-import 'package:cookora/features/community/domain/entities/post_entity.dart';
-import 'package:cookora/features/user/domain/entities/user_entity.dart';
-import 'package:cookora/features/user/presentation/bloc/user_bloc.dart';
-import 'package:cookora/features/user/presentation/bloc/user_state.dart';
-import 'package:cookora/features/user/presentation/bloc/user_event.dart';
-
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Trang cá nhân'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: () => context.push('/profile/settings'),
-          ),
-        ],
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: const _ProfileView(),
       ),
-      body: const _ProfileView(),
     );
   }
 }
@@ -38,14 +33,69 @@ class _ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Dùng ListView để nội dung có thể cuộn nếu màn hình nhỏ.
-    return ListView(
-      padding: EdgeInsets.symmetric(vertical: 16.h),
-      children: [
-        _ProfileHeader(),
-        SizedBox(height: 24.h),
-        _UserPostsGrid(),
-      ],
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
+    // Yêu cầu 2: Dùng Column để chia bố cục cố định và có thể cuộn
+    return SafeArea(
+      child: Column(
+        children: [
+          // Phần AppBar tùy chỉnh (cố định)
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.w),
+            child: AppBar(
+              title: Text(
+                'Trang cá nhân',
+                style: textTheme.headlineSmall?.copyWith(
+                  color: colorScheme.primary,
+                ),
+              ),
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              centerTitle: false,
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.share_outlined, size: 26.sp),
+                  onPressed: () {},
+                ),
+                IconButton(
+                  icon: Icon(Icons.settings_outlined, size: 28.sp),
+                  onPressed: () => context.push('/profile/settings'),
+                ),
+              ],
+            ),
+          ),
+          // Thẻ thông tin người dùng (cố định)
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: const _ProfileHeader(),
+          ),
+          SizedBox(height: 24.h),
+          // Thanh TabBar (cố định)
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: TabBar(
+              labelColor: colorScheme.primary,
+              unselectedLabelColor: colorScheme.inversePrimary,
+              indicatorColor: colorScheme.primary,
+              tabs: const [
+                Tab(icon: Icon(Icons.grid_on_outlined)),
+                Tab(icon: Icon(Icons.bookmark_border_outlined)),
+              ],
+            ),
+          ),
+          // Nội dung TabBarView (có thể cuộn)
+          Expanded(
+            child: TabBarView(
+              children: [
+                _UserPostsGrid(),
+                Center(child: Text('Chưa có bài đăng nào được lưu.')),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -53,24 +103,8 @@ class _ProfileView extends StatelessWidget {
 class _ProfileHeader extends StatelessWidget {
   const _ProfileHeader();
 
-  // Thay đổi ảnh đại diện
-  void _changeAvatar(BuildContext context) async {
-    try {
-      final ImagePicker picker = ImagePicker();
-      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-
-      if (image != null && context.mounted) {
-        context.read<UserBloc>().add(UpdateAvatar(image));
-      } else {}
-    } catch (e) {
-      throw Exception('Xử lý ảnh thất bại.');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return BlocBuilder<UserBloc, UserState>(
       buildWhen: (p, c) =>
           p.profileStatus != c.profileStatus ||
@@ -78,69 +112,143 @@ class _ProfileHeader extends StatelessWidget {
       builder: (context, state) {
         return AsyncStateBuilder<UserEntity>(
           asyncState: state.profileStatus,
-          successBuilder: (_, user) => Column(
-            children: [
-              SizedBox(
-                height: 100.r,
-                width: 100.r,
-                child: Stack(
-                  fit: StackFit.expand,
+          successBuilder: (_, user) {
+            return GlassmorphicContainer(
+              borderRadius: 25.r,
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 16.w),
+                child: Column(
                   children: [
-                    // Avatar người dùng
-                    state.isUploadingAvatar
-                        ? CircleAvatar(
-                            radius: 50.r,
-                            child: const CircularProgressIndicator(),
-                          )
-                        : CustomNetworkImage(
-                            imageUrl: user.photoURL.isNotEmpty
-                                ? user.photoURL
-                                : 'https://ui-avatars.com/api/?name=${user.username}&background=random&size=128',
-                            borderRadius: BorderRadius.circular(50.r),
-                          ),
-
-                    // Nút camera
-                    Positioned(
-                      bottom: -5.h,
-                      right: -10.w,
-                      child: IconButton(
-                        style: IconButton.styleFrom(
-                          backgroundColor: colorScheme.surface,
-                          shape: const CircleBorder(),
-                          side: BorderSide(
-                            color: colorScheme.outline,
-                            width: 1.sp,
-                          ),
-                        ),
-                        icon: Icon(
-                          Icons.camera_alt_outlined,
-                          size: 20.r,
-                          color: colorScheme.primary,
-                        ),
-                        onPressed: state.isUploadingAvatar
-                            ? null
-                            : () => _changeAvatar(context),
-                      ),
-                    ),
+                    _UserInfo(user: user, state: state),
+                    SizedBox(height: 24.h),
+                    const _UserStats(),
                   ],
                 ),
               ),
-              SizedBox(height: 16.h),
-              Text(
-                user.username,
-                style: Theme.of(context).textTheme.headlineMedium,
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class _UserInfo extends StatelessWidget {
+  const _UserInfo({required this.user, required this.state});
+  final UserEntity user;
+  final UserState state;
+
+  void _changeAvatar(BuildContext context) async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null && context.mounted) {
+      context.read<UserBloc>().add(UpdateAvatar(image));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    // Lấy URL ảnh, nếu không có thì dùng API placeholder
+    final imageUrl = user.photoURL.isNotEmpty
+        ? user.photoURL
+        : 'https://ui-avatars.com/api/?name=${user.username}&background=random&size=128';
+
+    return Column(
+      children: [
+        SizedBox(
+          height: 90.r,
+          width: 90.r,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              CircleAvatar(
+                radius: 45.r,
+                backgroundImage: !state.isUploadingAvatar
+                    ? NetworkImage(imageUrl)
+                    : null,
+                child: state.isUploadingAvatar
+                    ? const CircularProgressIndicator()
+                    : null,
               ),
-              SizedBox(height: 8.h),
-              Text(
-                user.email,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
+
+              // Yêu cầu 2: Style lại nút edit avatar
+              Positioned(
+                right: -5.w,
+                bottom: -5.h,
+                child: Material(
+                  color: colorScheme.primary,
+                  shape: const CircleBorder(),
+                  elevation: 2,
+                  child: SizedBox(
+                    width: 32.r,
+                    height: 32.r,
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      iconSize: 18.r,
+                      icon: Icon(
+                        Icons.edit_outlined,
+                        color: colorScheme.onPrimary,
+                      ),
+                      onPressed: state.isUploadingAvatar
+                          ? null
+                          : () => _changeAvatar(context),
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
-        );
-      },
+        ),
+        SizedBox(height: 16.h),
+        Text(user.username, style: textTheme.headlineSmall),
+        SizedBox(height: 8.h),
+        Text(
+          user.email,
+          style: textTheme.bodyLarge?.copyWith(
+            color: colorScheme.inversePrimary,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _UserStats extends StatelessWidget {
+  const _UserStats();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _StatItem(count: '12', label: 'bài viết'),
+        _StatItem(count: '8', label: 'người theo dõi'),
+        _StatItem(count: '23', label: 'đang theo dõi'),
+      ],
+    );
+  }
+}
+
+class _StatItem extends StatelessWidget {
+  const _StatItem({required this.count, required this.label});
+  final String count;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Column(
+      children: [
+        Text(
+          count,
+          style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w500),
+        ),
+        SizedBox(height: 4.h),
+        Text(label, style: textTheme.bodyMedium),
+      ],
     );
   }
 }
@@ -155,31 +263,27 @@ class _UserPostsGrid extends StatelessWidget {
       builder: (context, state) {
         return AsyncStateBuilder<List<PostEntity>>(
           asyncState: state.postsStatus,
-          successBuilder: (_, posts) => posts.isEmpty
-              ? const Center(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 40.0),
-                    child: Text('Bạn chưa có bài đăng nào.'),
-                  ),
-                )
-              : GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  padding: EdgeInsets.symmetric(horizontal: 4.w),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 4.w,
-                    mainAxisSpacing: 4.h,
-                  ),
-                  itemCount: posts.length,
-                  itemBuilder: (context, index) {
-                    return CustomNetworkImage(
-                      imageUrl: posts[index].imageUrl,
-                      fit: BoxFit.cover,
-                      borderRadius: BorderRadius.circular(4.r),
-                    );
-                  },
-                ),
+          successBuilder: (_, posts) {
+            if (posts.isEmpty) {
+              return const Center(child: Text('Bạn chưa có bài đăng nào.'));
+            }
+            return GridView.builder(
+              padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 20.h),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 8.w,
+                mainAxisSpacing: 8.h,
+              ),
+              itemCount: posts.length,
+              itemBuilder: (context, index) {
+                return CustomNetworkImage(
+                  imageUrl: posts[index].imageUrl,
+                  fit: BoxFit.cover,
+                  borderRadius: BorderRadius.circular(15.r),
+                );
+              },
+            );
+          },
         );
       },
     );

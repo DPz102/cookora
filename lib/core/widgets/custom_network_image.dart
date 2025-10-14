@@ -33,7 +33,7 @@ class CustomNetworkImage extends StatelessWidget {
           return Container(
             height: height,
             width: width,
-            color: colorScheme.surfaceBright,
+            color: Colors.transparent,
             child: const Center(child: CircularProgressIndicator()),
           );
         },

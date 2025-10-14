@@ -31,13 +31,11 @@ class CameraPreviewWidget extends StatelessWidget {
       );
     }
 
-    return Center(
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(19.r), // Bo tròn các góc
-        child: AspectRatio(
-          aspectRatio: 3 / 4, // Tỉ lệ khung hình dọc
-          child: CameraPreview(cameraController),
-        ),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(19.r), // Bo tròn các góc
+      child: AspectRatio(
+        aspectRatio: 3 / 4, // Tỉ lệ khung hình dọc
+        child: CameraPreview(cameraController),
       ),
     );
   }

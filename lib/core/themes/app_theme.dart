@@ -349,8 +349,8 @@ class AppTheme {
 
       // Navigation Bar
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: s.surface,
-        indicatorColor: s.primaryContainer, // Màu của vệt highlight khi chọn
+        backgroundColor: Colors.transparent,
+        indicatorColor: Colors.transparent, // Màu của vệt highlight khi chọn
         elevation: 0,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
 

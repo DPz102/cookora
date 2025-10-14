@@ -1,8 +1,12 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:cookora/core/utils/async_state.dart';
 import 'package:cookora/core/utils/snackbar_helper.dart';
 import 'package:cookora/core/widgets/async_sliver_builder.dart';
-import 'package:cookora/core/widgets/gradient_background.dart';
 import 'package:cookora/core/widgets/ingredient_form_dialog.dart';
+
 import 'package:cookora/features/pantry/domain/entities/ingredient_entity.dart';
 import 'package:cookora/features/pantry/presentation/bloc/pantry_bloc.dart';
 import 'package:cookora/features/pantry/presentation/bloc/pantry_event.dart';
@@ -10,9 +14,6 @@ import 'package:cookora/features/pantry/presentation/bloc/pantry_state.dart';
 import 'package:cookora/features/pantry/presentation/widgets/ingredient_card.dart';
 import 'package:cookora/features/pantry/presentation/widgets/pantry_filter_bar.dart';
 import 'package:cookora/features/pantry/presentation/widgets/pantry_summary_card.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PantryScreen extends StatelessWidget {
   const PantryScreen({super.key});
@@ -22,24 +23,29 @@ class PantryScreen extends StatelessWidget {
     final pantryBloc = context.read<PantryBloc>();
 
     return Scaffold(
-      // Giữ lại FAB từ code cũ để đảm bảo chức năng thêm không bị mất
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final newIngredient = await showDialog<IngredientEntity>(
-            context: context,
-            builder: (_) => const IngredientFormDialog(),
-          );
+      backgroundColor: Colors.transparent,
 
-          if (newIngredient != null) {
-            pantryBloc.add(AddIngredient(ingredient: newIngredient));
-          }
-        },
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        shape: const CircleBorder(),
-        elevation: 1,
-        child: const Icon(Icons.add),
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(bottom: 50.h),
+        child: FloatingActionButton(
+          onPressed: () async {
+            final newIngredient = await showDialog<IngredientEntity>(
+              context: context,
+              builder: (_) => const IngredientFormDialog(),
+            );
+
+            if (newIngredient != null) {
+              pantryBloc.add(AddIngredient(ingredient: newIngredient));
+            }
+          },
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          foregroundColor: Theme.of(context).colorScheme.onPrimary,
+          shape: const CircleBorder(),
+          elevation: 1,
+          child: const Icon(Icons.add),
+        ),
       ),
+
       body: BlocListener<PantryBloc, PantryState>(
         // Listener không đổi, dùng để hiển thị SnackBar
         listenWhen: (p, c) => p.mutationStatus != c.mutationStatus,
@@ -81,10 +87,7 @@ class _PantryView extends StatelessWidget {
 
     return Stack(
       children: [
-        // Lớp 1: Nền gradient (tái sử dụng từ SuggestionScreen)
-        const GradientBackground(),
-
-        // Lớp 2: Nội dung chính có thể cuộn
+        // Lớp 1: Nội dung chính có thể cuộn
         SafeArea(
           child: CustomScrollView(
             slivers: [
@@ -96,6 +99,7 @@ class _PantryView extends StatelessWidget {
                     color: colorScheme.primary,
                   ),
                 ),
+                centerTitle: false,
                 backgroundColor: Colors.transparent,
                 elevation: 0,
               ),
@@ -135,7 +139,7 @@ class _PantryView extends StatelessWidget {
               );
             }
             return SliverPadding(
-              padding: EdgeInsets.fromLTRB(20.w, 15.h, 20.w, 80.h),
+              padding: EdgeInsets.fromLTRB(20.w, 15.h, 20.w, 130.h),
               sliver: SliverGrid.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,

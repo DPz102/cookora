@@ -1,26 +1,34 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 /// Một widget tạo ra hiệu ứng kính mờ (glass morphism) với bóng đổ chỉ ở viền ngoài.
-/// Nó kết hợp BackdropFilter để làm mờ nền và CustomPaint để vẽ bóng.
+///
+/// Widget này kết hợp BackdropFilter để làm mờ nền, cho phép sử dụng màu nền đơn,
+/// gradient, và border để tùy chỉnh, cùng với CustomPaint để vẽ bóng đổ.
 class GlassmorphicContainer extends StatelessWidget {
   const GlassmorphicContainer({
     super.key,
     required this.child,
-    required this.height,
+    this.height,
     this.width,
     this.borderRadius = 27.0,
     this.blurSigma = 5.0,
     this.backgroundColor = const Color(0x70FFFFFF),
+    this.gradient,
+    this.border,
     this.shadowColor = const Color(0x26000000),
     this.shadowElevation = 4.0,
-  });
+  }) : assert(
+         gradient == null || backgroundColor == const Color(0x70FFFFFF),
+         'Cannot provide both a backgroundColor and a gradient. Use one or the other.',
+       );
 
   /// Nội dung sẽ được hiển thị bên trong container.
   final Widget child;
 
-  /// Chiều cao của container.
-  final double height;
+  /// Chiều cao của container. Mặc định sẽ co giãn theo `child`.
+  final double? height;
 
   /// Chiều rộng của container. Mặc định sẽ co giãn theo `child`.
   final double? width;
@@ -32,7 +40,14 @@ class GlassmorphicContainer extends StatelessWidget {
   final double blurSigma;
 
   /// Màu nền bán trong suốt phủ lên trên lớp kính mờ.
+  /// Sẽ bị bỏ qua nếu `gradient` được cung cấp.
   final Color backgroundColor;
+
+  /// [MỚI] Gradient cho nền. Sẽ được ưu tiên hơn `backgroundColor`.
+  final Gradient? gradient;
+
+  /// [MỚI] Đường viền cho container.
+  final BoxBorder? border;
 
   /// Màu của bóng đổ.
   final Color shadowColor;
@@ -43,7 +58,6 @@ class GlassmorphicContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      // Sử dụng painter tùy chỉnh để vẽ bóng chỉ ở viền ngoài.
       painter: _OuterShadowPainter(
         shadowColor: shadowColor,
         elevation: shadowElevation,
@@ -56,7 +70,14 @@ class GlassmorphicContainer extends StatelessWidget {
           child: Container(
             height: height,
             width: width,
-            color: backgroundColor,
+            decoration: BoxDecoration(
+              // SỬA ĐỔI QUAN TRỌNG: Thêm borderRadius ở đây
+              // để đảm bảo border được vẽ đúng hình dạng bo tròn ngay từ đầu.
+              borderRadius: BorderRadius.circular(borderRadius),
+              color: gradient == null ? backgroundColor : null,
+              gradient: gradient,
+              border: border,
+            ),
             child: child,
           ),
         ),
@@ -85,8 +106,6 @@ class _OuterShadowPainter extends CustomPainter {
     );
     final Path path = Path()..addRRect(rrect);
 
-    // Tham số cuối cùng 'false' (transparentOccluder) là chìa khóa
-    // để chỉ vẽ bóng ở bên ngoài.
     canvas.drawShadow(path, shadowColor, elevation, false);
   }
 

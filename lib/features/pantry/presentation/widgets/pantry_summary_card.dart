@@ -1,8 +1,8 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
+import 'package:cookora/core/widgets/glassmorphic_container.dart';
 
 class PantrySummaryCard extends StatelessWidget {
   const PantrySummaryCard({super.key});
@@ -72,52 +72,46 @@ class PantrySummaryCard extends StatelessWidget {
                   ),
 
                   // Thanh tìm kiếm
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(75.r),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-                      child: Container(
-                        height: 35.h,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.white.withAlpha(51),
-                              Colors.white.withAlpha(26),
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(75.r),
-                          border: Border.all(
-                            color: Colors.white.withAlpha(77),
-                            width: 0.8,
+                  GlassmorphicContainer(
+                    height: 35.h,
+                    borderRadius: 75.r,
+                    blurSigma: 10.0,
+                    shadowElevation: 0, // Tắt bóng đổ nếu không cần
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.white.withAlpha(51),
+                        Colors.white.withAlpha(26),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    border: Border.all(
+                      color: Colors.white.withAlpha(77),
+                      width: 0.8,
+                    ),
+                    child: TextField(
+                      textAlignVertical: TextAlignVertical.center,
+                      style: textTheme.bodyLarge?.copyWith(
+                        color: colorScheme.onPrimary,
+                      ),
+                      decoration: InputDecoration(
+                        filled: false,
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        hintText: 'Nhập nguyên liệu...',
+                        suffixIcon: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 14.w),
+                          child: SvgPicture.asset(
+                            'assets/icons/mic.svg',
+                            colorFilter: ColorFilter.mode(
+                              colorScheme.onPrimary,
+                              BlendMode.srcIn,
+                            ),
                           ),
                         ),
-                        child: TextField(
-                          textAlignVertical: TextAlignVertical.center,
-                          style: textTheme.bodyLarge?.copyWith(
-                            color: colorScheme.onPrimary,
-                          ),
-                          decoration: InputDecoration(
-                            filled: false,
-                            border: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            hintText: 'Nhập nguyên liệu...',
-                            suffixIcon: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 14.w),
-                              child: SvgPicture.asset(
-                                'assets/icons/mic.svg',
-                                colorFilter: ColorFilter.mode(
-                                  colorScheme.onPrimary,
-                                  BlendMode.srcIn,
-                                ),
-                              ),
-                            ),
-                            hintStyle: textTheme.titleMedium?.copyWith(
-                              color: colorScheme.onPrimary,
-                            ),
-                          ),
+                        hintStyle: textTheme.titleMedium?.copyWith(
+                          color: colorScheme.onPrimary,
                         ),
                       ),
                     ),

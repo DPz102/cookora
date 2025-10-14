@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:camera/camera.dart';
 // Core & DI
@@ -11,12 +12,14 @@ import 'package:cookora/features/pantry/presentation/bloc/pantry_bloc.dart';
 import 'package:cookora/features/scan/domain/entities/scan_result.dart';
 // Scan Feature - Bloc
 import 'package:cookora/features/scan/domain/enums/scan_mode.dart' as scan_enum;
+import 'package:cookora/features/scan/domain/models/camera_settings.dart';
 import 'package:cookora/features/scan/presentation/bloc/camera/camera_bloc.dart';
 import 'package:cookora/features/scan/presentation/bloc/scan/scan_bloc.dart';
 import 'package:cookora/features/scan/presentation/bloc/scan/scan_event.dart';
 import 'package:cookora/features/scan/presentation/bloc/scan/scan_state.dart';
 // Scan Feature - Widgets
-import 'package:cookora/features/scan/presentation/widgets/camera_controls.dart';
+import 'package:cookora/features/scan/presentation/widgets/scan_header.dart';
+import 'package:cookora/features/scan/presentation/widgets/scan_footer.dart';
 import 'package:cookora/features/scan/presentation/widgets/camera_preview.dart';
 import 'package:cookora/features/scan/presentation/widgets/dish_result_dialog.dart';
 import 'package:cookora/features/scan/presentation/widgets/ingredient_result_dialog.dart';
@@ -51,63 +54,47 @@ class _ScanView extends StatefulWidget {
 
 class _ScanViewState extends State<_ScanView> {
   final ImagePicker _picker = ImagePicker();
-  scan_enum.ScanMode _scanMode = scan_enum.ScanMode.ingredient;
-  FlashMode _flashMode = FlashMode.off;
-  double _currentZoom = 1.0;
+  var _cameraSettings = const CameraSettings();
+
   double _maxZoom = 1.0;
   final List<double> _zoomLevels = [1.0, 2.0, 3.0];
 
   void _toggleFlash(CameraController? controller) {
     if (controller == null) return;
+
+    final newFlashMode = switch (_cameraSettings.flashMode) {
+      FlashMode.off => FlashMode.auto,
+      FlashMode.auto => FlashMode.torch,
+      _ => FlashMode.off,
+    };
+
     setState(() {
-      switch (_flashMode) {
-        case FlashMode.off:
-          _flashMode = FlashMode.auto;
-          break;
-        case FlashMode.auto:
-          _flashMode = FlashMode.torch; // Bật đèn pin
-          break;
-        case FlashMode.torch:
-          _flashMode = FlashMode.off;
-          break;
-        default:
-          _flashMode = FlashMode.off;
-      }
+      _cameraSettings = _cameraSettings.copyWith(flashMode: newFlashMode);
     });
-    controller.setFlashMode(_flashMode);
+    controller.setFlashMode(newFlashMode);
   }
 
-  // Hàm mới để cycle qua các mức zoom
   void _cycleZoom(CameraController? controller) {
     if (controller == null) return;
 
-    // Tìm index của mức zoom hiện tại
-    final currentIndex = _zoomLevels.indexOf(_currentZoom);
-    // Chuyển sang mức zoom tiếp theo, quay vòng lại nếu hết
+    final currentIndex = _zoomLevels.indexOf(_cameraSettings.currentZoom);
     final nextIndex = (currentIndex + 1) % _zoomLevels.length;
     final newZoom = _zoomLevels[nextIndex];
 
-    // Chỉ cập nhật nếu mức zoom mới không vượt quá giới hạn của camera
-    if (newZoom <= _maxZoom) {
-      setState(() {
-        _currentZoom = newZoom;
-      });
-      controller.setZoomLevel(newZoom);
-    } else {
-      // Nếu vượt quá, quay về 1x
-      setState(() {
-        _currentZoom = 1.0;
-      });
-      controller.setZoomLevel(1.0);
-    }
+    final finalZoom = (newZoom <= _maxZoom) ? newZoom : 1.0;
+
+    setState(() {
+      _cameraSettings = _cameraSettings.copyWith(currentZoom: finalZoom);
+    });
+    controller.setZoomLevel(finalZoom);
   }
 
-  // Hàm mới để đổi chế độ scan
   void _cycleScanMode() {
+    final newMode = _cameraSettings.scanMode == scan_enum.ScanMode.ingredient
+        ? scan_enum.ScanMode.dish
+        : scan_enum.ScanMode.ingredient;
     setState(() {
-      _scanMode = _scanMode == scan_enum.ScanMode.ingredient
-          ? scan_enum.ScanMode.dish
-          : scan_enum.ScanMode.ingredient;
+      _cameraSettings = _cameraSettings.copyWith(scanMode: newMode);
     });
   }
 
@@ -122,18 +109,19 @@ class _ScanViewState extends State<_ScanView> {
     if (scanBloc.state.isScanning) return;
 
     try {
-      // Tắt flash trước khi chụp nếu đang ở chế độ torch
-      if (_flashMode == FlashMode.torch) {
+      if (_cameraSettings.flashMode == FlashMode.torch) {
         await controller.setFlashMode(FlashMode.off);
       }
       final image = await controller.takePicture();
-      // Bật lại flash nếu cần
-      if (_flashMode == FlashMode.torch) {
+      if (_cameraSettings.flashMode == FlashMode.torch) {
         await controller.setFlashMode(FlashMode.torch);
       }
 
       scanBloc.add(
-        ScanEvent.recognizeImage(imageFile: File(image.path), mode: _scanMode),
+        ScanEvent.recognizeImage(
+          imageFile: File(image.path),
+          mode: _cameraSettings.scanMode,
+        ),
       );
     } catch (e) {
       if (mounted) {
@@ -152,7 +140,7 @@ class _ScanViewState extends State<_ScanView> {
         scanBloc.add(
           ScanEvent.recognizeImage(
             imageFile: File(image.path),
-            mode: _scanMode,
+            mode: _cameraSettings.scanMode,
           ),
         );
       }
@@ -166,6 +154,7 @@ class _ScanViewState extends State<_ScanView> {
   @override
   Widget build(BuildContext context) {
     final scanBloc = context.read<ScanBloc>();
+    final colorScheme = Theme.of(context).colorScheme;
 
     return BlocListener<ScanBloc, ScanState>(
       listener: (context, state) {
@@ -180,7 +169,6 @@ class _ScanViewState extends State<_ScanView> {
                 child: DishResultDialog(recipe: recipe),
               ),
             ).then((_) => scanBloc.add(const ScanEvent.reset())),
-
             ingredients: (results) {
               if (results.isEmpty) {
                 context.showSnackBar(
@@ -208,54 +196,90 @@ class _ScanViewState extends State<_ScanView> {
         }
       },
       child: Scaffold(
-        backgroundColor: Colors.black,
-        body: BlocBuilder<CameraBloc, CameraState>(
-          builder: (context, cameraState) {
-            return cameraState.when(
-              initial: () => const Center(
-                child: CircularProgressIndicator(color: Colors.white),
-              ),
-              loadInProgress: () => const Center(
-                child: CircularProgressIndicator(color: Colors.white),
-              ),
-              loadFailure: (error) => Center(
-                child: Text(
-                  'Lỗi Camera: $error',
-                  style: const TextStyle(color: Colors.white),
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: BlocBuilder<CameraBloc, CameraState>(
+            builder: (context, cameraState) {
+              return cameraState.when(
+                initial: () => Center(
+                  child: CircularProgressIndicator(color: colorScheme.surface),
                 ),
-              ),
-              loadSuccess: (controller) {
-                controller.getMaxZoomLevel().then((max) => _maxZoom = max);
-                return BlocBuilder<ScanBloc, ScanState>(
-                  builder: (context, scanState) {
-                    return Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            vertical: 60.h,
-                            horizontal: 20.w, // Thêm padding trái phải
+                loadInProgress: () => Center(
+                  child: CircularProgressIndicator(color: colorScheme.surface),
+                ),
+                loadFailure: (error) => Center(
+                  child: Text(
+                    'Lỗi Camera: $error',
+                    style: TextStyle(color: colorScheme.surface),
+                  ),
+                ),
+                loadSuccess: (controller) {
+                  controller.getMaxZoomLevel().then((max) => _maxZoom = max);
+                  return BlocBuilder<ScanBloc, ScanState>(
+                    builder: (context, scanState) {
+                      final isScanning = scanState.scanStatus is AsyncLoading;
+
+                      return Stack(
+                        children: [
+                          // Lớp 1: Giao diện chính
+                          Column(
+                            children: [
+                              ScanHeader(
+                                flashMode: _cameraSettings.flashMode,
+                                currentZoom: _cameraSettings.currentZoom,
+                                onToggleFlash: () => _toggleFlash(controller),
+                                onCycleZoom: () => _cycleZoom(controller),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 20.w,
+                                  ),
+                                  child: isScanning
+                                      ? const SizedBox.shrink()
+                                      : CameraPreviewWidget(
+                                          controller: controller,
+                                        ),
+                                ),
+                              ),
+                              // Chỉ hiển thị footer khi không scanning
+                              if (!isScanning)
+                                ScanFooter(
+                                  currentMode: _cameraSettings.scanMode,
+                                  onTakePicture: () =>
+                                      _onTakePicture(controller),
+                                  onPickFromGallery: _onPickFromGallery,
+                                  onCycleMode: _cycleScanMode,
+                                ),
+                            ],
                           ),
-                          child: CameraPreviewWidget(controller: controller),
-                        ),
-                        CameraControls(
-                          scanStatus: scanState.scanStatus,
-                          currentMode: _scanMode,
-                          flashMode: _flashMode,
-                          currentZoom: _currentZoom,
-                          onTakePicture: () => _onTakePicture(controller),
-                          onPickFromGallery: _onPickFromGallery,
-                          onToggleFlash: () => _toggleFlash(controller),
-                          onCycleZoom: () => _cycleZoom(controller),
-                          onCycleMode: _cycleScanMode, // Truyền hàm mới
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            );
-          },
+
+                          // Lớp 2: Lớp phủ loading
+                          if (isScanning)
+                            Positioned.fill(
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(
+                                  sigmaX: 10,
+                                  sigmaY: 10,
+                                ),
+                                child: Container(
+                                  color: Colors.black.withAlpha(50),
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      color: colorScheme.surface,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              );
+            },
+          ),
         ),
       ),
     );
