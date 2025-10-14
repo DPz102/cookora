@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:cookora/core/themes/extensions/app_gradient.dart';
+
 class AppColors {
   // Blue
   static const Color blue0 = Color(0xFF011998);
@@ -100,7 +102,6 @@ class AppTextStyles {
     height: 2.0,
     letterSpacing: 0.3.sp,
   );
-
   static TextStyle button4 = TextStyle(
     fontFamily: 'Unbounded',
     fontWeight: FontWeight.w300,
@@ -230,6 +231,7 @@ class AppTheme {
       textTheme: t,
       // Toàn app: body mặc định SpaceGrotesk; Heading set tại TextTheme.
       fontFamily: 'SpaceGrotesk',
+      extensions: <ThemeExtension<dynamic>>[AppGradients.light(s)],
 
       // AppBar
       appBarTheme: AppBarTheme(
@@ -335,12 +337,13 @@ class AppTheme {
       // Chips
       chipTheme: ChipThemeData(
         backgroundColor: s.surface,
-        selectedColor: s.primary.withAlpha(31), // 0.12
+        selectedColor: s.primary,
         disabledColor: s.surface,
         labelStyle: t.bodySmall!,
-        side: BorderSide(color: s.outlineVariant),
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        side: BorderSide.none,
+        showCheckmark: false,
+        padding: EdgeInsets.symmetric(horizontal: 8.h, vertical: 4.w),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.5.r)),
       ),
 
       // Navigation Bar

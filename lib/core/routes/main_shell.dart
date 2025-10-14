@@ -22,10 +22,8 @@ class _MainShellState extends State<MainShell> {
     final int currentIndex = widget.navigationShell.currentIndex;
 
     return Scaffold(
-      body: SafeArea(
-        // The navigation shell renders and keeps state for each branch.
-        child: widget.navigationShell,
-      ),
+      // The navigation shell renders and keeps state for each branch.
+      body: widget.navigationShell,
       bottomNavigationBar: NavigationBar(
         selectedIndex: currentIndex,
         onDestinationSelected: _onDestinationSelected,

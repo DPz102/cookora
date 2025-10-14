@@ -1,5 +1,5 @@
+// suggestion/presentation/widgets/recipe_card.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cookora/features/suggestion/domain/entities/recipe_entity.dart';
 
 class RecipeCard extends StatelessWidget {
@@ -9,79 +9,82 @@ class RecipeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
-
+    final theme = Theme.of(context);
     return Card(
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      elevation: 4,
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /*
-          // Hình ảnh món ăn
-          Image.network(
-            recipe.imageUrl,
-            height: 160.h,
-            width: double.infinity,
-            fit: BoxFit.cover,
-            // Hiển thị loading indicator khi ảnh đang tải
-            loadingBuilder: (context, child, progress) {
-              return progress == null
-                  ? child
-                  : SizedBox(
-                      height: 160.h,
-                      child: const Center(child: CircularProgressIndicator()),
-                    );
-            },
-            // Hiển thị icon lỗi nếu không tải được ảnh
-            errorBuilder: (context, error, stackStrace) {
-              return SizedBox(
-                height: 160.h,
-                child: Icon(
-                  Icons.broken_image_outlined,
-                  size: 48.w,
-                  color: colorScheme.outline,
-                ),
-              );
-            },
+          // Image Placeholder
+          AspectRatio(
+            aspectRatio: 16 / 9,
+            child: Image.network(
+              'https://picsum.photos/seed/${recipe.id}/400/225',
+              fit: BoxFit.cover,
+              // Loading and error builders for better UX
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return const Center(child: CircularProgressIndicator());
+              },
+              errorBuilder: (context, error, stackTrace) {
+                return const Center(
+                  child: Icon(Icons.broken_image, color: Colors.grey),
+                );
+              },
+            ),
           ),
-*/
-          // Phần nội dung text
           Padding(
-            padding: EdgeInsets.all(12.w),
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(recipe.name, style: textTheme.headlineSmall),
-                SizedBox(height: 6.h),
                 Text(
-                  recipe.description,
-                  style: textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
+                  recipe.name,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                SizedBox(height: 10.h),
-                // Hiển thị một vài nguyên liệu cần có
-                Wrap(
-                  spacing: 6.w,
-                  runSpacing: 6.h,
-                  children: recipe.requiredIngredients
-                      .take(3)
-                      .map(
-                        (ingredient) => Chip(
-                          label: Text(ingredient),
-                          backgroundColor: colorScheme.secondaryContainer,
-                          side: BorderSide.none,
-                        ),
-                      )
-                      .toList(),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    _buildInfoChip(
+                      Icons.timer_outlined,
+                      '${recipe.cookTimeInMinutes} min',
+                      context,
+                    ),
+                    const SizedBox(width: 12),
+                    _buildInfoChip(
+                      Icons.people_outline,
+                      '${recipe.servingSize} servings',
+                      context,
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildInfoChip(IconData icon, String label, BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: Colors.grey[600]),
+        const SizedBox(width: 4),
+        Text(
+          label,
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: Colors.grey[700]),
+        ),
+      ],
     );
   }
 }
