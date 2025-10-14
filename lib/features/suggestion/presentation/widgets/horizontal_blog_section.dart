@@ -244,7 +244,7 @@ class _BlogCard extends StatelessWidget {
           // Dòng tiêu đề
           Text(
             title,
-            style: textTheme.titleSmall?.copyWith(
+            style: textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
               height: 1.2,
             ),

@@ -1,7 +1,6 @@
+import 'package:cookora/core/themes/extensions/app_gradient.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import 'package:cookora/core/themes/extensions/app_gradient.dart';
 
 class AppColors {
   // Blue
@@ -201,8 +200,8 @@ TextTheme _textTheme(ColorScheme s) {
 
     // Title (AppBar / Card / Tile)
     titleLarge: AppTextStyles.heading4.copyWith(color: s.onSurface),
-    titleMedium: AppTextStyles.heading5.copyWith(color: s.onSurface),
-    titleSmall: AppTextStyles.body4.copyWith(color: s.onSurface),
+    titleMedium: AppTextStyles.body4.copyWith(color: s.onSurface),
+    titleSmall: AppTextStyles.body5.copyWith(color: s.onSurface),
 
     // Body
     bodyLarge: AppTextStyles.body1.copyWith(color: s.onSurface),
@@ -343,7 +342,9 @@ class AppTheme {
         side: BorderSide.none,
         showCheckmark: false,
         padding: EdgeInsets.symmetric(horizontal: 8.h, vertical: 4.w),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.5.r)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25.5.r),
+        ),
       ),
 
       // Navigation Bar

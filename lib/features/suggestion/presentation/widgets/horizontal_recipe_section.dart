@@ -166,7 +166,7 @@ class _RecipeCard extends StatelessWidget {
                       likes > 999
                           ? '${(likes / 1000).toStringAsFixed(1)}k'
                           : likes.toString(),
-                      style: textTheme.titleSmall,
+                      style: textTheme.titleMedium,
                     ),
                   ],
                 ),

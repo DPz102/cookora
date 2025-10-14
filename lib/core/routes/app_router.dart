@@ -1,27 +1,24 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
-import 'package:cookora/core/routes/main_shell_provider.dart';
 import 'package:cookora/core/routes/main_shell.dart';
-
+import 'package:cookora/core/routes/main_shell_provider.dart';
 import 'package:cookora/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:cookora/features/auth/presentation/bloc/auth_state.dart';
-
-// Màn hình public
-import 'package:cookora/features/splash/screens/splash_screen.dart';
-import 'package:cookora/features/welcome/screens/welcome_screen.dart';
 import 'package:cookora/features/auth/presentation/screens/signin_screen.dart';
 import 'package:cookora/features/auth/presentation/screens/signup_screen.dart';
-
-// Màn hình private
-import 'package:cookora/features/suggestion/presentation/screens/suggestion_screen.dart';
+import 'package:cookora/features/community/presentation/screens/community_screen.dart';
 import 'package:cookora/features/pantry/presentation/screens/pantry_screen.dart';
 import 'package:cookora/features/scan/presentation/screens/scan_screen.dart';
-import 'package:cookora/features/community/presentation/screens/community_screen.dart';
+// Màn hình public
+import 'package:cookora/features/splash/screens/splash_screen.dart';
+// Màn hình private
+import 'package:cookora/features/suggestion/presentation/screens/suggestion_screen.dart';
+import 'package:cookora/features/user/presentation/screens/edit_password_screen.dart';
 import 'package:cookora/features/user/presentation/screens/profile_screen.dart';
 import 'package:cookora/features/user/presentation/screens/setting_screen.dart';
-import 'package:cookora/features/user/presentation/screens/edit_password_screen.dart';
+import 'package:cookora/features/welcome/screens/welcome_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 GoRouter appRouter(AuthBloc authBloc) {
   // Các route không cần xác thực
@@ -50,7 +47,7 @@ GoRouter appRouter(AuthBloc authBloc) {
       if (authState is Authenticated) {
         // Nếu họ đang ở các trang không cần đăng nhập, chuyển vào home
         return publicPathsWithSplash.contains(state.matchedLocation)
-            ? '/home'
+            ? '/pantry'
             : null;
       }
 

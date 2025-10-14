@@ -1,8 +1,7 @@
+import 'package:cookora/core/widgets/glassmorphic_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-import 'package:cookora/core/widgets/glassmorphic_container.dart';
 
 class CustomSearchBar extends StatelessWidget {
   const CustomSearchBar({super.key});
@@ -48,7 +47,7 @@ class CustomSearchBar extends StatelessWidget {
               Expanded(
                 child: Text(
                   'Tìm kiếm công thức',
-                  style: textTheme.titleSmall?.copyWith(
+                  style: textTheme.titleMedium?.copyWith(
                     color: colorScheme.primary,
                   ),
                 ),

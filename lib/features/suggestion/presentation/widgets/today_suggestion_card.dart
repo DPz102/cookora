@@ -45,7 +45,7 @@ class TodaySuggestionCard extends StatelessWidget {
                         SizedBox(height: 4.h),
                         Text(
                           'Khám phá công thức nấu ăn từ thực phẩm trong tủ lạnh của bạn ngay',
-                          style: textTheme.titleSmall?.copyWith(
+                          style: textTheme.titleMedium?.copyWith(
                             color: colorScheme.onPrimary,
                           ),
                         ),
