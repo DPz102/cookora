@@ -1,13 +1,15 @@
+// lib/features/scan/presentation/widgets/ingredient_result_dialog.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cookora/core/utils/snackbar_helper.dart';
-import 'package:cookora/core/widgets/ingredient_form_dialog.dart';
-import 'package:cookora/features/pantry/domain/entities/ingredient_entity.dart';
+import 'package:cookora/features/pantry/domain/entities/ingredient.dart';
+import 'package:cookora/features/pantry/domain/entities/pantry_lot.dart';
 import 'package:cookora/features/pantry/presentation/bloc/pantry_bloc.dart';
 import 'package:cookora/features/pantry/presentation/bloc/pantry_event.dart';
+import 'package:cookora/features/pantry/presentation/widgets/ingredient/lot_form_dialog.dart';
 
 class IngredientResultDialog extends StatefulWidget {
-  final List<IngredientEntity> results;
+  final List<Ingredient> results;
 
   const IngredientResultDialog({super.key, required this.results});
 
@@ -16,16 +18,14 @@ class IngredientResultDialog extends StatefulWidget {
 }
 
 class _IngredientResultDialogState extends State<IngredientResultDialog> {
-  late List<IngredientEntity> _editableIngredients;
+  late List<Ingredient> _editableIngredients;
 
   @override
   void initState() {
     super.initState();
-    // Tạo một bản sao của danh sách để có thể chỉnh sửa
-    _editableIngredients = List<IngredientEntity>.from(widget.results);
+    _editableIngredients = List<Ingredient>.from(widget.results);
   }
 
-  // Hàm xử lý khi người dùng nhấn "Thêm tất cả"
   void _addAllIngredients() {
     if (_editableIngredients.isEmpty) {
       Navigator.of(context).pop();
@@ -33,40 +33,67 @@ class _IngredientResultDialogState extends State<IngredientResultDialog> {
     }
 
     final pantryBloc = context.read<PantryBloc>();
-    // Gửi một loạt sự kiện AddIngredient cho tất cả nguyên liệu trong danh sách
     for (final ingredient in _editableIngredients) {
-      pantryBloc.add(AddIngredient(ingredient: ingredient));
+      // Chuyển đổi từ Ingredient (kết quả scan) thành PantryLot để thêm vào kho
+      final newLot = PantryLot(
+        ingredientId: ingredient.ingredientId, // Giả định AI trả về ID đúng
+        currentQuantity: 1, // Mặc định số lượng là 1, người dùng có thể sửa sau
+        unit: ingredient.validUnits.isNotEmpty
+            ? ingredient.validUnits.first
+            : 'cái',
+        purchaseDate: DateTime.now(),
+      );
+      pantryBloc.add(AddLot(lot: newLot));
     }
     context.showSnackBar(
       'Đã thêm ${_editableIngredients.length} nguyên liệu vào tủ bếp',
       type: SnackBarType.success,
     );
 
-    Navigator.of(context).pop(); // Đóng dialog sau khi thêm
+    Navigator.of(context).pop();
   }
 
-  // Hàm để mở dialog chỉnh sửa và cập nhật lại danh sách
-  void _editIngredient(int index) async {
-    final ingredientToEdit = _editableIngredients[index];
-
-    final updatedIngredient = await showDialog<IngredientEntity>(
-      context: context,
-      builder: (_) => IngredientFormDialog(initialIngredient: ingredientToEdit),
-    );
-
-    // Nếu người dùng lưu và có kết quả trả về, cập nhật lại state
-    if (updatedIngredient != null) {
-      setState(() {
-        _editableIngredients[index] = updatedIngredient;
-      });
-    }
-  }
-
-  // Hàm xóa nguyên liệu
   void _deleteIngredient(int index) {
     setState(() {
       _editableIngredients.removeAt(index);
     });
+  }
+
+  void _editIngredientDetails(int index) async {
+    final ingredient = _editableIngredients[index];
+
+    // Tạo lot tạm thời để mở form
+    final tempLot = PantryLot(
+      ingredientId: ingredient.ingredientId,
+      currentQuantity: 1,
+      unit: ingredient.validUnits.isNotEmpty
+          ? ingredient.validUnits.first
+          : 'cái',
+      purchaseDate: DateTime.now(),
+    );
+
+    final result = await showDialog<PantryLot>(
+      context: context,
+      builder: (_) =>
+          LotFormDialog(ingredient: ingredient, initialLot: tempLot),
+    );
+
+    if (result != null && mounted) {
+      // Thêm ngay vào pantry với thông tin chi tiết đã chỉnh sửa
+      context.read<PantryBloc>().add(AddLot(lot: result));
+
+      // Xóa khỏi danh sách để tránh thêm lần nữa
+      setState(() {
+        _editableIngredients.removeAt(index);
+      });
+
+      if (mounted) {
+        context.showSnackBar(
+          'Đã thêm ${ingredient.name} vào tủ bếp với chi tiết tùy chỉnh',
+          type: SnackBarType.success,
+        );
+      }
+    }
   }
 
   @override
@@ -82,26 +109,23 @@ class _IngredientResultDialogState extends State<IngredientResultDialog> {
             final ingredient = _editableIngredients[index];
             return ListTile(
               title: Text(ingredient.name),
-              subtitle: (ingredient.quantity > 0 && ingredient.unit.isNotEmpty)
-                  ? Text('Gợi ý: ${ingredient.quantity} ${ingredient.unit}')
-                  : const Text('Nhấn để thêm chi tiết'),
+              subtitle: const Text(
+                'Nhấn để chỉnh sửa chi tiết số lượng, đơn vị',
+              ),
               trailing: IconButton(
                 icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
-                tooltip: 'Xóa',
                 onPressed: () => _deleteIngredient(index),
               ),
-              onTap: () => _editIngredient(index),
+              onTap: () => _editIngredientDetails(index),
             );
           },
         ),
       ),
       actions: <Widget>[
-        // Nút "Bỏ qua"
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
           child: const Text('Bỏ qua'),
         ),
-        // Nút "Thêm tất cả"
         FilledButton(
           onPressed: _addAllIngredients,
           child: const Text('Thêm tất cả'),

@@ -5,6 +5,7 @@
 .env.development
 .env.test
 .env.production
+config/
 
 # ===================== Flutter & Dart =====================
 .dart_tool/

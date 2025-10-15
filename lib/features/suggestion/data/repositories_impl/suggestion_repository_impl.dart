@@ -1,5 +1,5 @@
+// lib/features/suggestion/data/repositories_impl/suggestion_repository_impl.dart
 import 'package:cookora/features/suggestion/data/datasources/suggestion_data_source.dart';
-import 'package:cookora/features/pantry/domain/entities/ingredient_entity.dart';
 import 'package:cookora/features/suggestion/domain/entities/recipe_entity.dart';
 import 'package:cookora/features/suggestion/domain/repositories/suggestion_repository.dart';
 
@@ -10,48 +10,41 @@ class SuggestionRepositoryImpl implements SuggestionRepository {
 
   @override
   Future<List<RecipeEntity>> getSuggestedRecipes(
-    List<IngredientEntity> pantryIngredients,
+    List<String> pantryIngredientIds,
   ) async {
-    final pantryIngredientNames = pantryIngredients
-        .map((ingredient) => ingredient.name.toLowerCase())
-        .toSet();
+    // Chuyển danh sách ID thành một Set để tra cứu nhanh hơn O(1)
+    final pantryIngredientIdSet = pantryIngredientIds.toSet();
 
-    // 1. Lấy danh sách công thức đã được lọc sơ bộ từ server
-    final getRecipes = await _dataSource.getRecipes(
-      pantryIngredientNames: pantryIngredientNames.toList(),
+    // 1. Lấy danh sách công thức có thể nấu từ server
+    final candidateRecipes = await _dataSource.getRecipes(
+      pantryIngredientIds: pantryIngredientIds,
     );
 
-    // 2. Kiểm tra công thức
+    // 2. Tính điểm và sắp xếp ở client
     final List<Map<String, dynamic>> scoredRecipes = [];
 
-    for (final recipe in getRecipes) {
-      // Điều kiện cần: Đủ tất cả nguyên liệu bắc buộc
+    for (final recipe in candidateRecipes) {
+      // Điều kiện cần: Đủ tất cả nguyên liệu bắt buộc
       final hasAllRequired = recipe.requiredIngredients.every(
-        (req) => pantryIngredientNames.contains(req.toLowerCase()),
+        (reqId) => pantryIngredientIdSet.contains(reqId),
       );
-
-      // Nếu không đủ, bỏ qua công thức này
       if (!hasAllRequired) continue;
 
-      // Tính điểm phù hợp: Nếu đã đủ điều kiện cần (Mỗi cái 10 điểm)
-      int score = 0;
-      score += recipe.requiredIngredients.length * 10;
-
-      // Cộng điểm cho mỗi nguyên liệu tùy chọn có sẵn (Mỗi cái 3 điểm)
-      for (final opt in recipe.optionalIngredients) {
-        if (pantryIngredientNames.contains(opt.toLowerCase())) {
+      // Tính điểm
+      int score = recipe.requiredIngredients.length * 10;
+      for (final optId in recipe.optionalIngredients) {
+        if (pantryIngredientIdSet.contains(optId)) {
           score += 3;
         }
       }
       scoredRecipes.add({'recipe': recipe, 'score': score});
     }
 
-    // 4. Sắp xếp công thức theo điểm từ cao đến thấp
+    // 3. Sắp xếp theo điểm từ cao đến thấp
     scoredRecipes.sort(
       (a, b) => (b['score'] as int).compareTo(a['score'] as int),
     );
 
-    // 5. Trả về danh sách Entity đã được sắp xếp thông minh
     return scoredRecipes.map((e) => e['recipe'] as RecipeEntity).toList();
   }
 }

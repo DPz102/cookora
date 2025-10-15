@@ -14,8 +14,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$PantryState {
 
-// Theo dõi trạng thái của danh sách nguyên liệu (loading, success, failure).
- AsyncState<List<IngredientEntity>> get ingredientsStatus;// Theo dõi trạng thái của các hành động (thêm, sửa xóa)
+// Theo dõi trạng thái của danh sách các mục trong kho (PantryEntry).
+ AsyncState<List<PantryEntry>> get entriesStatus;// Theo dõi trạng thái của các hành động (thêm, sửa, xóa).
  AsyncState<void> get mutationStatus;
 /// Create a copy of PantryState
 /// with the given fields replaced by the non-null parameter values.
@@ -27,16 +27,16 @@ $PantryStateCopyWith<PantryState> get copyWith => _$PantryStateCopyWithImpl<Pant
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PantryState&&(identical(other.ingredientsStatus, ingredientsStatus) || other.ingredientsStatus == ingredientsStatus)&&(identical(other.mutationStatus, mutationStatus) || other.mutationStatus == mutationStatus));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PantryState&&(identical(other.entriesStatus, entriesStatus) || other.entriesStatus == entriesStatus)&&(identical(other.mutationStatus, mutationStatus) || other.mutationStatus == mutationStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,ingredientsStatus,mutationStatus);
+int get hashCode => Object.hash(runtimeType,entriesStatus,mutationStatus);
 
 @override
 String toString() {
-  return 'PantryState(ingredientsStatus: $ingredientsStatus, mutationStatus: $mutationStatus)';
+  return 'PantryState(entriesStatus: $entriesStatus, mutationStatus: $mutationStatus)';
 }
 
 
@@ -47,11 +47,11 @@ abstract mixin class $PantryStateCopyWith<$Res>  {
   factory $PantryStateCopyWith(PantryState value, $Res Function(PantryState) _then) = _$PantryStateCopyWithImpl;
 @useResult
 $Res call({
- AsyncState<List<IngredientEntity>> ingredientsStatus, AsyncState<void> mutationStatus
+ AsyncState<List<PantryEntry>> entriesStatus, AsyncState<void> mutationStatus
 });
 
 
-$AsyncStateCopyWith<List<IngredientEntity>, $Res> get ingredientsStatus;$AsyncStateCopyWith<void, $Res> get mutationStatus;
+$AsyncStateCopyWith<List<PantryEntry>, $Res> get entriesStatus;$AsyncStateCopyWith<void, $Res> get mutationStatus;
 
 }
 /// @nodoc
@@ -64,10 +64,10 @@ class _$PantryStateCopyWithImpl<$Res>
 
 /// Create a copy of PantryState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? ingredientsStatus = null,Object? mutationStatus = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? entriesStatus = null,Object? mutationStatus = null,}) {
   return _then(_self.copyWith(
-ingredientsStatus: null == ingredientsStatus ? _self.ingredientsStatus : ingredientsStatus // ignore: cast_nullable_to_non_nullable
-as AsyncState<List<IngredientEntity>>,mutationStatus: null == mutationStatus ? _self.mutationStatus : mutationStatus // ignore: cast_nullable_to_non_nullable
+entriesStatus: null == entriesStatus ? _self.entriesStatus : entriesStatus // ignore: cast_nullable_to_non_nullable
+as AsyncState<List<PantryEntry>>,mutationStatus: null == mutationStatus ? _self.mutationStatus : mutationStatus // ignore: cast_nullable_to_non_nullable
 as AsyncState<void>,
   ));
 }
@@ -75,10 +75,10 @@ as AsyncState<void>,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$AsyncStateCopyWith<List<IngredientEntity>, $Res> get ingredientsStatus {
+$AsyncStateCopyWith<List<PantryEntry>, $Res> get entriesStatus {
   
-  return $AsyncStateCopyWith<List<IngredientEntity>, $Res>(_self.ingredientsStatus, (value) {
-    return _then(_self.copyWith(ingredientsStatus: value));
+  return $AsyncStateCopyWith<List<PantryEntry>, $Res>(_self.entriesStatus, (value) {
+    return _then(_self.copyWith(entriesStatus: value));
   });
 }/// Create a copy of PantryState
 /// with the given fields replaced by the non-null parameter values.
@@ -171,10 +171,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( AsyncState<List<IngredientEntity>> ingredientsStatus,  AsyncState<void> mutationStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( AsyncState<List<PantryEntry>> entriesStatus,  AsyncState<void> mutationStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _PantryState() when $default != null:
-return $default(_that.ingredientsStatus,_that.mutationStatus);case _:
+return $default(_that.entriesStatus,_that.mutationStatus);case _:
   return orElse();
 
 }
@@ -192,10 +192,10 @@ return $default(_that.ingredientsStatus,_that.mutationStatus);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( AsyncState<List<IngredientEntity>> ingredientsStatus,  AsyncState<void> mutationStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( AsyncState<List<PantryEntry>> entriesStatus,  AsyncState<void> mutationStatus)  $default,) {final _that = this;
 switch (_that) {
 case _PantryState():
-return $default(_that.ingredientsStatus,_that.mutationStatus);case _:
+return $default(_that.entriesStatus,_that.mutationStatus);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -212,10 +212,10 @@ return $default(_that.ingredientsStatus,_that.mutationStatus);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( AsyncState<List<IngredientEntity>> ingredientsStatus,  AsyncState<void> mutationStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( AsyncState<List<PantryEntry>> entriesStatus,  AsyncState<void> mutationStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _PantryState() when $default != null:
-return $default(_that.ingredientsStatus,_that.mutationStatus);case _:
+return $default(_that.entriesStatus,_that.mutationStatus);case _:
   return null;
 
 }
@@ -227,12 +227,12 @@ return $default(_that.ingredientsStatus,_that.mutationStatus);case _:
 
 
 class _PantryState implements PantryState {
-  const _PantryState({this.ingredientsStatus = const AsyncInitial(), this.mutationStatus = const AsyncInitial()});
+  const _PantryState({this.entriesStatus = const AsyncInitial(), this.mutationStatus = const AsyncInitial()});
   
 
-// Theo dõi trạng thái của danh sách nguyên liệu (loading, success, failure).
-@override@JsonKey() final  AsyncState<List<IngredientEntity>> ingredientsStatus;
-// Theo dõi trạng thái của các hành động (thêm, sửa xóa)
+// Theo dõi trạng thái của danh sách các mục trong kho (PantryEntry).
+@override@JsonKey() final  AsyncState<List<PantryEntry>> entriesStatus;
+// Theo dõi trạng thái của các hành động (thêm, sửa, xóa).
 @override@JsonKey() final  AsyncState<void> mutationStatus;
 
 /// Create a copy of PantryState
@@ -245,16 +245,16 @@ _$PantryStateCopyWith<_PantryState> get copyWith => __$PantryStateCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PantryState&&(identical(other.ingredientsStatus, ingredientsStatus) || other.ingredientsStatus == ingredientsStatus)&&(identical(other.mutationStatus, mutationStatus) || other.mutationStatus == mutationStatus));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PantryState&&(identical(other.entriesStatus, entriesStatus) || other.entriesStatus == entriesStatus)&&(identical(other.mutationStatus, mutationStatus) || other.mutationStatus == mutationStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,ingredientsStatus,mutationStatus);
+int get hashCode => Object.hash(runtimeType,entriesStatus,mutationStatus);
 
 @override
 String toString() {
-  return 'PantryState(ingredientsStatus: $ingredientsStatus, mutationStatus: $mutationStatus)';
+  return 'PantryState(entriesStatus: $entriesStatus, mutationStatus: $mutationStatus)';
 }
 
 
@@ -265,11 +265,11 @@ abstract mixin class _$PantryStateCopyWith<$Res> implements $PantryStateCopyWith
   factory _$PantryStateCopyWith(_PantryState value, $Res Function(_PantryState) _then) = __$PantryStateCopyWithImpl;
 @override @useResult
 $Res call({
- AsyncState<List<IngredientEntity>> ingredientsStatus, AsyncState<void> mutationStatus
+ AsyncState<List<PantryEntry>> entriesStatus, AsyncState<void> mutationStatus
 });
 
 
-@override $AsyncStateCopyWith<List<IngredientEntity>, $Res> get ingredientsStatus;@override $AsyncStateCopyWith<void, $Res> get mutationStatus;
+@override $AsyncStateCopyWith<List<PantryEntry>, $Res> get entriesStatus;@override $AsyncStateCopyWith<void, $Res> get mutationStatus;
 
 }
 /// @nodoc
@@ -282,10 +282,10 @@ class __$PantryStateCopyWithImpl<$Res>
 
 /// Create a copy of PantryState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? ingredientsStatus = null,Object? mutationStatus = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? entriesStatus = null,Object? mutationStatus = null,}) {
   return _then(_PantryState(
-ingredientsStatus: null == ingredientsStatus ? _self.ingredientsStatus : ingredientsStatus // ignore: cast_nullable_to_non_nullable
-as AsyncState<List<IngredientEntity>>,mutationStatus: null == mutationStatus ? _self.mutationStatus : mutationStatus // ignore: cast_nullable_to_non_nullable
+entriesStatus: null == entriesStatus ? _self.entriesStatus : entriesStatus // ignore: cast_nullable_to_non_nullable
+as AsyncState<List<PantryEntry>>,mutationStatus: null == mutationStatus ? _self.mutationStatus : mutationStatus // ignore: cast_nullable_to_non_nullable
 as AsyncState<void>,
   ));
 }
@@ -294,10 +294,10 @@ as AsyncState<void>,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$AsyncStateCopyWith<List<IngredientEntity>, $Res> get ingredientsStatus {
+$AsyncStateCopyWith<List<PantryEntry>, $Res> get entriesStatus {
   
-  return $AsyncStateCopyWith<List<IngredientEntity>, $Res>(_self.ingredientsStatus, (value) {
-    return _then(_self.copyWith(ingredientsStatus: value));
+  return $AsyncStateCopyWith<List<PantryEntry>, $Res>(_self.entriesStatus, (value) {
+    return _then(_self.copyWith(entriesStatus: value));
   });
 }/// Create a copy of PantryState
 /// with the given fields replaced by the non-null parameter values.

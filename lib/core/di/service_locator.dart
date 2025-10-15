@@ -30,6 +30,9 @@ import 'package:cookora/features/pantry/data/datasources/pantry_data_source_impl
 import 'package:cookora/features/pantry/data/repositories_impl/pantry_repository_impl.dart';
 import 'package:cookora/features/pantry/domain/repositories/pantry_repository.dart';
 import 'package:cookora/features/pantry/presentation/bloc/pantry_bloc.dart';
+import 'package:cookora/features/pantry/data/datasources/ingredient_data_source.dart';
+import 'package:cookora/features/pantry/domain/repositories/ingredient_repository.dart';
+import 'package:cookora/features/pantry/presentation/bloc/ingredient_management/ingredient_bloc.dart';
 
 // scan
 import 'package:cookora/features/scan/data/datasources/scan_data_source.dart';
@@ -77,6 +80,9 @@ Future<void> initializeDependencies() async {
   locator.registerLazySingleton<PantryDataSource>(
     () => PantryDataSourceImpl(locator()),
   );
+  locator.registerLazySingleton<IngredientDataSource>(
+    () => IngredientDataSourceImpl(locator()),
+  );
   locator.registerLazySingleton<SuggestionDataSource>(
     () => SuggestionDataSourceImpl(firestore: locator()),
   );
@@ -99,6 +105,9 @@ Future<void> initializeDependencies() async {
   );
   locator.registerLazySingleton<PantryRepository>(
     () => PantryRepositoryImpl(locator()),
+  );
+  locator.registerLazySingleton<IngredientRepository>(
+    () => IngredientRepositoryImpl(locator()),
   );
   locator.registerLazySingleton<SuggestionRepository>(
     () => SuggestionRepositoryImpl(locator()),
@@ -134,6 +143,9 @@ Future<void> initializeDependencies() async {
   );
   locator.registerLazySingleton<PantryBloc>(
     () => PantryBloc(pantryRepository: locator(), userBloc: locator()),
+  );
+  locator.registerLazySingleton<IngredientBloc>(
+    () => IngredientBloc(locator()),
   );
   locator.registerLazySingleton<SuggestionBloc>(
     () => SuggestionBloc(getSuggestionUseCase: locator()),

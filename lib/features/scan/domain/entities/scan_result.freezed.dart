@@ -122,7 +122,7 @@ return ingredients(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( RecipeEntity recipe)?  dish,TResult Function( List<IngredientEntity> results)?  ingredients,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( RecipeEntity recipe)?  dish,TResult Function( List<Ingredient> results)?  ingredients,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case DishScanResult() when dish != null:
 return dish(_that.recipe);case IngredientsScanResults() when ingredients != null:
@@ -144,7 +144,7 @@ return ingredients(_that.results);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( RecipeEntity recipe)  dish,required TResult Function( List<IngredientEntity> results)  ingredients,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( RecipeEntity recipe)  dish,required TResult Function( List<Ingredient> results)  ingredients,}) {final _that = this;
 switch (_that) {
 case DishScanResult():
 return dish(_that.recipe);case IngredientsScanResults():
@@ -165,7 +165,7 @@ return ingredients(_that.results);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( RecipeEntity recipe)?  dish,TResult? Function( List<IngredientEntity> results)?  ingredients,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( RecipeEntity recipe)?  dish,TResult? Function( List<Ingredient> results)?  ingredients,}) {final _that = this;
 switch (_that) {
 case DishScanResult() when dish != null:
 return dish(_that.recipe);case IngredientsScanResults() when ingredients != null:
@@ -256,11 +256,11 @@ $RecipeEntityCopyWith<$Res> get recipe {
 
 
 class IngredientsScanResults implements ScanResult {
-  const IngredientsScanResults({required final  List<IngredientEntity> results}): _results = results;
+  const IngredientsScanResults({required final  List<Ingredient> results}): _results = results;
   
 
- final  List<IngredientEntity> _results;
- List<IngredientEntity> get results {
+ final  List<Ingredient> _results;
+ List<Ingredient> get results {
   if (_results is EqualUnmodifiableListView) return _results;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_results);
@@ -297,7 +297,7 @@ abstract mixin class $IngredientsScanResultsCopyWith<$Res> implements $ScanResul
   factory $IngredientsScanResultsCopyWith(IngredientsScanResults value, $Res Function(IngredientsScanResults) _then) = _$IngredientsScanResultsCopyWithImpl;
 @useResult
 $Res call({
- List<IngredientEntity> results
+ List<Ingredient> results
 });
 
 
@@ -317,7 +317,7 @@ class _$IngredientsScanResultsCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') $Res call({Object? results = null,}) {
   return _then(IngredientsScanResults(
 results: null == results ? _self._results : results // ignore: cast_nullable_to_non_nullable
-as List<IngredientEntity>,
+as List<Ingredient>,
   ));
 }
 

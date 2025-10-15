@@ -11,10 +11,10 @@ class SuggestionDataSourceImpl implements SuggestionDataSource {
 
   @override
   Future<List<RecipeEntity>> getRecipes({
-    required List<String> pantryIngredientNames,
+    required List<String> pantryIngredientIds,
   }) async {
     // Nếu trong kho không có nguyên liệu, không cần query, trả về list rỗng
-    if (pantryIngredientNames.isEmpty) {
+    if (pantryIngredientIds.isEmpty) {
       return [];
     }
 
@@ -33,7 +33,7 @@ class SuggestionDataSourceImpl implements SuggestionDataSource {
 
       // Lọc kết quả ở client để tìm công thức phù hợp.
       // Chuyển danh sách nguyên liệu trong kho thành một Set để kiểm tra hiệu quả hơn.
-      final pantrySet = Set<String>.from(pantryIngredientNames);
+      final pantrySet = Set<String>.from(pantryIngredientIds);
 
       // Lọc ra những công thức mà tất cả nguyên liệu bắc buộc đều có trong kho.
       final suitableRecipes = allRecipes.where((recipe) {

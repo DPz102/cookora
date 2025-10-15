@@ -1,7 +1,8 @@
+// lib/features/scan/data/repositories_impl/scan_repository_impl.dart
 import 'dart:io';
 
 import 'package:cookora/features/scan/data/datasources/scan_data_source.dart';
-import 'package:cookora/features/pantry/domain/entities/ingredient_entity.dart';
+import 'package:cookora/features/pantry/domain/entities/ingredient.dart'; // THAY ĐỔI
 import 'package:cookora/features/scan/domain/entities/scan_result.dart';
 import 'package:cookora/features/suggestion/domain/entities/recipe_entity.dart';
 import 'package:cookora/features/scan/domain/repositories/scan_repository.dart';
@@ -26,8 +27,9 @@ class ScanRepositoryImpl implements ScanRepository {
         final ingredientData = await _dataSource.recognizeIngredientsFromImage(
           imageFile,
         );
+        // Map kết quả JSON từ AI thành các object Ingredient
         final ingredients = ingredientData
-            .map((data) => IngredientEntity.fromJson(data))
+            .map((data) => Ingredient.fromJson(data)) // THAY ĐỔI
             .toList();
         return ScanResult.ingredients(results: ingredients);
       }

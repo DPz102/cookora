@@ -1,20 +1,21 @@
-import 'package:cookora/features/pantry/domain/entities/ingredient_entity.dart';
+// lib/features/pantry/domain/repositories/pantry_repository.dart
+import 'package:cookora/features/pantry/domain/entities/pantry_entry.dart';
+import 'package:cookora/features/pantry/domain/entities/pantry_lot.dart';
 
 abstract class PantryRepository {
-  // Lấy một stream chứa danh sách nguyên liệu của người dùng hiện tại.
-  Stream<List<IngredientEntity>> getPantryIngredients(String uid);
+  Stream<List<PantryEntry>> getPantryEntries(String uid);
 
-  // Thêm một nguyên liệu mới.
-  Future<void> addIngredient({
+  Future<void> addLot({required String uid, required PantryLot lot});
+
+  Future<void> updateLot({required String uid, required PantryLot lot});
+
+  Future<void> deleteLot({
     required String uid,
-    required IngredientEntity ingredient,
+    required String ingredientId,
+    required String lotId,
   });
 
-  // Cập nhật một nguyên liệu đã có.
-  Future<void> updateIngredient(IngredientEntity ingredient);
-
-  // Xóa một nguyên liệu.
-  Future<void> deleteIngredient({
+  Future<void> deletePantryEntry({
     required String uid,
     required String ingredientId,
   });

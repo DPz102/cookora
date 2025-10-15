@@ -51,6 +51,7 @@ const validateInput = (email, password, username) => {
 
 const createUserWithProfile = onCall(
   {
+    region: "asia-southeast1",
     enforceAppCheck: true,
     secrets: [],
   },

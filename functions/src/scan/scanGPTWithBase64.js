@@ -1,9 +1,8 @@
-const functions = require("firebase-functions");
-const admin = require("firebase-admin");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { OpenAI } = require("openai");
 const sharp = require("sharp");
 const { db } = require("../common/admin");
+const { FieldValue } = require("firebase-admin/firestore");
 
 let openai;
 /**
@@ -30,7 +29,10 @@ async function calculatePHash(imageBase64) {
 }
 
 exports.scanGPTWithBase64 = onCall(
-  { secrets: ["OPENAI_API_KEY"] },
+  {
+    region: "asia-southeast1",
+    secrets: ["OPENAI_API_KEY"],
+  },
   async (request) => {
     if (!openai) {
       openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -39,14 +41,11 @@ exports.scanGPTWithBase64 = onCall(
     const { imageBase64, scanType } = request.data;
 
     if (!imageBase64) {
-      throw new functions.https.HttpsError(
-        "invalid-argument",
-        "Cần có dữ liệu ảnh base64"
-      );
+      throw new HttpsError("invalid-argument", "Cần có dữ liệu ảnh base64");
     }
 
     if (!scanType || (scanType !== "dish" && scanType !== "ingredients")) {
-      throw new functions.https.HttpsError(
+      throw new HttpsError(
         "invalid-argument",
         `scanType phải là "dish" hoặc "ingredients"`
       );
@@ -175,10 +174,10 @@ Chỉ trả về JSON, không bao gồm khối mã Markdown hay bất kỳ lời
         const pHash = await calculatePHash(imageBase64);
         const newRecipeRef = db.collection("recipes").doc();
 
-        console.log(admin.firestore.FieldValue.serverTimestamp());
+        console.log(FieldValue.serverTimestamp());
 
         result.id = newRecipeRef.id;
-        result.createdAt = admin.firestore.FieldValue.serverTimestamp();
+        result.createdAt = FieldValue.serverTimestamp();
         result.source = "scanned";
         result.isUserFavorite = false;
 
@@ -186,7 +185,7 @@ Chỉ trả về JSON, không bao gồm khối mã Markdown hay bất kỳ lời
         batch.set(newRecipeRef, result);
         batch.set(db.collection("recipe_cache").doc(pHash), {
           recipeId: newRecipeRef.id,
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          createdAt: FieldValue.serverTimestamp(),
         });
         await batch.commit();
 
@@ -200,10 +199,7 @@ Chỉ trả về JSON, không bao gồm khối mã Markdown hay bất kỳ lời
       return result;
     } catch (error) {
       console.error("Lỗi trong hàm scanGPT:", error);
-      throw new functions.https.HttpsError(
-        "internal",
-        "Lỗi GPT: " + error.message
-      );
+      throw new HttpsError("internal", "Lỗi GPT: " + error.message);
     }
   }
 );

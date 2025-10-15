@@ -15,6 +15,7 @@ const { v4: uuidv4 } = require("uuid");
  */
 const optimizeImagesHttp = onRequest(
   {
+    region: "asia-southeast1",
     timeoutSeconds: 540,
     memory: "1GB",
     secrets: ["MAINTENANCE_SECRET_KEY"],

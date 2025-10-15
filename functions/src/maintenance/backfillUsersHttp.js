@@ -6,7 +6,10 @@ const { FieldValue } = require("firebase-admin/firestore");
 const { getUserProfileData } = require("../common/userSchema"); // schema chuẩn
 
 const backfillUsersHttp = onRequest(
-  { secrets: ["MAINTENANCE_SECRET_KEY"] },
+  {
+    region: "asia-southeast1",
+    secrets: ["MAINTENANCE_SECRET_KEY"],
+  },
   async (req, res) => {
     if (req.query.key !== process.env.MAINTENANCE_SECRET_KEY) {
       res.status(403).send("Forbidden: Invalid secret key.");

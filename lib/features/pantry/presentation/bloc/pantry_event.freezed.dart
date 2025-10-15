@@ -55,15 +55,16 @@ extension PantryEventPatterns on PantryEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( SubscribeToPantry value)?  subscribeToPantry,TResult Function( AddIngredient value)?  addIngredient,TResult Function( UpdateIngredient value)?  updateIngredient,TResult Function( DeleteIngredient value)?  deleteIngredient,TResult Function( PantryStreamUpdated value)?  pantryStreamUpdated,TResult Function( ResetMutationStatus value)?  resetMutationStatus,TResult Function( ClearPantry value)?  clearPantry,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( SubscribeToPantry value)?  subscribeToPantry,TResult Function( AddLot value)?  addLot,TResult Function( UpdateLot value)?  updateLot,TResult Function( DeleteLot value)?  deleteLot,TResult Function( DeletePantryEntry value)?  deletePantryEntry,TResult Function( PantryUpdated value)?  pantryUpdated,TResult Function( ResetMutationStatus value)?  resetMutationStatus,TResult Function( ClearPantry value)?  clearPantry,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case SubscribeToPantry() when subscribeToPantry != null:
-return subscribeToPantry(_that);case AddIngredient() when addIngredient != null:
-return addIngredient(_that);case UpdateIngredient() when updateIngredient != null:
-return updateIngredient(_that);case DeleteIngredient() when deleteIngredient != null:
-return deleteIngredient(_that);case PantryStreamUpdated() when pantryStreamUpdated != null:
-return pantryStreamUpdated(_that);case ResetMutationStatus() when resetMutationStatus != null:
+return subscribeToPantry(_that);case AddLot() when addLot != null:
+return addLot(_that);case UpdateLot() when updateLot != null:
+return updateLot(_that);case DeleteLot() when deleteLot != null:
+return deleteLot(_that);case DeletePantryEntry() when deletePantryEntry != null:
+return deletePantryEntry(_that);case PantryUpdated() when pantryUpdated != null:
+return pantryUpdated(_that);case ResetMutationStatus() when resetMutationStatus != null:
 return resetMutationStatus(_that);case ClearPantry() when clearPantry != null:
 return clearPantry(_that);case _:
   return orElse();
@@ -83,15 +84,16 @@ return clearPantry(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( SubscribeToPantry value)  subscribeToPantry,required TResult Function( AddIngredient value)  addIngredient,required TResult Function( UpdateIngredient value)  updateIngredient,required TResult Function( DeleteIngredient value)  deleteIngredient,required TResult Function( PantryStreamUpdated value)  pantryStreamUpdated,required TResult Function( ResetMutationStatus value)  resetMutationStatus,required TResult Function( ClearPantry value)  clearPantry,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( SubscribeToPantry value)  subscribeToPantry,required TResult Function( AddLot value)  addLot,required TResult Function( UpdateLot value)  updateLot,required TResult Function( DeleteLot value)  deleteLot,required TResult Function( DeletePantryEntry value)  deletePantryEntry,required TResult Function( PantryUpdated value)  pantryUpdated,required TResult Function( ResetMutationStatus value)  resetMutationStatus,required TResult Function( ClearPantry value)  clearPantry,}){
 final _that = this;
 switch (_that) {
 case SubscribeToPantry():
-return subscribeToPantry(_that);case AddIngredient():
-return addIngredient(_that);case UpdateIngredient():
-return updateIngredient(_that);case DeleteIngredient():
-return deleteIngredient(_that);case PantryStreamUpdated():
-return pantryStreamUpdated(_that);case ResetMutationStatus():
+return subscribeToPantry(_that);case AddLot():
+return addLot(_that);case UpdateLot():
+return updateLot(_that);case DeleteLot():
+return deleteLot(_that);case DeletePantryEntry():
+return deletePantryEntry(_that);case PantryUpdated():
+return pantryUpdated(_that);case ResetMutationStatus():
 return resetMutationStatus(_that);case ClearPantry():
 return clearPantry(_that);case _:
   throw StateError('Unexpected subclass');
@@ -110,15 +112,16 @@ return clearPantry(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( SubscribeToPantry value)?  subscribeToPantry,TResult? Function( AddIngredient value)?  addIngredient,TResult? Function( UpdateIngredient value)?  updateIngredient,TResult? Function( DeleteIngredient value)?  deleteIngredient,TResult? Function( PantryStreamUpdated value)?  pantryStreamUpdated,TResult? Function( ResetMutationStatus value)?  resetMutationStatus,TResult? Function( ClearPantry value)?  clearPantry,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( SubscribeToPantry value)?  subscribeToPantry,TResult? Function( AddLot value)?  addLot,TResult? Function( UpdateLot value)?  updateLot,TResult? Function( DeleteLot value)?  deleteLot,TResult? Function( DeletePantryEntry value)?  deletePantryEntry,TResult? Function( PantryUpdated value)?  pantryUpdated,TResult? Function( ResetMutationStatus value)?  resetMutationStatus,TResult? Function( ClearPantry value)?  clearPantry,}){
 final _that = this;
 switch (_that) {
 case SubscribeToPantry() when subscribeToPantry != null:
-return subscribeToPantry(_that);case AddIngredient() when addIngredient != null:
-return addIngredient(_that);case UpdateIngredient() when updateIngredient != null:
-return updateIngredient(_that);case DeleteIngredient() when deleteIngredient != null:
-return deleteIngredient(_that);case PantryStreamUpdated() when pantryStreamUpdated != null:
-return pantryStreamUpdated(_that);case ResetMutationStatus() when resetMutationStatus != null:
+return subscribeToPantry(_that);case AddLot() when addLot != null:
+return addLot(_that);case UpdateLot() when updateLot != null:
+return updateLot(_that);case DeleteLot() when deleteLot != null:
+return deleteLot(_that);case DeletePantryEntry() when deletePantryEntry != null:
+return deletePantryEntry(_that);case PantryUpdated() when pantryUpdated != null:
+return pantryUpdated(_that);case ResetMutationStatus() when resetMutationStatus != null:
 return resetMutationStatus(_that);case ClearPantry() when clearPantry != null:
 return clearPantry(_that);case _:
   return null;
@@ -137,14 +140,15 @@ return clearPantry(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String uid)?  subscribeToPantry,TResult Function( IngredientEntity ingredient)?  addIngredient,TResult Function( IngredientEntity ingredient)?  updateIngredient,TResult Function( String ingredientId)?  deleteIngredient,TResult Function( List<IngredientEntity> ingredients)?  pantryStreamUpdated,TResult Function()?  resetMutationStatus,TResult Function()?  clearPantry,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String uid)?  subscribeToPantry,TResult Function( PantryLot lot)?  addLot,TResult Function( PantryLot lot)?  updateLot,TResult Function( String ingredientId,  String lotId)?  deleteLot,TResult Function( String ingredientId)?  deletePantryEntry,TResult Function( List<PantryEntry> entries)?  pantryUpdated,TResult Function()?  resetMutationStatus,TResult Function()?  clearPantry,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case SubscribeToPantry() when subscribeToPantry != null:
-return subscribeToPantry(_that.uid);case AddIngredient() when addIngredient != null:
-return addIngredient(_that.ingredient);case UpdateIngredient() when updateIngredient != null:
-return updateIngredient(_that.ingredient);case DeleteIngredient() when deleteIngredient != null:
-return deleteIngredient(_that.ingredientId);case PantryStreamUpdated() when pantryStreamUpdated != null:
-return pantryStreamUpdated(_that.ingredients);case ResetMutationStatus() when resetMutationStatus != null:
+return subscribeToPantry(_that.uid);case AddLot() when addLot != null:
+return addLot(_that.lot);case UpdateLot() when updateLot != null:
+return updateLot(_that.lot);case DeleteLot() when deleteLot != null:
+return deleteLot(_that.ingredientId,_that.lotId);case DeletePantryEntry() when deletePantryEntry != null:
+return deletePantryEntry(_that.ingredientId);case PantryUpdated() when pantryUpdated != null:
+return pantryUpdated(_that.entries);case ResetMutationStatus() when resetMutationStatus != null:
 return resetMutationStatus();case ClearPantry() when clearPantry != null:
 return clearPantry();case _:
   return orElse();
@@ -164,14 +168,15 @@ return clearPantry();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String uid)  subscribeToPantry,required TResult Function( IngredientEntity ingredient)  addIngredient,required TResult Function( IngredientEntity ingredient)  updateIngredient,required TResult Function( String ingredientId)  deleteIngredient,required TResult Function( List<IngredientEntity> ingredients)  pantryStreamUpdated,required TResult Function()  resetMutationStatus,required TResult Function()  clearPantry,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String uid)  subscribeToPantry,required TResult Function( PantryLot lot)  addLot,required TResult Function( PantryLot lot)  updateLot,required TResult Function( String ingredientId,  String lotId)  deleteLot,required TResult Function( String ingredientId)  deletePantryEntry,required TResult Function( List<PantryEntry> entries)  pantryUpdated,required TResult Function()  resetMutationStatus,required TResult Function()  clearPantry,}) {final _that = this;
 switch (_that) {
 case SubscribeToPantry():
-return subscribeToPantry(_that.uid);case AddIngredient():
-return addIngredient(_that.ingredient);case UpdateIngredient():
-return updateIngredient(_that.ingredient);case DeleteIngredient():
-return deleteIngredient(_that.ingredientId);case PantryStreamUpdated():
-return pantryStreamUpdated(_that.ingredients);case ResetMutationStatus():
+return subscribeToPantry(_that.uid);case AddLot():
+return addLot(_that.lot);case UpdateLot():
+return updateLot(_that.lot);case DeleteLot():
+return deleteLot(_that.ingredientId,_that.lotId);case DeletePantryEntry():
+return deletePantryEntry(_that.ingredientId);case PantryUpdated():
+return pantryUpdated(_that.entries);case ResetMutationStatus():
 return resetMutationStatus();case ClearPantry():
 return clearPantry();case _:
   throw StateError('Unexpected subclass');
@@ -190,14 +195,15 @@ return clearPantry();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String uid)?  subscribeToPantry,TResult? Function( IngredientEntity ingredient)?  addIngredient,TResult? Function( IngredientEntity ingredient)?  updateIngredient,TResult? Function( String ingredientId)?  deleteIngredient,TResult? Function( List<IngredientEntity> ingredients)?  pantryStreamUpdated,TResult? Function()?  resetMutationStatus,TResult? Function()?  clearPantry,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String uid)?  subscribeToPantry,TResult? Function( PantryLot lot)?  addLot,TResult? Function( PantryLot lot)?  updateLot,TResult? Function( String ingredientId,  String lotId)?  deleteLot,TResult? Function( String ingredientId)?  deletePantryEntry,TResult? Function( List<PantryEntry> entries)?  pantryUpdated,TResult? Function()?  resetMutationStatus,TResult? Function()?  clearPantry,}) {final _that = this;
 switch (_that) {
 case SubscribeToPantry() when subscribeToPantry != null:
-return subscribeToPantry(_that.uid);case AddIngredient() when addIngredient != null:
-return addIngredient(_that.ingredient);case UpdateIngredient() when updateIngredient != null:
-return updateIngredient(_that.ingredient);case DeleteIngredient() when deleteIngredient != null:
-return deleteIngredient(_that.ingredientId);case PantryStreamUpdated() when pantryStreamUpdated != null:
-return pantryStreamUpdated(_that.ingredients);case ResetMutationStatus() when resetMutationStatus != null:
+return subscribeToPantry(_that.uid);case AddLot() when addLot != null:
+return addLot(_that.lot);case UpdateLot() when updateLot != null:
+return updateLot(_that.lot);case DeleteLot() when deleteLot != null:
+return deleteLot(_that.ingredientId,_that.lotId);case DeletePantryEntry() when deletePantryEntry != null:
+return deletePantryEntry(_that.ingredientId);case PantryUpdated() when pantryUpdated != null:
+return pantryUpdated(_that.entries);case ResetMutationStatus() when resetMutationStatus != null:
 return resetMutationStatus();case ClearPantry() when clearPantry != null:
 return clearPantry();case _:
   return null;
@@ -276,63 +282,63 @@ as String,
 /// @nodoc
 
 
-class AddIngredient implements PantryEvent {
-  const AddIngredient({required this.ingredient});
+class AddLot implements PantryEvent {
+  const AddLot({required this.lot});
   
 
- final  IngredientEntity ingredient;
+ final  PantryLot lot;
 
 /// Create a copy of PantryEvent
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$AddIngredientCopyWith<AddIngredient> get copyWith => _$AddIngredientCopyWithImpl<AddIngredient>(this, _$identity);
+$AddLotCopyWith<AddLot> get copyWith => _$AddLotCopyWithImpl<AddLot>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AddIngredient&&(identical(other.ingredient, ingredient) || other.ingredient == ingredient));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AddLot&&(identical(other.lot, lot) || other.lot == lot));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,ingredient);
+int get hashCode => Object.hash(runtimeType,lot);
 
 @override
 String toString() {
-  return 'PantryEvent.addIngredient(ingredient: $ingredient)';
+  return 'PantryEvent.addLot(lot: $lot)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $AddIngredientCopyWith<$Res> implements $PantryEventCopyWith<$Res> {
-  factory $AddIngredientCopyWith(AddIngredient value, $Res Function(AddIngredient) _then) = _$AddIngredientCopyWithImpl;
+abstract mixin class $AddLotCopyWith<$Res> implements $PantryEventCopyWith<$Res> {
+  factory $AddLotCopyWith(AddLot value, $Res Function(AddLot) _then) = _$AddLotCopyWithImpl;
 @useResult
 $Res call({
- IngredientEntity ingredient
+ PantryLot lot
 });
 
 
-$IngredientEntityCopyWith<$Res> get ingredient;
+$PantryLotCopyWith<$Res> get lot;
 
 }
 /// @nodoc
-class _$AddIngredientCopyWithImpl<$Res>
-    implements $AddIngredientCopyWith<$Res> {
-  _$AddIngredientCopyWithImpl(this._self, this._then);
+class _$AddLotCopyWithImpl<$Res>
+    implements $AddLotCopyWith<$Res> {
+  _$AddLotCopyWithImpl(this._self, this._then);
 
-  final AddIngredient _self;
-  final $Res Function(AddIngredient) _then;
+  final AddLot _self;
+  final $Res Function(AddLot) _then;
 
 /// Create a copy of PantryEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? ingredient = null,}) {
-  return _then(AddIngredient(
-ingredient: null == ingredient ? _self.ingredient : ingredient // ignore: cast_nullable_to_non_nullable
-as IngredientEntity,
+@pragma('vm:prefer-inline') $Res call({Object? lot = null,}) {
+  return _then(AddLot(
+lot: null == lot ? _self.lot : lot // ignore: cast_nullable_to_non_nullable
+as PantryLot,
   ));
 }
 
@@ -340,10 +346,10 @@ as IngredientEntity,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$IngredientEntityCopyWith<$Res> get ingredient {
+$PantryLotCopyWith<$Res> get lot {
   
-  return $IngredientEntityCopyWith<$Res>(_self.ingredient, (value) {
-    return _then(_self.copyWith(ingredient: value));
+  return $PantryLotCopyWith<$Res>(_self.lot, (value) {
+    return _then(_self.copyWith(lot: value));
   });
 }
 }
@@ -351,63 +357,63 @@ $IngredientEntityCopyWith<$Res> get ingredient {
 /// @nodoc
 
 
-class UpdateIngredient implements PantryEvent {
-  const UpdateIngredient(this.ingredient);
+class UpdateLot implements PantryEvent {
+  const UpdateLot({required this.lot});
   
 
- final  IngredientEntity ingredient;
+ final  PantryLot lot;
 
 /// Create a copy of PantryEvent
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$UpdateIngredientCopyWith<UpdateIngredient> get copyWith => _$UpdateIngredientCopyWithImpl<UpdateIngredient>(this, _$identity);
+$UpdateLotCopyWith<UpdateLot> get copyWith => _$UpdateLotCopyWithImpl<UpdateLot>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UpdateIngredient&&(identical(other.ingredient, ingredient) || other.ingredient == ingredient));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UpdateLot&&(identical(other.lot, lot) || other.lot == lot));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,ingredient);
+int get hashCode => Object.hash(runtimeType,lot);
 
 @override
 String toString() {
-  return 'PantryEvent.updateIngredient(ingredient: $ingredient)';
+  return 'PantryEvent.updateLot(lot: $lot)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $UpdateIngredientCopyWith<$Res> implements $PantryEventCopyWith<$Res> {
-  factory $UpdateIngredientCopyWith(UpdateIngredient value, $Res Function(UpdateIngredient) _then) = _$UpdateIngredientCopyWithImpl;
+abstract mixin class $UpdateLotCopyWith<$Res> implements $PantryEventCopyWith<$Res> {
+  factory $UpdateLotCopyWith(UpdateLot value, $Res Function(UpdateLot) _then) = _$UpdateLotCopyWithImpl;
 @useResult
 $Res call({
- IngredientEntity ingredient
+ PantryLot lot
 });
 
 
-$IngredientEntityCopyWith<$Res> get ingredient;
+$PantryLotCopyWith<$Res> get lot;
 
 }
 /// @nodoc
-class _$UpdateIngredientCopyWithImpl<$Res>
-    implements $UpdateIngredientCopyWith<$Res> {
-  _$UpdateIngredientCopyWithImpl(this._self, this._then);
+class _$UpdateLotCopyWithImpl<$Res>
+    implements $UpdateLotCopyWith<$Res> {
+  _$UpdateLotCopyWithImpl(this._self, this._then);
 
-  final UpdateIngredient _self;
-  final $Res Function(UpdateIngredient) _then;
+  final UpdateLot _self;
+  final $Res Function(UpdateLot) _then;
 
 /// Create a copy of PantryEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? ingredient = null,}) {
-  return _then(UpdateIngredient(
-null == ingredient ? _self.ingredient : ingredient // ignore: cast_nullable_to_non_nullable
-as IngredientEntity,
+@pragma('vm:prefer-inline') $Res call({Object? lot = null,}) {
+  return _then(UpdateLot(
+lot: null == lot ? _self.lot : lot // ignore: cast_nullable_to_non_nullable
+as PantryLot,
   ));
 }
 
@@ -415,10 +421,10 @@ as IngredientEntity,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$IngredientEntityCopyWith<$Res> get ingredient {
+$PantryLotCopyWith<$Res> get lot {
   
-  return $IngredientEntityCopyWith<$Res>(_self.ingredient, (value) {
-    return _then(_self.copyWith(ingredient: value));
+  return $PantryLotCopyWith<$Res>(_self.lot, (value) {
+    return _then(_self.copyWith(lot: value));
   });
 }
 }
@@ -426,43 +432,44 @@ $IngredientEntityCopyWith<$Res> get ingredient {
 /// @nodoc
 
 
-class DeleteIngredient implements PantryEvent {
-  const DeleteIngredient(this.ingredientId);
+class DeleteLot implements PantryEvent {
+  const DeleteLot({required this.ingredientId, required this.lotId});
   
 
  final  String ingredientId;
+ final  String lotId;
 
 /// Create a copy of PantryEvent
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$DeleteIngredientCopyWith<DeleteIngredient> get copyWith => _$DeleteIngredientCopyWithImpl<DeleteIngredient>(this, _$identity);
+$DeleteLotCopyWith<DeleteLot> get copyWith => _$DeleteLotCopyWithImpl<DeleteLot>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DeleteIngredient&&(identical(other.ingredientId, ingredientId) || other.ingredientId == ingredientId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DeleteLot&&(identical(other.ingredientId, ingredientId) || other.ingredientId == ingredientId)&&(identical(other.lotId, lotId) || other.lotId == lotId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,ingredientId);
+int get hashCode => Object.hash(runtimeType,ingredientId,lotId);
 
 @override
 String toString() {
-  return 'PantryEvent.deleteIngredient(ingredientId: $ingredientId)';
+  return 'PantryEvent.deleteLot(ingredientId: $ingredientId, lotId: $lotId)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $DeleteIngredientCopyWith<$Res> implements $PantryEventCopyWith<$Res> {
-  factory $DeleteIngredientCopyWith(DeleteIngredient value, $Res Function(DeleteIngredient) _then) = _$DeleteIngredientCopyWithImpl;
+abstract mixin class $DeleteLotCopyWith<$Res> implements $PantryEventCopyWith<$Res> {
+  factory $DeleteLotCopyWith(DeleteLot value, $Res Function(DeleteLot) _then) = _$DeleteLotCopyWithImpl;
 @useResult
 $Res call({
- String ingredientId
+ String ingredientId, String lotId
 });
 
 
@@ -470,18 +477,19 @@ $Res call({
 
 }
 /// @nodoc
-class _$DeleteIngredientCopyWithImpl<$Res>
-    implements $DeleteIngredientCopyWith<$Res> {
-  _$DeleteIngredientCopyWithImpl(this._self, this._then);
+class _$DeleteLotCopyWithImpl<$Res>
+    implements $DeleteLotCopyWith<$Res> {
+  _$DeleteLotCopyWithImpl(this._self, this._then);
 
-  final DeleteIngredient _self;
-  final $Res Function(DeleteIngredient) _then;
+  final DeleteLot _self;
+  final $Res Function(DeleteLot) _then;
 
 /// Create a copy of PantryEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? ingredientId = null,}) {
-  return _then(DeleteIngredient(
-null == ingredientId ? _self.ingredientId : ingredientId // ignore: cast_nullable_to_non_nullable
+@pragma('vm:prefer-inline') $Res call({Object? ingredientId = null,Object? lotId = null,}) {
+  return _then(DeleteLot(
+ingredientId: null == ingredientId ? _self.ingredientId : ingredientId // ignore: cast_nullable_to_non_nullable
+as String,lotId: null == lotId ? _self.lotId : lotId // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -492,49 +500,43 @@ as String,
 /// @nodoc
 
 
-class PantryStreamUpdated implements PantryEvent {
-  const PantryStreamUpdated(final  List<IngredientEntity> ingredients): _ingredients = ingredients;
+class DeletePantryEntry implements PantryEvent {
+  const DeletePantryEntry({required this.ingredientId});
   
 
- final  List<IngredientEntity> _ingredients;
- List<IngredientEntity> get ingredients {
-  if (_ingredients is EqualUnmodifiableListView) return _ingredients;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_ingredients);
-}
-
+ final  String ingredientId;
 
 /// Create a copy of PantryEvent
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$PantryStreamUpdatedCopyWith<PantryStreamUpdated> get copyWith => _$PantryStreamUpdatedCopyWithImpl<PantryStreamUpdated>(this, _$identity);
+$DeletePantryEntryCopyWith<DeletePantryEntry> get copyWith => _$DeletePantryEntryCopyWithImpl<DeletePantryEntry>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PantryStreamUpdated&&const DeepCollectionEquality().equals(other._ingredients, _ingredients));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DeletePantryEntry&&(identical(other.ingredientId, ingredientId) || other.ingredientId == ingredientId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_ingredients));
+int get hashCode => Object.hash(runtimeType,ingredientId);
 
 @override
 String toString() {
-  return 'PantryEvent.pantryStreamUpdated(ingredients: $ingredients)';
+  return 'PantryEvent.deletePantryEntry(ingredientId: $ingredientId)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $PantryStreamUpdatedCopyWith<$Res> implements $PantryEventCopyWith<$Res> {
-  factory $PantryStreamUpdatedCopyWith(PantryStreamUpdated value, $Res Function(PantryStreamUpdated) _then) = _$PantryStreamUpdatedCopyWithImpl;
+abstract mixin class $DeletePantryEntryCopyWith<$Res> implements $PantryEventCopyWith<$Res> {
+  factory $DeletePantryEntryCopyWith(DeletePantryEntry value, $Res Function(DeletePantryEntry) _then) = _$DeletePantryEntryCopyWithImpl;
 @useResult
 $Res call({
- List<IngredientEntity> ingredients
+ String ingredientId
 });
 
 
@@ -542,19 +544,91 @@ $Res call({
 
 }
 /// @nodoc
-class _$PantryStreamUpdatedCopyWithImpl<$Res>
-    implements $PantryStreamUpdatedCopyWith<$Res> {
-  _$PantryStreamUpdatedCopyWithImpl(this._self, this._then);
+class _$DeletePantryEntryCopyWithImpl<$Res>
+    implements $DeletePantryEntryCopyWith<$Res> {
+  _$DeletePantryEntryCopyWithImpl(this._self, this._then);
 
-  final PantryStreamUpdated _self;
-  final $Res Function(PantryStreamUpdated) _then;
+  final DeletePantryEntry _self;
+  final $Res Function(DeletePantryEntry) _then;
 
 /// Create a copy of PantryEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? ingredients = null,}) {
-  return _then(PantryStreamUpdated(
-null == ingredients ? _self._ingredients : ingredients // ignore: cast_nullable_to_non_nullable
-as List<IngredientEntity>,
+@pragma('vm:prefer-inline') $Res call({Object? ingredientId = null,}) {
+  return _then(DeletePantryEntry(
+ingredientId: null == ingredientId ? _self.ingredientId : ingredientId // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class PantryUpdated implements PantryEvent {
+  const PantryUpdated(final  List<PantryEntry> entries): _entries = entries;
+  
+
+ final  List<PantryEntry> _entries;
+ List<PantryEntry> get entries {
+  if (_entries is EqualUnmodifiableListView) return _entries;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_entries);
+}
+
+
+/// Create a copy of PantryEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$PantryUpdatedCopyWith<PantryUpdated> get copyWith => _$PantryUpdatedCopyWithImpl<PantryUpdated>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PantryUpdated&&const DeepCollectionEquality().equals(other._entries, _entries));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_entries));
+
+@override
+String toString() {
+  return 'PantryEvent.pantryUpdated(entries: $entries)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $PantryUpdatedCopyWith<$Res> implements $PantryEventCopyWith<$Res> {
+  factory $PantryUpdatedCopyWith(PantryUpdated value, $Res Function(PantryUpdated) _then) = _$PantryUpdatedCopyWithImpl;
+@useResult
+$Res call({
+ List<PantryEntry> entries
+});
+
+
+
+
+}
+/// @nodoc
+class _$PantryUpdatedCopyWithImpl<$Res>
+    implements $PantryUpdatedCopyWith<$Res> {
+  _$PantryUpdatedCopyWithImpl(this._self, this._then);
+
+  final PantryUpdated _self;
+  final $Res Function(PantryUpdated) _then;
+
+/// Create a copy of PantryEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? entries = null,}) {
+  return _then(PantryUpdated(
+null == entries ? _self._entries : entries // ignore: cast_nullable_to_non_nullable
+as List<PantryEntry>,
   ));
 }
 
