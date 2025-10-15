@@ -17,7 +17,9 @@ Future<void> main() async {
 
   await FirebaseAppCheck.instance.activate(
     providerAndroid: kDebugMode
-        ? const AndroidDebugProvider()
+        ? const AndroidDebugProvider(
+            debugToken: '327A4AB3-EADA-4002-A595-90103ACFB146',
+          )
         : const AndroidPlayIntegrityProvider(),
   );
 

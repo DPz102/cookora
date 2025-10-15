@@ -1,17 +1,18 @@
-import 'package:cookora/core/widgets/async_state_builder.dart';
-import 'package:cookora/core/widgets/custom_network_image.dart';
-import 'package:cookora/core/widgets/glassmorphic_container.dart';
-import 'package:cookora/core/widgets/gradient_background.dart';
-import 'package:cookora/features/community/domain/entities/post_entity.dart';
-import 'package:cookora/features/user/domain/entities/user_entity.dart';
-import 'package:cookora/features/user/presentation/bloc/user_bloc.dart';
-import 'package:cookora/features/user/presentation/bloc/user_event.dart';
-import 'package:cookora/features/user/presentation/bloc/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+
+import 'package:cookora/core/widgets/async_state_builder.dart';
+import 'package:cookora/core/widgets/custom_network_image.dart';
+import 'package:cookora/core/widgets/glassmorphic_container.dart';
+
+import 'package:cookora/features/community/domain/entities/post_entity.dart';
+import 'package:cookora/features/user/domain/entities/user_entity.dart';
+import 'package:cookora/features/user/presentation/bloc/user_bloc.dart';
+import 'package:cookora/features/user/presentation/bloc/user_event.dart';
+import 'package:cookora/features/user/presentation/bloc/user_state.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});

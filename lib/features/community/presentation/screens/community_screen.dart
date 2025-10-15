@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cookora/core/utils/async_state.dart';
 import 'package:cookora/core/utils/snackbar_helper.dart';
 import 'package:cookora/core/widgets/async_sliver_builder.dart';
-import 'package:cookora/core/widgets/gradient_background.dart';
 
 import 'package:cookora/features/community/domain/entities/post_entity.dart';
 import 'package:cookora/features/community/presentation/bloc/community_bloc.dart';

@@ -1,15 +1,14 @@
-// features/user/presentation/screens/setting_screen.dart
-
-import 'package:cookora/core/widgets/custom_elevated_button.dart';
-import 'package:cookora/core/widgets/glassmorphic_container.dart';
-import 'package:cookora/core/widgets/gradient_background.dart';
-import 'package:cookora/core/widgets/show_markdown_bottom_sheet.dart';
-import 'package:cookora/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:cookora/features/auth/presentation/bloc/auth_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+
+import 'package:cookora/core/widgets/custom_elevated_button.dart';
+import 'package:cookora/core/widgets/glassmorphic_container.dart';
+
+import 'package:cookora/core/widgets/show_markdown_bottom_sheet.dart';
+import 'package:cookora/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:cookora/features/auth/presentation/bloc/auth_event.dart';
 
 class SettingScreen extends StatelessWidget {
   const SettingScreen({super.key});

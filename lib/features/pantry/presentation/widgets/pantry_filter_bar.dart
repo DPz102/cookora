@@ -35,7 +35,6 @@ class _PantryFilterBarState extends State<PantryFilterBar> {
                 setState(() {
                   _selectedIndex = index;
                 });
-                // TODO: Gọi BLoC event
               },
               child: Container(
                 color: Colors.transparent, // Để GestureDetector nhận sự kiện
