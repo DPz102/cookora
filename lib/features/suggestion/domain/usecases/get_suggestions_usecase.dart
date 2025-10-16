@@ -1,6 +1,5 @@
 // lib/features/suggestion/domain/usecases/get_suggestions_usecase.dart
 import 'dart:async';
-import 'package:rxdart/rxdart.dart';
 import 'package:cookora/features/pantry/domain/repositories/pantry_repository.dart';
 import 'package:cookora/features/suggestion/domain/entities/recipe_entity.dart';
 import 'package:cookora/features/suggestion/domain/repositories/suggestion_repository.dart';
@@ -15,18 +14,19 @@ class GetSuggestionsUsecase {
   }) : _pantryRepository = pantryRepository,
        _suggestionRepository = suggestionRepository;
 
-  Stream<List<RecipeEntity>> call({required String uid}) {
+  Stream<List<RecipeEntity>> call({required String uid}) async* {
     // Lấy danh sách PantryEntry từ kho
-    return _pantryRepository.getPantryEntries(uid).switchMap((entries) {
+    await for (final entries in _pantryRepository.getPantryEntries(uid)) {
       // Trích xuất danh sách các ingredientId mà người dùng có
-      final ingredientIds = entries.map((entry) => entry.ingredientId).toList();
+      final ingredientIds = entries
+          .map((entry) => entry.ingredient.ingredientId)
+          .toList();
       if (ingredientIds.isEmpty) {
-        return Stream.value([]);
+        yield [];
+      } else {
+        // Gọi repository gợi ý với danh sách ID này
+        yield await _suggestionRepository.getSuggestedRecipes(ingredientIds);
       }
-      // Gọi repository gợi ý với danh sách ID này
-      return Stream.fromFuture(
-        _suggestionRepository.getSuggestedRecipes(ingredientIds),
-      );
-    });
+    }
   }
 }

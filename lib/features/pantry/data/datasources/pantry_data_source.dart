@@ -1,13 +1,27 @@
 // lib/features/pantry/data/datasources/pantry_data_source.dart
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cookora/features/pantry/domain/entities/pantry_entry.dart';
 import 'package:cookora/features/pantry/domain/entities/pantry_lot.dart';
+import 'package:cookora/features/pantry/domain/entities/ingredient.dart';
 
 abstract class PantryDataSource {
-  Stream<QuerySnapshot<Map<String, dynamic>>> getPantryStream(String uid);
+  Stream<List<PantryEntry>> getPantryEntries(String uid);
 
-  Future<void> addLot({required String uid, required PantryLot newLot});
+  Future<void> addLot({
+    required String uid,
+    required Ingredient ingredient,
+    required PantryLot lot,
+  });
 
-  Future<void> updateLot({required String uid, required PantryLot updatedLot});
+  Future<void> addMultipleLots({
+    required String uid,
+    required List<({Ingredient ingredient, PantryLot lot})> items,
+  });
+
+  Future<void> updateLot({
+    required String uid,
+    required String ingredientId,
+    required PantryLot lot,
+  });
 
   Future<void> deleteLot({
     required String uid,
@@ -15,9 +29,5 @@ abstract class PantryDataSource {
     required String lotId,
   });
 
-  // Xóa toàn bộ một entry (tất cả các lô của một nguyên liệu)
-  Future<void> deletePantryEntry({
-    required String uid,
-    required String ingredientId,
-  });
+  Future<void> deleteEntry({required String uid, required String ingredientId});
 }

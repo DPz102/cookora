@@ -4,12 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:cookora/core/utils/async_state.dart';
 import 'package:cookora/core/utils/exception_handler.dart';
-
 import 'package:cookora/features/user/presentation/bloc/user_bloc.dart';
 import 'package:cookora/features/user/domain/entities/user_entity.dart';
-
-import 'package:cookora/features/pantry/domain/entities/pantry_display_entry.dart';
-import 'package:cookora/features/pantry/domain/usecases/get_pantry_with_details_usecase.dart';
+import 'package:cookora/features/pantry/domain/entities/pantry_entry.dart';
+import 'package:cookora/features/pantry/domain/entities/pantry_lot.dart';
 import 'package:cookora/features/pantry/domain/repositories/pantry_repository.dart';
 import 'package:cookora/features/pantry/presentation/bloc/pantry_event.dart';
 import 'package:cookora/features/pantry/presentation/bloc/pantry_state.dart';
@@ -17,31 +15,27 @@ import 'package:cookora/features/pantry/presentation/bloc/pantry_state.dart';
 class PantryBloc extends Bloc<PantryEvent, PantryState> {
   final PantryRepository _pantryRepository;
   final UserBloc _userBloc;
-  // Thêm UseCase
-  final GetPantryWithDetailsUseCase _getPantryWithDetailsUseCase;
 
-  StreamSubscription<List<PantryDisplayEntry>>? _pantrySubscription;
+  StreamSubscription<List<PantryEntry>>? _pantrySubscription;
 
   PantryBloc({
     required PantryRepository pantryRepository,
     required UserBloc userBloc,
-    // Thêm UseCase vào constructor
-    required GetPantryWithDetailsUseCase getPantryWithDetailsUseCase,
   }) : _pantryRepository = pantryRepository,
        _userBloc = userBloc,
-       _getPantryWithDetailsUseCase = getPantryWithDetailsUseCase,
        super(const PantryState()) {
     on<SubscribeToPantry>(_onSubscribeToPantry);
-    on<PantryUpdated>(_onPantryUpdated); // Đổi tên event này cho rõ nghĩa
+    on<PantryUpdated>(_onPantryUpdated);
     on<AddLot>(_onAddLot);
+    on<AddMultipleLots>(_onAddMultipleLots);
     on<UpdateLot>(_onUpdateLot);
     on<DeleteLot>(_onDeleteLot);
-    on<DeletePantryEntry>(_onDeletePantryEntry);
+    on<DeleteEntry>(_onDeleteEntry);
     on<ResetMutationStatus>(_onResetMutationStatus);
     on<ClearPantry>(_onClearPantry);
   }
 
-  String? _getCurrentUid() {
+  String? get _currentUserId {
     final userState = _userBloc.state.profileStatus;
     return userState is AsyncSuccess<UserEntity> ? userState.data.uid : null;
   }
@@ -50,89 +44,115 @@ class PantryBloc extends Bloc<PantryEvent, PantryState> {
     SubscribeToPantry event,
     Emitter<PantryState> emit,
   ) {
-    emit(state.copyWith(displayEntriesStatus: const AsyncLoading()));
+    emit(state.copyWith(entriesStatus: const AsyncLoading()));
     _pantrySubscription?.cancel();
+    _pantrySubscription = _pantryRepository
+        .getPantryEntries(event.uid)
+        .listen(
+          (entries) => add(PantryUpdated(entries)),
+          onError: (error) {
+            final errorMessage = ExceptionHandler.handle(error).toString();
+            emit(state.copyWith(entriesStatus: AsyncFailure(errorMessage)));
+          },
+        );
+  }
 
-    // Gọi UseCase ở đây
-    _pantrySubscription = _getPantryWithDetailsUseCase(event.uid).listen(
-      (displayEntries) =>
-          add(PantryUpdated(displayEntries)), // Gửi dữ liệu đã được join
-      onError: (e) {
-        final eMessage = ExceptionHandler.handle(e).toString();
-        emit(state.copyWith(displayEntriesStatus: AsyncFailure(eMessage)));
-      },
+  void _onPantryUpdated(PantryUpdated event, Emitter<PantryState> emit) {
+    emit(state.copyWith(entriesStatus: AsyncSuccess(event.entries)));
+  }
+
+  Future<void> _handleMutation(
+    Emitter<PantryState> emit,
+    Future<void> Function() mutation,
+  ) async {
+    final uid = _currentUserId;
+    if (uid == null) {
+      emit(
+        state.copyWith(
+          mutationStatus: const AsyncFailure('Người dùng chưa đăng nhập.'),
+        ),
+      );
+      return;
+    }
+    emit(state.copyWith(mutationStatus: const AsyncLoading()));
+    try {
+      await mutation();
+      emit(state.copyWith(mutationStatus: const AsyncSuccess(null)));
+    } catch (e) {
+      final errorMessage = ExceptionHandler.handle(e).toString();
+      emit(state.copyWith(mutationStatus: AsyncFailure(errorMessage)));
+    }
+  }
+
+  Future<void> _onAddLot(AddLot event, Emitter<PantryState> emit) async {
+    final newLot = PantryLot.fromJson(event.lotData);
+
+    await _handleMutation(
+      emit,
+      () => _pantryRepository.addLot(
+        uid: _currentUserId!,
+        ingredient: event.ingredient,
+        lot: newLot,
+      ),
     );
   }
 
-  // Sửa event handler này
-  void _onPantryUpdated(PantryUpdated event, Emitter<PantryState> emit) {
-    emit(state.copyWith(displayEntriesStatus: AsyncSuccess(event.entries)));
-  }
+  Future<void> _onAddMultipleLots(
+    AddMultipleLots event,
+    Emitter<PantryState> emit,
+  ) async {
+    final itemsWithEntities = event.items.map((item) {
+      return (
+        ingredient: item.ingredient,
+        lot: PantryLot.fromJson(item.lotData),
+      );
+    }).toList();
 
-  // ... (Các hàm xử lý mutation không thay đổi)
-  Future<void> _onAddLot(AddLot event, Emitter<PantryState> emit) async {
-    final uid = _getCurrentUid();
-    if (uid == null) return _emitAuthError(emit);
     await _handleMutation(
       emit,
-      () => _pantryRepository.addLot(uid: uid, lot: event.lot),
+      () => _pantryRepository.addMultipleLots(
+        uid: _currentUserId!,
+        items: itemsWithEntities,
+      ),
     );
   }
 
   Future<void> _onUpdateLot(UpdateLot event, Emitter<PantryState> emit) async {
-    final uid = _getCurrentUid();
-    if (uid == null) return _emitAuthError(emit);
+    final lotDataWithId = {...event.lotData, 'id': event.lotId};
+    final updatedLot = PantryLot.fromJson(lotDataWithId);
+
     await _handleMutation(
       emit,
-      () => _pantryRepository.updateLot(uid: uid, lot: event.lot),
+      () => _pantryRepository.updateLot(
+        uid: _currentUserId!,
+        ingredientId: event.ingredientId,
+        lot: updatedLot,
+      ),
     );
   }
 
   Future<void> _onDeleteLot(DeleteLot event, Emitter<PantryState> emit) async {
-    final uid = _getCurrentUid();
-    if (uid == null) return _emitAuthError(emit);
     await _handleMutation(
       emit,
       () => _pantryRepository.deleteLot(
-        uid: uid,
+        uid: _currentUserId!,
         ingredientId: event.ingredientId,
         lotId: event.lotId,
       ),
     );
   }
 
-  Future<void> _onDeletePantryEntry(
-    DeletePantryEntry event,
+  Future<void> _onDeleteEntry(
+    DeleteEntry event,
     Emitter<PantryState> emit,
   ) async {
-    final uid = _getCurrentUid();
-    if (uid == null) return _emitAuthError(emit);
     await _handleMutation(
       emit,
-      () => _pantryRepository.deletePantryEntry(
-        uid: uid,
+      () => _pantryRepository.deleteEntry(
+        uid: _currentUserId!,
         ingredientId: event.ingredientId,
       ),
     );
-  }
-
-  Future<void> _handleMutation(
-    Emitter<PantryState> emit,
-    Future<void> Function() action,
-  ) async {
-    emit(state.copyWith(mutationStatus: const AsyncLoading()));
-    try {
-      await action();
-      emit(state.copyWith(mutationStatus: const AsyncSuccess(null)));
-    } catch (e) {
-      final eMessage = ExceptionHandler.handle(e).toString();
-      emit(state.copyWith(mutationStatus: AsyncFailure(eMessage)));
-    }
-  }
-
-  void _emitAuthError(Emitter<PantryState> emit) {
-    final eMessage = 'Lỗi: Không tìm thấy thông tin người dùng.';
-    emit(state.copyWith(mutationStatus: AsyncFailure(eMessage)));
   }
 
   void _onResetMutationStatus(

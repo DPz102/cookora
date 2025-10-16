@@ -5,14 +5,12 @@ import 'package:intl/intl.dart';
 
 import 'package:cookora/core/widgets/custom_text_field.dart';
 import 'package:cookora/core/widgets/custom_elevated_button.dart';
-
+import 'package:cookora/core/utils/validators.dart';
 import 'package:cookora/features/pantry/domain/entities/ingredient.dart';
 import 'package:cookora/features/pantry/domain/entities/pantry_lot.dart';
 
 class LotFormDialog extends StatefulWidget {
-  // Dữ liệu từ Master Data để lấy các thông tin ràng buộc
   final Ingredient ingredient;
-  // Lô hàng ban đầu (nếu là chế độ sửa)
   final PantryLot? initialLot;
 
   const LotFormDialog({super.key, required this.ingredient, this.initialLot});
@@ -37,13 +35,12 @@ class _LotFormDialogState extends State<LotFormDialog> {
     final now = DateTime.now();
 
     _quantityController = TextEditingController(
-      text: lot?.currentQuantity.toString() ?? '',
+      text: lot?.quantity.toString() ?? '1.0', // Mặc định là 1.0
     );
     _selectedUnit =
         lot?.unit ?? widget.ingredient.validUnits.firstOrNull ?? 'đơn vị';
     _purchaseDate = lot?.purchaseDate ?? now;
 
-    // Thiết lập ngày hết hạn mặc định
     if (lot?.expiryDate != null) {
       _expiryDate = lot!.expiryDate;
     } else {
@@ -59,8 +56,8 @@ class _LotFormDialogState extends State<LotFormDialog> {
     super.dispose();
   }
 
-  Future<void> _selectDate(
-    BuildContext context, {
+  Future<void> _selectDate({
+    required BuildContext context,
     required DateTime initialDate,
     required ValueChanged<DateTime> onDateSelected,
   }) async {
@@ -79,34 +76,25 @@ class _LotFormDialogState extends State<LotFormDialog> {
   void _submitForm() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    final resultLot =
-        (widget.initialLot ??
-                PantryLot(ingredientId: widget.ingredient.ingredientId))
-            .copyWith(
-              currentQuantity:
-                  double.tryParse(_quantityController.text.trim()) ?? 0.0,
-              unit: _selectedUnit,
-              purchaseDate: _purchaseDate,
-              expiryDate: _expiryDate,
-              initialQuantity: _isEditing
-                  ? widget.initialLot!.initialQuantity
-                  : double.tryParse(_quantityController.text.trim()) ?? 0.0,
-            );
+    final Map<String, dynamic> resultData = {
+      'quantity': double.tryParse(_quantityController.text.trim()) ?? 0.0,
+      'unit': _selectedUnit,
+      'purchaseDate': _purchaseDate,
+      'expiryDate': _expiryDate,
+    };
 
-    Navigator.of(context).pop(resultLot);
+    Navigator.of(context).pop(resultData);
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return AlertDialog(
       title: Text(
         '${_isEditing ? 'Sửa' : 'Thêm'} lô: ${widget.ingredient.name}',
         style: theme.textTheme.titleLarge,
         maxLines: 2,
       ),
-      // Sửa lỗi overflow bằng cách set width cho content và dùng SingleChildScrollView
       content: SizedBox(
         width: double.maxFinite,
         child: Form(
@@ -116,7 +104,6 @@ class _LotFormDialogState extends State<LotFormDialog> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                // --- SỐ LƯỢNG & ĐƠN VỊ ---
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -127,26 +114,18 @@ class _LotFormDialogState extends State<LotFormDialog> {
                         hintText: 'Nhập số lượng',
                         controller: _quantityController,
                         keyboardType: TextInputType.number,
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Nhập số lượng';
-                          }
-                          if (double.tryParse(value) == null ||
-                              double.parse(value) <= 0) {
-                            return 'Số không hợp lệ';
-                          }
-                          return null;
-                        },
+                        validator: Validators.validateQuantity,
                       ),
                     ),
                     SizedBox(width: 16.w),
                     Expanded(
-                      flex: 2, // Tăng độ rộng cho đơn vị
-
+                      flex: 2,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('Đơn vị', style: theme.textTheme.bodyLarge),
+                          SizedBox(height: 3.h),
+                          // DropdownButtonFormField đã có sẵn decoration, không cần InputDecorator
                           DropdownButtonFormField<String>(
                             initialValue: _selectedUnit,
                             items: widget.ingredient.validUnits
@@ -162,6 +141,12 @@ class _LotFormDialogState extends State<LotFormDialog> {
                                 setState(() => _selectedUnit = value);
                               }
                             },
+                            // Thêm decoration để nhất quán
+                            decoration: const InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -169,33 +154,31 @@ class _LotFormDialogState extends State<LotFormDialog> {
                   ],
                 ),
                 SizedBox(height: 20.h),
-
-                // --- NGÀY MUA ---
                 _DatePickerField(
                   label: 'Ngày mua',
                   selectedDate: _purchaseDate,
                   onTap: () => _selectDate(
-                    context,
+                    context: context,
                     initialDate: _purchaseDate,
                     onDateSelected: (date) =>
                         setState(() => _purchaseDate = date),
                   ),
                 ),
                 SizedBox(height: 20.h),
-
-                // --- HẠN SỬ DỤNG ---
                 _DatePickerField(
                   label: 'Ngày hết hạn',
                   selectedDate: _expiryDate,
                   onTap: () => _selectDate(
-                    context,
+                    context: context,
                     initialDate: _expiryDate ?? DateTime.now(),
                     onDateSelected: (date) =>
                         setState(() => _expiryDate = date),
                   ),
                   validator: (date) {
+                    final baseError = Validators.validateExpiryDate(date);
+                    if (baseError != null) return baseError;
                     if (date != null && date.isBefore(_purchaseDate)) {
-                      return 'Ngày hết hạn phải sau ngày mua';
+                      return 'HSD phải sau ngày mua';
                     }
                     return null;
                   },
@@ -219,7 +202,7 @@ class _LotFormDialogState extends State<LotFormDialog> {
   }
 }
 
-// Widget helper cho trường chọn ngày để tránh lặp code
+// ... (_DatePickerField không thay đổi)
 class _DatePickerField extends StatelessWidget {
   final String label;
   final DateTime? selectedDate;
@@ -243,16 +226,15 @@ class _DatePickerField extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label, style: theme.textTheme.bodyMedium),
-            SizedBox(height: 8.h),
+            Text(label, style: theme.textTheme.bodyLarge),
+            SizedBox(height: 3.h),
             GestureDetector(
               onTap: onTap,
               child: InputDecorator(
                 decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 12,
-                    vertical: 16,
+                    vertical: 15,
                   ),
                   errorText: field.errorText,
                 ),
@@ -264,7 +246,7 @@ class _DatePickerField extends StatelessWidget {
                           ? 'Chọn ngày'
                           : DateFormat('dd/MM/yyyy').format(selectedDate!),
                     ),
-                    const Icon(Icons.calendar_today_outlined),
+                    const Icon(Icons.calendar_today_outlined, size: 20),
                   ],
                 ),
               ),

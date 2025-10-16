@@ -6,44 +6,44 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
 import 'package:cookora/core/utils/async_state.dart';
-
-import 'package:cookora/features/pantry/domain/entities/ingredient.dart';
 import 'package:cookora/features/pantry/domain/entities/pantry_entry.dart';
 import 'package:cookora/features/pantry/domain/entities/pantry_lot.dart';
-import 'package:cookora/features/pantry/domain/entities/pantry_display_entry.dart';
 import 'package:cookora/features/pantry/presentation/bloc/pantry_bloc.dart';
 import 'package:cookora/features/pantry/presentation/bloc/pantry_event.dart';
 import 'package:cookora/features/pantry/presentation/bloc/pantry_state.dart';
 import 'package:cookora/features/pantry/presentation/widgets/ingredient/lot_form_dialog.dart';
 
 class PantryEntryDetailsDialog extends StatelessWidget {
-  final PantryEntry entry; // Giữ lại entry ban đầu để lấy ID
-  final Ingredient ingredientInfo;
+  final PantryEntry entry;
 
-  const PantryEntryDetailsDialog({
-    super.key,
-    required this.entry,
-    required this.ingredientInfo,
-  });
+  const PantryEntryDetailsDialog({super.key, required this.entry});
 
   void _editLot(BuildContext context, PantryLot lot) async {
-    final result = await showDialog<PantryLot>(
+    final resultData = await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (_) =>
-          LotFormDialog(ingredient: ingredientInfo, initialLot: lot),
+          LotFormDialog(ingredient: entry.ingredient, initialLot: lot),
     );
-    if (result != null && context.mounted) {
-      context.read<PantryBloc>().add(UpdateLot(lot: result));
+    if (resultData != null && context.mounted) {
+      context.read<PantryBloc>().add(
+        UpdateLot(
+          ingredientId: entry.ingredient.ingredientId,
+          lotId: lot.id, // Cần truyền lotId để BLoC biết sửa lot nào
+          lotData: resultData,
+        ),
+      );
     }
   }
 
   void _addLot(BuildContext context) async {
-    final result = await showDialog<PantryLot>(
+    final resultData = await showDialog<Map<String, dynamic>>(
       context: context,
-      builder: (_) => LotFormDialog(ingredient: ingredientInfo),
+      builder: (_) => LotFormDialog(ingredient: entry.ingredient),
     );
-    if (result != null && context.mounted) {
-      context.read<PantryBloc>().add(AddLot(lot: result));
+    if (resultData != null && context.mounted) {
+      context.read<PantryBloc>().add(
+        AddLot(ingredient: entry.ingredient, lotData: resultData),
+      );
     }
   }
 
@@ -53,7 +53,7 @@ class PantryEntryDetailsDialog extends StatelessWidget {
       builder: (dialogContext) => AlertDialog(
         title: const Text('Xác nhận xóa'),
         content: Text(
-          'Bạn có chắc muốn xóa lô hàng số lượng ${lot.currentQuantity}${lot.unit} này không?',
+          'Bạn có chắc muốn xóa lô hàng số lượng ${lot.quantity} ${entry.unit} này không?',
         ),
         actions: [
           TextButton(
@@ -63,7 +63,10 @@ class PantryEntryDetailsDialog extends StatelessWidget {
           FilledButton(
             onPressed: () {
               context.read<PantryBloc>().add(
-                DeleteLot(ingredientId: lot.ingredientId, lotId: lot.id),
+                DeleteLot(
+                  ingredientId: entry.ingredient.ingredientId,
+                  lotId: lot.id,
+                ),
               );
               Navigator.of(dialogContext).pop();
             },
@@ -76,36 +79,29 @@ class PantryEntryDetailsDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Bọc toàn bộ dialog bằng BlocBuilder để nó tự cập nhật khi state thay đổi
     return BlocBuilder<PantryBloc, PantryState>(
       builder: (builderContext, state) {
+        // ... (phần logic tìm currentEntry không đổi)
         PantryEntry? currentEntry;
-        final status = state.displayEntriesStatus;
-
-        if (status is AsyncSuccess<List<PantryDisplayEntry>>) {
-          currentEntry = status.data
-              .firstWhereOrNull(
-                (e) => e.entry.ingredientId == entry.ingredientId,
-              )
-              ?.entry;
+        final status = state.entriesStatus;
+        if (status is AsyncSuccess<List<PantryEntry>>) {
+          currentEntry = status.data.firstWhereOrNull(
+            (e) => e.ingredient.ingredientId == entry.ingredient.ingredientId,
+          );
         }
-
-        // Nếu không tìm thấy entry (ví dụ đã bị xóa), tự động đóng dialog
         if (currentEntry == null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (Navigator.of(builderContext).canPop()) {
               Navigator.of(builderContext).pop();
             }
           });
-          // Trả về một dialog trống trong khi chờ đóng
           return const Dialog(child: SizedBox.shrink());
         }
 
         final theme = Theme.of(builderContext);
-
-        // Dựng giao diện dialog với dữ liệu `currentEntry` mới nhất
+        // ... (phần UI của dialog không đổi)
         return AlertDialog(
-          title: Text('Chi tiết: ${ingredientInfo.name}'),
+          title: Text('Chi tiết: ${currentEntry.ingredient.name}'),
           content: SizedBox(
             width: double.maxFinite,
             child: Column(
@@ -121,6 +117,7 @@ class PantryEntryDetailsDialog extends StatelessWidget {
                       final lot = currentEntry!.lots[index];
                       return _PantryLotTile(
                         lot: lot,
+                        unit: currentEntry.unit,
                         onEdit: () => _editLot(builderContext, lot),
                         onDelete: () => _deleteLot(builderContext, lot),
                       );
@@ -145,7 +142,7 @@ class PantryEntryDetailsDialog extends StatelessWidget {
     );
   }
 
-  // ... (Phần còn lại của file không đổi)
+  // ... (các widget helper _buildListHeader và _PantryLotTile không đổi)
   Widget _buildListHeader(ThemeData theme) {
     final textStyle = theme.textTheme.bodySmall?.copyWith(
       fontWeight: FontWeight.bold,
@@ -179,11 +176,13 @@ class PantryEntryDetailsDialog extends StatelessWidget {
 
 class _PantryLotTile extends StatelessWidget {
   final PantryLot lot;
+  final String unit;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
   const _PantryLotTile({
     required this.lot,
+    required this.unit,
     required this.onEdit,
     required this.onDelete,
   });
@@ -229,7 +228,7 @@ class _PantryLotTile extends StatelessWidget {
           Expanded(
             flex: 3,
             child: Text(
-              '${lot.currentQuantity.toStringAsFixed(lot.currentQuantity.truncateToDouble() == lot.currentQuantity ? 0 : 1)} ${lot.unit}',
+              '${lot.quantity.toStringAsFixed(lot.quantity.truncateToDouble() == lot.quantity ? 0 : 1)} $unit',
               style: textTheme.bodyMedium,
             ),
           ),

@@ -5,21 +5,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cookora/core/widgets/custom_network_image.dart';
 
 import 'package:cookora/features/pantry/domain/entities/pantry_entry.dart';
-import 'package:cookora/features/pantry/domain/entities/ingredient.dart';
 
 class PantryEntryCard extends StatelessWidget {
-  // Card này nhận vào PantryEntry từ kho của người dùng
+  // Card này nhận vào PantryEntry đã chứa sẵn thông tin ingredient
   final PantryEntry entry;
-  // Và thông tin chi tiết từ master data (sẽ được cung cấp bởi BLoC sau này)
-  final Ingredient ingredientInfo;
   final VoidCallback onTap;
 
-  const PantryEntryCard({
-    super.key,
-    required this.entry,
-    required this.ingredientInfo,
-    required this.onTap,
-  });
+  const PantryEntryCard({super.key, required this.entry, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +20,9 @@ class PantryEntryCard extends StatelessWidget {
     final textTheme = theme.textTheme;
 
     // Sử dụng ảnh thật nếu có, fallback về ảnh placeholder
-    final imageUrl = ingredientInfo.imageUrl.isNotEmpty
-        ? ingredientInfo.imageUrl
-        : 'https://picsum.photos/seed/${ingredientInfo.name}/200';
+    final imageUrl = entry.ingredient.imageUrl.isNotEmpty
+        ? entry.ingredient.imageUrl
+        : 'https://picsum.photos/seed/${entry.ingredient.name}/200';
 
     return GestureDetector(
       onTap: onTap,
@@ -69,7 +61,7 @@ class PantryEntryCard extends StatelessWidget {
                 children: [
                   // Tên nguyên liệu
                   Text(
-                    ingredientInfo.name, // Lấy tên từ master data
+                    entry.ingredient.name, // Tên ingredient đã được nhúng
                     style: textTheme.bodySmall?.copyWith(
                       color: colorScheme.primary,
                       fontFamily: 'Unbounded',

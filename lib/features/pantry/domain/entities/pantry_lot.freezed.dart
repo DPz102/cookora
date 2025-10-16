@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$PantryLot {
 
- String get id; String get ingredientId; double get initialQuantity; double get currentQuantity; String get unit;@JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) DateTime? get purchaseDate;@JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) DateTime? get expiryDate;
+ String get id; double get quantity; String get unit;@JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) DateTime? get purchaseDate;@JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) DateTime? get expiryDate;
 /// Create a copy of PantryLot
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $PantryLotCopyWith<PantryLot> get copyWith => _$PantryLotCopyWithImpl<PantryLot>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PantryLot&&(identical(other.id, id) || other.id == id)&&(identical(other.ingredientId, ingredientId) || other.ingredientId == ingredientId)&&(identical(other.initialQuantity, initialQuantity) || other.initialQuantity == initialQuantity)&&(identical(other.currentQuantity, currentQuantity) || other.currentQuantity == currentQuantity)&&(identical(other.unit, unit) || other.unit == unit)&&(identical(other.purchaseDate, purchaseDate) || other.purchaseDate == purchaseDate)&&(identical(other.expiryDate, expiryDate) || other.expiryDate == expiryDate));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PantryLot&&(identical(other.id, id) || other.id == id)&&(identical(other.quantity, quantity) || other.quantity == quantity)&&(identical(other.unit, unit) || other.unit == unit)&&(identical(other.purchaseDate, purchaseDate) || other.purchaseDate == purchaseDate)&&(identical(other.expiryDate, expiryDate) || other.expiryDate == expiryDate));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,ingredientId,initialQuantity,currentQuantity,unit,purchaseDate,expiryDate);
+int get hashCode => Object.hash(runtimeType,id,quantity,unit,purchaseDate,expiryDate);
 
 @override
 String toString() {
-  return 'PantryLot(id: $id, ingredientId: $ingredientId, initialQuantity: $initialQuantity, currentQuantity: $currentQuantity, unit: $unit, purchaseDate: $purchaseDate, expiryDate: $expiryDate)';
+  return 'PantryLot(id: $id, quantity: $quantity, unit: $unit, purchaseDate: $purchaseDate, expiryDate: $expiryDate)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $PantryLotCopyWith<$Res>  {
   factory $PantryLotCopyWith(PantryLot value, $Res Function(PantryLot) _then) = _$PantryLotCopyWithImpl;
 @useResult
 $Res call({
- String id, String ingredientId, double initialQuantity, double currentQuantity, String unit,@JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) DateTime? purchaseDate,@JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) DateTime? expiryDate
+ String id, double quantity, String unit,@JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) DateTime? purchaseDate,@JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) DateTime? expiryDate
 });
 
 
@@ -65,12 +65,10 @@ class _$PantryLotCopyWithImpl<$Res>
 
 /// Create a copy of PantryLot
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? ingredientId = null,Object? initialQuantity = null,Object? currentQuantity = null,Object? unit = null,Object? purchaseDate = freezed,Object? expiryDate = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? quantity = null,Object? unit = null,Object? purchaseDate = freezed,Object? expiryDate = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,ingredientId: null == ingredientId ? _self.ingredientId : ingredientId // ignore: cast_nullable_to_non_nullable
-as String,initialQuantity: null == initialQuantity ? _self.initialQuantity : initialQuantity // ignore: cast_nullable_to_non_nullable
-as double,currentQuantity: null == currentQuantity ? _self.currentQuantity : currentQuantity // ignore: cast_nullable_to_non_nullable
+as String,quantity: null == quantity ? _self.quantity : quantity // ignore: cast_nullable_to_non_nullable
 as double,unit: null == unit ? _self.unit : unit // ignore: cast_nullable_to_non_nullable
 as String,purchaseDate: freezed == purchaseDate ? _self.purchaseDate : purchaseDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,expiryDate: freezed == expiryDate ? _self.expiryDate : expiryDate // ignore: cast_nullable_to_non_nullable
@@ -159,10 +157,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String ingredientId,  double initialQuantity,  double currentQuantity,  String unit, @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp)  DateTime? purchaseDate, @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp)  DateTime? expiryDate)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  double quantity,  String unit, @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp)  DateTime? purchaseDate, @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp)  DateTime? expiryDate)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _PantryLot() when $default != null:
-return $default(_that.id,_that.ingredientId,_that.initialQuantity,_that.currentQuantity,_that.unit,_that.purchaseDate,_that.expiryDate);case _:
+return $default(_that.id,_that.quantity,_that.unit,_that.purchaseDate,_that.expiryDate);case _:
   return orElse();
 
 }
@@ -180,10 +178,10 @@ return $default(_that.id,_that.ingredientId,_that.initialQuantity,_that.currentQ
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String ingredientId,  double initialQuantity,  double currentQuantity,  String unit, @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp)  DateTime? purchaseDate, @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp)  DateTime? expiryDate)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  double quantity,  String unit, @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp)  DateTime? purchaseDate, @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp)  DateTime? expiryDate)  $default,) {final _that = this;
 switch (_that) {
 case _PantryLot():
-return $default(_that.id,_that.ingredientId,_that.initialQuantity,_that.currentQuantity,_that.unit,_that.purchaseDate,_that.expiryDate);case _:
+return $default(_that.id,_that.quantity,_that.unit,_that.purchaseDate,_that.expiryDate);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +198,10 @@ return $default(_that.id,_that.ingredientId,_that.initialQuantity,_that.currentQ
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String ingredientId,  double initialQuantity,  double currentQuantity,  String unit, @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp)  DateTime? purchaseDate, @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp)  DateTime? expiryDate)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  double quantity,  String unit, @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp)  DateTime? purchaseDate, @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp)  DateTime? expiryDate)?  $default,) {final _that = this;
 switch (_that) {
 case _PantryLot() when $default != null:
-return $default(_that.id,_that.ingredientId,_that.initialQuantity,_that.currentQuantity,_that.unit,_that.purchaseDate,_that.expiryDate);case _:
+return $default(_that.id,_that.quantity,_that.unit,_that.purchaseDate,_that.expiryDate);case _:
   return null;
 
 }
@@ -215,13 +213,11 @@ return $default(_that.id,_that.ingredientId,_that.initialQuantity,_that.currentQ
 @JsonSerializable()
 
 class _PantryLot implements PantryLot {
-  const _PantryLot({this.id = '', required this.ingredientId, this.initialQuantity = 0.0, this.currentQuantity = 0.0, this.unit = '', @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) this.purchaseDate, @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) this.expiryDate});
+  const _PantryLot({this.id = '', this.quantity = 0.0, this.unit = '', @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) this.purchaseDate, @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) this.expiryDate});
   factory _PantryLot.fromJson(Map<String, dynamic> json) => _$PantryLotFromJson(json);
 
 @override@JsonKey() final  String id;
-@override final  String ingredientId;
-@override@JsonKey() final  double initialQuantity;
-@override@JsonKey() final  double currentQuantity;
+@override@JsonKey() final  double quantity;
 @override@JsonKey() final  String unit;
 @override@JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) final  DateTime? purchaseDate;
 @override@JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) final  DateTime? expiryDate;
@@ -239,16 +235,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PantryLot&&(identical(other.id, id) || other.id == id)&&(identical(other.ingredientId, ingredientId) || other.ingredientId == ingredientId)&&(identical(other.initialQuantity, initialQuantity) || other.initialQuantity == initialQuantity)&&(identical(other.currentQuantity, currentQuantity) || other.currentQuantity == currentQuantity)&&(identical(other.unit, unit) || other.unit == unit)&&(identical(other.purchaseDate, purchaseDate) || other.purchaseDate == purchaseDate)&&(identical(other.expiryDate, expiryDate) || other.expiryDate == expiryDate));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PantryLot&&(identical(other.id, id) || other.id == id)&&(identical(other.quantity, quantity) || other.quantity == quantity)&&(identical(other.unit, unit) || other.unit == unit)&&(identical(other.purchaseDate, purchaseDate) || other.purchaseDate == purchaseDate)&&(identical(other.expiryDate, expiryDate) || other.expiryDate == expiryDate));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,ingredientId,initialQuantity,currentQuantity,unit,purchaseDate,expiryDate);
+int get hashCode => Object.hash(runtimeType,id,quantity,unit,purchaseDate,expiryDate);
 
 @override
 String toString() {
-  return 'PantryLot(id: $id, ingredientId: $ingredientId, initialQuantity: $initialQuantity, currentQuantity: $currentQuantity, unit: $unit, purchaseDate: $purchaseDate, expiryDate: $expiryDate)';
+  return 'PantryLot(id: $id, quantity: $quantity, unit: $unit, purchaseDate: $purchaseDate, expiryDate: $expiryDate)';
 }
 
 
@@ -259,7 +255,7 @@ abstract mixin class _$PantryLotCopyWith<$Res> implements $PantryLotCopyWith<$Re
   factory _$PantryLotCopyWith(_PantryLot value, $Res Function(_PantryLot) _then) = __$PantryLotCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String ingredientId, double initialQuantity, double currentQuantity, String unit,@JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) DateTime? purchaseDate,@JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) DateTime? expiryDate
+ String id, double quantity, String unit,@JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) DateTime? purchaseDate,@JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) DateTime? expiryDate
 });
 
 
@@ -276,12 +272,10 @@ class __$PantryLotCopyWithImpl<$Res>
 
 /// Create a copy of PantryLot
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? ingredientId = null,Object? initialQuantity = null,Object? currentQuantity = null,Object? unit = null,Object? purchaseDate = freezed,Object? expiryDate = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? quantity = null,Object? unit = null,Object? purchaseDate = freezed,Object? expiryDate = freezed,}) {
   return _then(_PantryLot(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,ingredientId: null == ingredientId ? _self.ingredientId : ingredientId // ignore: cast_nullable_to_non_nullable
-as String,initialQuantity: null == initialQuantity ? _self.initialQuantity : initialQuantity // ignore: cast_nullable_to_non_nullable
-as double,currentQuantity: null == currentQuantity ? _self.currentQuantity : currentQuantity // ignore: cast_nullable_to_non_nullable
+as String,quantity: null == quantity ? _self.quantity : quantity // ignore: cast_nullable_to_non_nullable
 as double,unit: null == unit ? _self.unit : unit // ignore: cast_nullable_to_non_nullable
 as String,purchaseDate: freezed == purchaseDate ? _self.purchaseDate : purchaseDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,expiryDate: freezed == expiryDate ? _self.expiryDate : expiryDate // ignore: cast_nullable_to_non_nullable

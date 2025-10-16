@@ -1,39 +1,46 @@
 // lib/features/pantry/presentation/bloc/pantry_event.dart
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:cookora/features/pantry/domain/entities/pantry_display_entry.dart';
-import 'package:cookora/features/pantry/domain/entities/pantry_lot.dart';
+import 'package:cookora/features/pantry/domain/entities/pantry_entry.dart';
+import 'package:cookora/features/pantry/domain/entities/ingredient.dart';
 
 part 'pantry_event.freezed.dart';
 
 @freezed
 abstract class PantryEvent with _$PantryEvent {
-  // Bắt đầu lắng nghe stream pantry từ Firestore.
   const factory PantryEvent.subscribeToPantry({required String uid}) =
       SubscribeToPantry;
 
-  // Thêm một lô mới.
-  const factory PantryEvent.addLot({required PantryLot lot}) = AddLot;
+  const factory PantryEvent.pantryUpdated(List<PantryEntry> entries) =
+      PantryUpdated;
 
-  // Cập nhật một lô.
-  const factory PantryEvent.updateLot({required PantryLot lot}) = UpdateLot;
+  /// Thêm 1 lot.
+  const factory PantryEvent.addLot({
+    required Ingredient ingredient,
+    required Map<String, dynamic> lotData,
+  }) = AddLot;
 
-  // Xóa một lô.
+  /// Thêm nhiều lots.
+  const factory PantryEvent.addMultipleLots({
+    required List<({Ingredient ingredient, Map<String, dynamic> lotData})>
+    items,
+  }) = AddMultipleLots;
+
+  /// Cập nhật lot.
+  const factory PantryEvent.updateLot({
+    required String ingredientId,
+    required String lotId,
+    required Map<String, dynamic> lotData,
+  }) = UpdateLot;
+
   const factory PantryEvent.deleteLot({
     required String ingredientId,
     required String lotId,
   }) = DeleteLot;
 
-  // Xóa toàn bộ một nguyên liệu (entry).
-  const factory PantryEvent.deletePantryEntry({required String ingredientId}) =
-      DeletePantryEntry;
+  const factory PantryEvent.deleteEntry({required String ingredientId}) =
+      DeleteEntry;
 
-  // Event nội bộ để đẩy dữ liệu mới từ stream vào state.
-  const factory PantryEvent.pantryUpdated(List<PantryDisplayEntry> entries) =
-      PantryUpdated;
-
-  // Event để reset trạng thái mutation (loading/error/success).
   const factory PantryEvent.resetMutationStatus() = ResetMutationStatus;
 
-  // Event reset toàn bộ bloc khi đăng xuất.
   const factory PantryEvent.clearPantry() = ClearPantry;
 }

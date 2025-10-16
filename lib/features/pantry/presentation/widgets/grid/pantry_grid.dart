@@ -5,9 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:cookora/core/widgets/async_sliver_builder.dart';
 import 'package:cookora/core/widgets/empty_state_widget.dart';
-import 'package:cookora/features/pantry/domain/entities/ingredient.dart';
 import 'package:cookora/features/pantry/domain/entities/pantry_entry.dart';
-import 'package:cookora/features/pantry/domain/entities/pantry_display_entry.dart';
 import 'package:cookora/features/pantry/presentation/bloc/pantry_bloc.dart';
 import 'package:cookora/features/pantry/presentation/bloc/pantry_state.dart';
 import 'pantry_entry_card.dart';
@@ -25,16 +23,14 @@ class PantryGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Chỉ cần build dựa trên một Bloc duy nhất
     return BlocBuilder<PantryBloc, PantryState>(
-      buildWhen: (p, c) => p.displayEntriesStatus != c.displayEntriesStatus,
+      buildWhen: (p, c) => p.entriesStatus != c.entriesStatus,
       builder: (context, state) {
-        return AsyncSliverBuilder<List<PantryDisplayEntry>>(
-          asyncState: state.displayEntriesStatus,
-          successBuilder: (_, displayEntries) {
-            // Logic lọc dữ liệu giờ đơn giản hơn nhiều
+        return AsyncSliverBuilder<List<PantryEntry>>(
+          asyncState: state.entriesStatus,
+          successBuilder: (_, entries) {
             final filteredEntries = _filterEntries(
-              displayEntries,
+              entries,
               selectedCategory,
               searchQuery,
             );
@@ -56,16 +52,11 @@ class PantryGrid extends StatelessWidget {
                 ),
                 itemCount: filteredEntries.length,
                 itemBuilder: (context, index) {
-                  final displayEntry = filteredEntries[index];
+                  final entry = filteredEntries[index];
 
                   return PantryEntryCard(
-                    entry: displayEntry.entry,
-                    ingredientInfo: displayEntry.ingredientInfo,
-                    onTap: () => _showEntryDetails(
-                      context,
-                      displayEntry.entry,
-                      displayEntry.ingredientInfo,
-                    ),
+                    entry: entry,
+                    onTap: () => _showEntryDetails(context, entry),
                   );
                 },
               ),
@@ -76,16 +67,16 @@ class PantryGrid extends StatelessWidget {
     );
   }
 
-  List<PantryDisplayEntry> _filterEntries(
-    List<PantryDisplayEntry> displayEntries,
+  List<PantryEntry> _filterEntries(
+    List<PantryEntry> entries,
     String selectedCategory,
     String searchQuery,
   ) {
     // 1. Lọc theo category
     final categoryFiltered = selectedCategory == 'Tất cả'
-        ? displayEntries
-        : displayEntries
-              .where((d) => d.ingredientInfo.category == selectedCategory)
+        ? entries
+        : entries
+              .where((e) => e.ingredient.category == selectedCategory)
               .toList();
 
     // 2. Lọc theo search query
@@ -94,10 +85,10 @@ class PantryGrid extends StatelessWidget {
     }
 
     final lowerCaseQuery = searchQuery.toLowerCase();
-    return categoryFiltered.where((d) {
-      final info = d.ingredientInfo;
-      final nameMatch = info.name.toLowerCase().contains(lowerCaseQuery);
-      final keywordMatch = info.searchKeywords.any(
+    return categoryFiltered.where((e) {
+      final ingredient = e.ingredient;
+      final nameMatch = ingredient.name.toLowerCase().contains(lowerCaseQuery);
+      final keywordMatch = ingredient.searchKeywords.any(
         (kw) => kw.toLowerCase().contains(lowerCaseQuery),
       );
       return nameMatch || keywordMatch;
@@ -125,19 +116,12 @@ class PantryGrid extends StatelessWidget {
     );
   }
 
-  void _showEntryDetails(
-    BuildContext context,
-    PantryEntry entry,
-    Ingredient ingredientInfo,
-  ) {
+  void _showEntryDetails(BuildContext context, PantryEntry entry) {
     showDialog(
       context: context,
       builder: (_) => BlocProvider.value(
         value: context.read<PantryBloc>(),
-        child: PantryEntryDetailsDialog(
-          entry: entry,
-          ingredientInfo: ingredientInfo,
-        ),
+        child: PantryEntryDetailsDialog(entry: entry),
       ),
     );
   }

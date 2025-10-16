@@ -7,20 +7,22 @@ part of 'pantry_entry.dart';
 // **************************************************************************
 
 _PantryEntry _$PantryEntryFromJson(Map<String, dynamic> json) => _PantryEntry(
-  ingredientId: json['ingredientId'] as String? ?? '',
+  ingredient: Ingredient.fromJson(json['ingredient'] as Map<String, dynamic>),
   totalQuantity: (json['totalQuantity'] as num?)?.toDouble() ?? 0.0,
   unit: json['unit'] as String? ?? '',
-  earliestExpiryDate: _timestampToDateTime(
-    json['earliestExpiryDate'] as Timestamp?,
-  ),
-  lots: json['lots'] == null ? const [] : _lotsFromJson(json['lots'] as List?),
+  earliestExpiryDate: _timestampToDateTime(json['earliestExpiryDate']),
+  lots:
+      (json['lots'] as List<dynamic>?)
+          ?.map((e) => PantryLot.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
 );
 
 Map<String, dynamic> _$PantryEntryToJson(_PantryEntry instance) =>
     <String, dynamic>{
-      'ingredientId': instance.ingredientId,
+      'ingredient': instance.ingredient.toJson(),
       'totalQuantity': instance.totalQuantity,
       'unit': instance.unit,
       'earliestExpiryDate': _dateTimeToTimestamp(instance.earliestExpiryDate),
-      'lots': _lotsToJson(instance.lots),
+      'lots': instance.lots.map((e) => e.toJson()).toList(),
     };

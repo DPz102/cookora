@@ -25,13 +25,10 @@ import 'package:cookora/features/kitchen_log/domain/repository/kitchen_log_repos
 import 'package:cookora/features/kitchen_log/presentation/bloc/kitchen_log_bloc.dart';
 
 // pantry
-import 'package:cookora/features/pantry/data/datasources/ingredient_data_source.dart';
 import 'package:cookora/features/pantry/data/datasources/pantry_data_source.dart';
 import 'package:cookora/features/pantry/data/datasources/pantry_data_source_impl.dart';
 import 'package:cookora/features/pantry/data/repositories_impl/pantry_repository_impl.dart';
 import 'package:cookora/features/pantry/domain/repositories/pantry_repository.dart';
-import 'package:cookora/features/pantry/domain/repositories/ingredient_repository.dart';
-import 'package:cookora/features/pantry/domain/usecases/get_pantry_with_details_usecase.dart';
 import 'package:cookora/features/pantry/presentation/bloc/pantry_bloc.dart';
 
 // scan
@@ -80,9 +77,6 @@ Future<void> initializeDependencies() async {
   locator.registerLazySingleton<PantryDataSource>(
     () => PantryDataSourceImpl(locator()),
   );
-  locator.registerLazySingleton<IngredientDataSource>(
-    () => IngredientDataSourceImpl(locator()),
-  );
   locator.registerLazySingleton<SuggestionDataSource>(
     () => SuggestionDataSourceImpl(firestore: locator()),
   );
@@ -106,9 +100,6 @@ Future<void> initializeDependencies() async {
   locator.registerLazySingleton<PantryRepository>(
     () => PantryRepositoryImpl(locator()),
   );
-  locator.registerLazySingleton<IngredientRepository>(
-    () => IngredientRepositoryImpl(locator()),
-  );
   locator.registerLazySingleton<SuggestionRepository>(
     () => SuggestionRepositoryImpl(locator()),
   );
@@ -131,12 +122,6 @@ Future<void> initializeDependencies() async {
       suggestionRepository: locator(),
     ),
   );
-  locator.registerLazySingleton(
-    () => GetPantryWithDetailsUseCase(
-      pantryRepository: locator(),
-      ingredientRepository: locator(),
-    ),
-  );
 
   // --- Blocs ---
   locator.registerSingleton<AuthBloc>(AuthBloc(authRepository: locator()));
@@ -148,11 +133,7 @@ Future<void> initializeDependencies() async {
     ),
   );
   locator.registerLazySingleton<PantryBloc>(
-    () => PantryBloc(
-      pantryRepository: locator(),
-      userBloc: locator(),
-      getPantryWithDetailsUseCase: locator(),
-    ),
+    () => PantryBloc(pantryRepository: locator(), userBloc: locator()),
   );
   locator.registerLazySingleton<SuggestionBloc>(
     () => SuggestionBloc(getSuggestionUseCase: locator()),

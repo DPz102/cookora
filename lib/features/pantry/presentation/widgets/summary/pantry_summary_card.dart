@@ -2,12 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:cookora/features/pantry/domain/entities/pantry_display_entry.dart';
+import 'package:cookora/features/pantry/domain/entities/pantry_entry.dart';
 import 'package:cookora/features/pantry/presentation/widgets/summary/pantry_stats_row.dart';
 import 'package:cookora/features/pantry/presentation/widgets/summary/pantry_search_field.dart';
 
 class PantrySummaryCard extends StatelessWidget {
-  final List<PantryDisplayEntry> entries;
+  final List<PantryEntry> entries;
   final TextEditingController? searchController;
   final ValueChanged<String>? onSearchChanged;
 
@@ -22,9 +22,6 @@ class PantrySummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-
-    // Trích xuất List<PantryEntry> từ List<PantryDisplayEntry>
-    final pantryEntries = entries.map((display) => display.entry).toList();
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -58,11 +55,7 @@ class PantrySummaryCard extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Hàng chứa các thông số
-                  PantryStatsRow(
-                    entries: pantryEntries,
-                  ), // Truyền vào list đã trích xuất
-                  // Thanh tìm kiếm
+                  PantryStatsRow(entries: entries),
                   PantrySearchField(
                     controller: searchController,
                     onChanged: onSearchChanged,

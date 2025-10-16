@@ -5,17 +5,24 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'pantry_lot.freezed.dart';
 part 'pantry_lot.g.dart';
 
-DateTime? _timestampToDateTime(Timestamp? timestamp) => timestamp?.toDate();
-Timestamp? _dateTimeToTimestamp(DateTime? dateTime) =>
-    dateTime == null ? null : Timestamp.fromDate(dateTime);
+DateTime? _timestampToDateTime(dynamic timestamp) {
+  if (timestamp == null) return null;
+  if (timestamp is Timestamp) return timestamp.toDate();
+  if (timestamp is DateTime) return timestamp;
+  if (timestamp is int) return DateTime.fromMillisecondsSinceEpoch(timestamp);
+  return null;
+}
+
+dynamic _dateTimeToTimestamp(DateTime? dateTime) {
+  if (dateTime == null) return null;
+  return Timestamp.fromDate(dateTime);
+}
 
 @freezed
 abstract class PantryLot with _$PantryLot {
   const factory PantryLot({
     @Default('') String id,
-    required String ingredientId,
-    @Default(0.0) double initialQuantity,
-    @Default(0.0) double currentQuantity,
+    @Default(0.0) double quantity,
     @Default('') String unit,
     @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp)
     DateTime? purchaseDate,

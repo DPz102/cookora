@@ -60,4 +60,67 @@ class Validators {
 
     return null;
   }
+
+  // Pantry-specific validators
+
+  // Kiểm tra số lượng nguyên liệu
+  static String? validateQuantity(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Số lượng không được để trống.';
+    }
+
+    final quantity = double.tryParse(value.trim());
+    if (quantity == null) {
+      return 'Số lượng phải là số.';
+    }
+
+    if (quantity <= 0) {
+      return 'Số lượng phải lớn hơn 0.';
+    }
+
+    if (quantity > 9999) {
+      return 'Số lượng quá lớn (tối đa 9999).';
+    }
+
+    return null;
+  }
+
+  // Kiểm tra ngày hết hạn
+  static String? validateExpiryDate(DateTime? date) {
+    if (date == null) {
+      return 'Ngày hết hạn không được để trống.';
+    }
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final expiryDay = DateTime(date.year, date.month, date.day);
+
+    if (expiryDay.isBefore(today)) {
+      return 'Ngày hết hạn không thể là ngày trong quá khứ.';
+    }
+
+    return null;
+  }
+
+  // Kiểm tra vị trí lưu trữ
+  static String? validateStorageLocation(String? location) {
+    final requiredError = validateRequired(location, 'Vị trí lưu trữ');
+    if (requiredError != null) {
+      return requiredError;
+    }
+
+    if (location!.length > 50) {
+      return 'Tên vị trí quá dài (tối đa 50 ký tự).';
+    }
+
+    return null;
+  }
+
+  // Kiểm tra ghi chú (optional field)
+  static String? validateNote(String? note) {
+    if (note != null && note.length > 200) {
+      return 'Ghi chú quá dài (tối đa 200 ký tự).';
+    }
+    return null;
+  }
 }

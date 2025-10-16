@@ -1,10 +1,12 @@
 // lib/features/pantry/data/datasources/pantry_data_source_impl.dart
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cookora/features/pantry/domain/entities/pantry_entry.dart';
 import 'package:uuid/uuid.dart';
+
+import 'package:cookora/features/pantry/domain/entities/pantry_entry.dart';
 import 'package:cookora/features/pantry/data/datasources/pantry_data_source.dart';
 import 'package:cookora/features/pantry/domain/entities/pantry_lot.dart';
+import 'package:cookora/features/pantry/domain/entities/ingredient.dart';
 
 class PantryDataSourceImpl implements PantryDataSource {
   final FirebaseFirestore _firestore;
@@ -12,81 +14,158 @@ class PantryDataSourceImpl implements PantryDataSource {
 
   PantryDataSourceImpl(this._firestore);
 
-  CollectionReference<Map<String, dynamic>> _getUserPantryCollection(
-    String uid,
-  ) {
+  String _generateLotId() => _uuid.v4();
+
+  double _calculateTotalQuantity(List<PantryLot> lots) {
+    if (lots.isEmpty) return 0.0;
+    return lots.fold(0.0, (total, lot) => total + lot.quantity);
+  }
+
+  DateTime? _calculateEarliestExpiry(List<PantryLot> lots) {
+    final expiryDates = lots
+        .where((lot) => lot.expiryDate != null)
+        .map((lot) => lot.expiryDate!)
+        .toList();
+
+    if (expiryDates.isEmpty) return null;
+
+    expiryDates.sort();
+    return expiryDates.first;
+  }
+
+  // >> THAY ĐỔI LỚN: Helper để lấy reference đến collection pantry của user <<
+  CollectionReference _pantryCollectionRef(String uid) {
     return _firestore.collection('users').doc(uid).collection('pantry');
   }
 
   @override
-  Stream<QuerySnapshot<Map<String, dynamic>>> getPantryStream(String uid) {
-    return _getUserPantryCollection(
-      uid,
-    ).orderBy('earliestExpiryDate').snapshots();
+  Stream<List<PantryEntry>> getPantryEntries(String uid) {
+    return _pantryCollectionRef(uid).snapshots().map((snapshot) {
+      if (snapshot.docs.isEmpty) return [];
+      return snapshot.docs
+          .map(
+            (doc) => PantryEntry.fromJson(doc.data() as Map<String, dynamic>),
+          )
+          .toList();
+    });
   }
 
   @override
-  Future<void> addLot({required String uid, required PantryLot newLot}) {
-    final docRef = _getUserPantryCollection(uid).doc(newLot.ingredientId);
+  Future<void> addLot({
+    required String uid,
+    required Ingredient ingredient,
+    required PantryLot lot,
+  }) async {
+    // >> SỬA ĐƯỜNG DẪN <<
+    final entryRef = _pantryCollectionRef(uid).doc(ingredient.ingredientId);
+    final entryDoc = await entryRef.get();
+    final newLot = lot.id.isEmpty ? lot.copyWith(id: _generateLotId()) : lot;
 
-    return _firestore.runTransaction((transaction) async {
-      final docSnapshot = await transaction.get(docRef);
-      final lotWithId = newLot.copyWith(id: _uuid.v4());
+    if (entryDoc.exists) {
+      final currentEntry = PantryEntry.fromJson(
+        entryDoc.data() as Map<String, dynamic>,
+      );
+      final updatedLots = [...currentEntry.lots, newLot];
+      final updatedEntry = currentEntry.copyWith(
+        lots: updatedLots,
+        totalQuantity: _calculateTotalQuantity(updatedLots),
+        earliestExpiryDate: _calculateEarliestExpiry(updatedLots),
+      );
+      await entryRef.set(updatedEntry.toJson());
+    } else {
+      final newEntry = PantryEntry(
+        ingredient: ingredient,
+        lots: [newLot],
+        totalQuantity: newLot.quantity,
+        unit: newLot.unit,
+        earliestExpiryDate: newLot.expiryDate,
+      );
+      await entryRef.set(newEntry.toJson());
+    }
+  }
 
-      if (!docSnapshot.exists) {
-        final newPantryEntry = PantryEntry(
-          ingredientId: newLot.ingredientId,
-          totalQuantity: newLot.currentQuantity,
-          unit: newLot.unit,
-          earliestExpiryDate: newLot.expiryDate,
-          lots: [lotWithId],
+  @override
+  Future<void> addMultipleLots({
+    required String uid,
+    required List<({Ingredient ingredient, PantryLot lot})> items,
+  }) async {
+    final batch = _firestore.batch();
+    // >> SỬA ĐƯỜNG DẪN <<
+    final entriesRef = _pantryCollectionRef(uid);
+
+    final Map<String, List<({Ingredient ingredient, PantryLot lot})>>
+    itemsByIngredient = {};
+    for (final item in items) {
+      (itemsByIngredient[item.ingredient.ingredientId] ??= []).add(item);
+    }
+
+    for (final entry in itemsByIngredient.entries) {
+      final ingredientId = entry.key;
+      final ingredientItems = entry.value;
+      final ingredient = ingredientItems.first.ingredient;
+      final newLots = ingredientItems
+          .map(
+            (item) => item.lot.id.isEmpty
+                ? item.lot.copyWith(id: _generateLotId())
+                : item.lot,
+          )
+          .toList();
+
+      final entryRef = entriesRef.doc(ingredientId);
+      final entryDoc = await entryRef.get(); // Phải get trong batch loop
+
+      if (entryDoc.exists) {
+        final currentEntry = PantryEntry.fromJson(
+          entryDoc.data() as Map<String, dynamic>,
         );
-        transaction.set(docRef, newPantryEntry.toJson());
-      } else {
-        final existingEntry = PantryEntry.fromJson(docSnapshot.data()!);
-        final updatedLots = [...existingEntry.lots, lotWithId];
-        final newTotalQuantity =
-            existingEntry.totalQuantity + newLot.currentQuantity;
-        final newEarliestExpiryDate = _calculateEarliestExpiry(updatedLots);
+        final updatedLots = [...currentEntry.lots, ...newLots];
 
-        transaction.update(docRef, {
-          'lots': updatedLots.map((l) => l.toJson()).toList(),
-          'totalQuantity': newTotalQuantity,
-          'earliestExpiryDate': newEarliestExpiryDate,
-        });
+        final updatedEntry = currentEntry.copyWith(
+          lots: updatedLots,
+          totalQuantity: _calculateTotalQuantity(updatedLots),
+          earliestExpiryDate: _calculateEarliestExpiry(updatedLots),
+        );
+        batch.set(entryRef, updatedEntry.toJson());
+      } else {
+        final newEntry = PantryEntry(
+          ingredient: ingredient,
+          lots: newLots,
+          totalQuantity: _calculateTotalQuantity(newLots),
+          unit: newLots.first.unit,
+          earliestExpiryDate: _calculateEarliestExpiry(newLots),
+        );
+        batch.set(entryRef, newEntry.toJson());
       }
-    });
+    }
+
+    await batch.commit();
   }
 
   @override
-  Future<void> updateLot({required String uid, required PantryLot updatedLot}) {
-    final docRef = _getUserPantryCollection(uid).doc(updatedLot.ingredientId);
+  Future<void> updateLot({
+    required String uid,
+    required String ingredientId,
+    required PantryLot lot,
+  }) async {
+    // >> SỬA ĐƯỜNG DẪN <<
+    final entryRef = _pantryCollectionRef(uid).doc(ingredientId);
+    final entryDoc = await entryRef.get();
+    if (!entryDoc.exists) {
+      throw Exception('Không tìm thấy nguyên liệu để cập nhật.');
+    }
 
-    return _firestore.runTransaction((transaction) async {
-      final docSnapshot = await transaction.get(docRef);
-      if (!docSnapshot.exists) throw Exception("Document không tồn tại!");
-
-      final existingEntry = PantryEntry.fromJson(docSnapshot.data()!);
-      final lotIndex = existingEntry.lots.indexWhere(
-        (l) => l.id == updatedLot.id,
-      );
-      if (lotIndex == -1) throw Exception("Lô hàng không tồn tại!");
-
-      final updatedLots = List<PantryLot>.from(existingEntry.lots);
-      updatedLots[lotIndex] = updatedLot;
-
-      final newTotalQuantity = updatedLots.fold<double>(
-        0,
-        (total, lot) => total + lot.currentQuantity,
-      );
-      final newEarliestExpiryDate = _calculateEarliestExpiry(updatedLots);
-
-      transaction.update(docRef, {
-        'lots': updatedLots.map((l) => l.toJson()).toList(),
-        'totalQuantity': newTotalQuantity,
-        'earliestExpiryDate': newEarliestExpiryDate,
-      });
-    });
+    final currentEntry = PantryEntry.fromJson(
+      entryDoc.data() as Map<String, dynamic>,
+    );
+    final updatedLots = currentEntry.lots
+        .map((l) => l.id == lot.id ? lot : l)
+        .toList();
+    final updatedEntry = currentEntry.copyWith(
+      lots: updatedLots,
+      totalQuantity: _calculateTotalQuantity(updatedLots),
+      earliestExpiryDate: _calculateEarliestExpiry(updatedLots),
+    );
+    await entryRef.set(updatedEntry.toJson());
   }
 
   @override
@@ -94,54 +173,37 @@ class PantryDataSourceImpl implements PantryDataSource {
     required String uid,
     required String ingredientId,
     required String lotId,
-  }) {
-    final docRef = _getUserPantryCollection(uid).doc(ingredientId);
+  }) async {
+    // >> SỬA ĐƯỜNG DẪN <<
+    final entryRef = _pantryCollectionRef(uid).doc(ingredientId);
+    final entryDoc = await entryRef.get();
+    if (!entryDoc.exists) return;
 
-    return _firestore.runTransaction((transaction) async {
-      final docSnapshot = await transaction.get(docRef);
-      if (!docSnapshot.exists) return;
+    final currentEntry = PantryEntry.fromJson(
+      entryDoc.data() as Map<String, dynamic>,
+    );
+    final updatedLots = currentEntry.lots
+        .where((lot) => lot.id != lotId)
+        .toList();
 
-      final existingEntry = PantryEntry.fromJson(docSnapshot.data()!);
-      final updatedLots = existingEntry.lots
-          .where((l) => l.id != lotId)
-          .toList();
-
-      if (updatedLots.isEmpty) {
-        transaction.delete(docRef);
-      } else {
-        final newTotalQuantity = updatedLots.fold<double>(
-          0,
-          (total, lot) => total + lot.currentQuantity,
-        );
-        final newEarliestExpiryDate = _calculateEarliestExpiry(updatedLots);
-
-        transaction.update(docRef, {
-          'lots': updatedLots.map((l) => l.toJson()).toList(),
-          'totalQuantity': newTotalQuantity,
-          'earliestExpiryDate': newEarliestExpiryDate,
-        });
-      }
-    });
+    if (updatedLots.isEmpty) {
+      await entryRef.delete();
+    } else {
+      final updatedEntry = currentEntry.copyWith(
+        lots: updatedLots,
+        totalQuantity: _calculateTotalQuantity(updatedLots),
+        earliestExpiryDate: _calculateEarliestExpiry(updatedLots),
+      );
+      await entryRef.set(updatedEntry.toJson());
+    }
   }
 
   @override
-  Future<void> deletePantryEntry({
+  Future<void> deleteEntry({
     required String uid,
     required String ingredientId,
-  }) {
-    // Đơn giản là xóa toàn bộ document
-    return _getUserPantryCollection(uid).doc(ingredientId).delete();
-  }
-
-  DateTime? _calculateEarliestExpiry(List<PantryLot> lots) {
-    DateTime? earliest;
-    for (final lot in lots) {
-      if (lot.expiryDate != null) {
-        if (earliest == null || lot.expiryDate!.isBefore(earliest)) {
-          earliest = lot.expiryDate;
-        }
-      }
-    }
-    return earliest;
+  }) async {
+    // >> SỬA ĐƯỜNG DẪN <<
+    await _pantryCollectionRef(uid).doc(ingredientId).delete();
   }
 }
