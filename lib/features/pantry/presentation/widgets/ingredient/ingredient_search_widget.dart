@@ -1,12 +1,14 @@
 // lib/features/pantry/presentation/widgets/ingredient/ingredient_search_widget.dart
 import 'dart:async';
 import 'dart:developer';
-import 'package:algoliasearch/algoliasearch_lite.dart';
-import 'package:cookora/core/config/app_config.dart';
-import 'package:cookora/features/pantry/domain/entities/ingredient.dart';
-import 'package:cookora/core/widgets/empty_state_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:algoliasearch/algoliasearch_lite.dart';
+
+import 'package:cookora/core/config/app_config.dart';
+import 'package:cookora/core/widgets/empty_state_widget.dart';
+
+import 'package:cookora/features/pantry/domain/entities/ingredient.dart';
 
 class IngredientSearchWidget extends StatefulWidget {
   final ValueChanged<Ingredient> onIngredientSelected;

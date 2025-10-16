@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:cookora/core/utils/async_state.dart';
 import 'package:cookora/core/utils/snackbar_helper.dart';
-import 'package:cookora/features/pantry/domain/entities/pantry_entry.dart';
+import 'package:cookora/features/pantry/domain/entities/pantry_display_entry.dart';
 import 'package:cookora/features/pantry/presentation/bloc/pantry_bloc.dart';
 import 'package:cookora/features/pantry/presentation/bloc/pantry_event.dart';
 import 'package:cookora/features/pantry/presentation/bloc/pantry_state.dart';
@@ -68,54 +68,90 @@ class _PantryView extends StatefulWidget {
 class _PantryViewState extends State<_PantryView> {
   // Biến state để lưu category đang được chọn
   String _selectedCategory = 'Tất cả';
+  // Biến state mới để lưu từ khóa tìm kiếm
+  String _searchQuery = '';
+  final _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return SafeArea(
-      child: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            title: Text(
-              'Kho nguyên liệu',
-              style: theme.textTheme.headlineSmall?.copyWith(
-                color: theme.colorScheme.primary,
+      // Sử dụng GestureDetector để ẩn bàn phím khi người dùng bấm ra ngoài
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              title: Text(
+                'Kho nguyên liệu',
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+              centerTitle: false,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+            ),
+            // Bọc PantrySummaryCard bằng BlocBuilder để nó nhận được dữ liệu entries
+            SliverToBoxAdapter(
+              child: BlocBuilder<PantryBloc, PantryState>(
+                buildWhen: (p, c) =>
+                    p.displayEntriesStatus != c.displayEntriesStatus,
+                builder: (context, state) {
+                  if (state.displayEntriesStatus
+                      is AsyncSuccess<List<PantryDisplayEntry>>) {
+                    final displayEntries =
+                        (state.displayEntriesStatus
+                                as AsyncSuccess<List<PantryDisplayEntry>>)
+                            .data;
+                    return PantrySummaryCard(
+                      entries: displayEntries,
+                      searchController: _searchController,
+                      onSearchChanged: (query) {
+                        setState(() {
+                          _searchQuery = query;
+                        });
+                      },
+                    );
+                  }
+                  // Hiển thị card với giá trị 0 khi đang tải hoặc lỗi
+                  return PantrySummaryCard(
+                    entries: const [],
+                    searchController: _searchController,
+                    onSearchChanged: (query) {
+                      setState(() {
+                        _searchQuery = query;
+                      });
+                    },
+                  );
+                },
               ),
             ),
-            centerTitle: false,
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-          ),
-          // Bọc PantrySummaryCard bằng BlocBuilder để nó nhận được dữ liệu entries
-          SliverToBoxAdapter(
-            child: BlocBuilder<PantryBloc, PantryState>(
-              buildWhen: (p, c) => p.entriesStatus != c.entriesStatus,
-              builder: (context, state) {
-                if (state.entriesStatus is AsyncSuccess<List<PantryEntry>>) {
-                  final entries =
-                      (state.entriesStatus as AsyncSuccess<List<PantryEntry>>)
-                          .data;
-                  return PantrySummaryCard(entries: entries);
-                }
-                // Hiển thị card với giá trị 0 khi đang tải hoặc lỗi
-                return const PantrySummaryCard(entries: []);
-              },
+            SliverPadding(padding: EdgeInsets.only(top: 15.h)),
+            // Truyền category đang chọn và hàm callback để cập nhật state
+            SliverToBoxAdapter(
+              child: PantryFilterBar(
+                selectedCategory: _selectedCategory,
+                onSelected: (category) {
+                  setState(() {
+                    _selectedCategory = category;
+                  });
+                },
+              ),
             ),
-          ),
-          SliverPadding(padding: EdgeInsets.only(top: 15.h)),
-          // Truyền category đang chọn và hàm callback để cập nhật state
-          SliverToBoxAdapter(
-            child: PantryFilterBar(
+            // Truyền thêm cả `_searchQuery` vào PantryGrid
+            PantryGrid(
               selectedCategory: _selectedCategory,
-              onSelected: (category) {
-                setState(() {
-                  _selectedCategory = category;
-                });
-              },
+              searchQuery: _searchQuery,
             ),
-          ),
-          PantryGrid(selectedCategory: _selectedCategory),
-        ],
+          ],
+        ),
       ),
     );
   }

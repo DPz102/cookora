@@ -3,7 +3,8 @@ import 'package:cookora/features/pantry/data/datasources/ingredient_data_source.
 import 'package:cookora/features/pantry/domain/entities/ingredient.dart';
 
 abstract class IngredientRepository {
-  Future<List<Ingredient>> getAllIngredients();
+  // Thay thế hàm cũ bằng hàm mới này
+  Future<List<Ingredient>> getIngredientsByIds(List<String> ids);
 }
 
 class IngredientRepositoryImpl implements IngredientRepository {
@@ -12,9 +13,13 @@ class IngredientRepositoryImpl implements IngredientRepository {
   IngredientRepositoryImpl(this._dataSource);
 
   @override
-  Future<List<Ingredient>> getAllIngredients() async {
+  Future<List<Ingredient>> getIngredientsByIds(List<String> ids) async {
+    // Tránh gọi query rỗng tới Firestore
+    if (ids.isEmpty) {
+      return [];
+    }
     try {
-      final snapshot = await _dataSource.getAllIngredients();
+      final snapshot = await _dataSource.getIngredientsByIds(ids);
       if (snapshot.docs.isEmpty) {
         return [];
       }

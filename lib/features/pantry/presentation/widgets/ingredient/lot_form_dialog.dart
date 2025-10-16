@@ -1,11 +1,13 @@
 // lib/features/pantry/presentation/widgets/ingredient/lot_form_dialog.dart
-import 'package:cookora/features/pantry/domain/entities/ingredient.dart';
-import 'package:cookora/features/pantry/domain/entities/pantry_lot.dart';
-import 'package:cookora/core/widgets/custom_text_field.dart';
-import 'package:cookora/core/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+
+import 'package:cookora/core/widgets/custom_text_field.dart';
+import 'package:cookora/core/widgets/custom_elevated_button.dart';
+
+import 'package:cookora/features/pantry/domain/entities/ingredient.dart';
+import 'package:cookora/features/pantry/domain/entities/pantry_lot.dart';
 
 class LotFormDialog extends StatefulWidget {
   // Dữ liệu từ Master Data để lấy các thông tin ràng buộc

@@ -2,7 +2,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 abstract class IngredientDataSource {
-  Future<QuerySnapshot<Map<String, dynamic>>> getAllIngredients();
+  // Thay thế hàm cũ
+  Future<QuerySnapshot<Map<String, dynamic>>> getIngredientsByIds(
+    List<String> ids,
+  );
 }
 
 class IngredientDataSourceImpl implements IngredientDataSource {
@@ -11,7 +14,13 @@ class IngredientDataSourceImpl implements IngredientDataSource {
   IngredientDataSourceImpl(this._firestore);
 
   @override
-  Future<QuerySnapshot<Map<String, dynamic>>> getAllIngredients() {
-    return _firestore.collection('ingredients').get();
+  Future<QuerySnapshot<Map<String, dynamic>>> getIngredientsByIds(
+    List<String> ids,
+  ) {
+    // Sử dụng query "whereIn" để lấy nhiều document bằng ID
+    return _firestore
+        .collection('ingredients')
+        .where(FieldPath.documentId, whereIn: ids)
+        .get();
   }
 }

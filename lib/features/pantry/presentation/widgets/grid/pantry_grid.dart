@@ -3,156 +3,72 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:cookora/core/utils/async_state.dart';
 import 'package:cookora/core/widgets/async_sliver_builder.dart';
 import 'package:cookora/core/widgets/empty_state_widget.dart';
 import 'package:cookora/features/pantry/domain/entities/ingredient.dart';
 import 'package:cookora/features/pantry/domain/entities/pantry_entry.dart';
+import 'package:cookora/features/pantry/domain/entities/pantry_display_entry.dart';
 import 'package:cookora/features/pantry/presentation/bloc/pantry_bloc.dart';
 import 'package:cookora/features/pantry/presentation/bloc/pantry_state.dart';
-import 'package:cookora/features/pantry/presentation/bloc/ingredient_management/ingredient_bloc.dart';
-import 'package:cookora/features/pantry/presentation/bloc/ingredient_management/ingredient_state.dart'
-    as mgmt;
 import 'pantry_entry_card.dart';
 import '../entry/pantry_entry_details_dialog.dart';
 
 class PantryGrid extends StatelessWidget {
   final String selectedCategory;
+  final String searchQuery;
 
-  const PantryGrid({super.key, required this.selectedCategory});
+  const PantryGrid({
+    super.key,
+    required this.selectedCategory,
+    required this.searchQuery,
+  });
 
   @override
   Widget build(BuildContext context) {
+    // Chỉ cần build dựa trên một Bloc duy nhất
     return BlocBuilder<PantryBloc, PantryState>(
-      builder: (context, pantryState) {
-        return BlocBuilder<IngredientBloc, mgmt.IngredientState>(
-          builder: (context, ingredientState) {
-            final combinedState = pantryState.entriesStatus
-                .when<
-                  AsyncState<
-                    ({
-                      List<PantryEntry> entries,
-                      Map<String, Ingredient> ingredientsMap,
-                    })
-                  >
-                >(
-                  initial: () =>
-                      const AsyncInitial<
-                        ({
-                          List<PantryEntry> entries,
-                          Map<String, Ingredient> ingredientsMap,
-                        })
-                      >(),
-                  loading: () =>
-                      const AsyncLoading<
-                        ({
-                          List<PantryEntry> entries,
-                          Map<String, Ingredient> ingredientsMap,
-                        })
-                      >(),
-                  failure: (error) =>
-                      AsyncFailure<
-                        ({
-                          List<PantryEntry> entries,
-                          Map<String, Ingredient> ingredientsMap,
-                        })
-                      >(error),
-                  success: (entries) =>
-                      ingredientState.ingredientsMap.when<
-                        AsyncState<
-                          ({
-                            List<PantryEntry> entries,
-                            Map<String, Ingredient> ingredientsMap,
-                          })
-                        >
-                      >(
-                        initial: () =>
-                            const AsyncLoading<
-                              ({
-                                List<PantryEntry> entries,
-                                Map<String, Ingredient> ingredientsMap,
-                              })
-                            >(),
-                        loading: () =>
-                            const AsyncLoading<
-                              ({
-                                List<PantryEntry> entries,
-                                Map<String, Ingredient> ingredientsMap,
-                              })
-                            >(),
-                        failure: (error) =>
-                            AsyncFailure<
-                              ({
-                                List<PantryEntry> entries,
-                                Map<String, Ingredient> ingredientsMap,
-                              })
-                            >(error),
-                        success: (ingredientsMap) =>
-                            AsyncSuccess<
-                              ({
-                                List<PantryEntry> entries,
-                                Map<String, Ingredient> ingredientsMap,
-                              })
-                            >((
-                              entries: entries,
-                              ingredientsMap: ingredientsMap,
-                            )),
-                      ),
-                );
+      buildWhen: (p, c) => p.displayEntriesStatus != c.displayEntriesStatus,
+      builder: (context, state) {
+        return AsyncSliverBuilder<List<PantryDisplayEntry>>(
+          asyncState: state.displayEntriesStatus,
+          successBuilder: (_, displayEntries) {
+            // Logic lọc dữ liệu giờ đơn giản hơn nhiều
+            final filteredEntries = _filterEntries(
+              displayEntries,
+              selectedCategory,
+              searchQuery,
+            );
 
-            return AsyncSliverBuilder<
-              ({
-                List<PantryEntry> entries,
-                Map<String, Ingredient> ingredientsMap,
-              })
-            >(
-              asyncState: combinedState,
-              successBuilder: (_, data) {
-                final entries = data.entries;
-                final ingredientsMap = data.ingredientsMap;
+            if (filteredEntries.isEmpty) {
+              return SliverFillRemaining(
+                child: Center(child: _buildEmptyState(context)),
+              );
+            }
 
-                // Logic lọc dữ liệu
-                final filteredEntries = _filterEntries(
-                  entries,
-                  ingredientsMap,
-                  selectedCategory,
-                );
+            return SliverPadding(
+              padding: EdgeInsets.fromLTRB(20.w, 15.h, 20.w, 130.h),
+              sliver: SliverGrid.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 4.w,
+                  mainAxisSpacing: 17.h,
+                  childAspectRatio: 0.8,
+                ),
+                itemCount: filteredEntries.length,
+                itemBuilder: (context, index) {
+                  final displayEntry = filteredEntries[index];
 
-                if (filteredEntries.isEmpty) {
-                  return SliverFillRemaining(
-                    child: Center(child: _buildEmptyState(context)),
-                  );
-                }
-
-                return SliverPadding(
-                  padding: EdgeInsets.fromLTRB(20.w, 15.h, 20.w, 130.h),
-                  sliver: SliverGrid.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 4.w,
-                      mainAxisSpacing: 17.h,
-                      childAspectRatio: 0.8,
+                  return PantryEntryCard(
+                    entry: displayEntry.entry,
+                    ingredientInfo: displayEntry.ingredientInfo,
+                    onTap: () => _showEntryDetails(
+                      context,
+                      displayEntry.entry,
+                      displayEntry.ingredientInfo,
                     ),
-                    itemCount: filteredEntries.length,
-                    itemBuilder: (context, index) {
-                      final entry = filteredEntries[index];
-                      final ingredientInfo =
-                          ingredientsMap[entry.ingredientId] ??
-                          Ingredient(
-                            ingredientId: entry.ingredientId,
-                            name: 'Không rõ',
-                          );
-
-                      return PantryEntryCard(
-                        entry: entry,
-                        ingredientInfo: ingredientInfo,
-                        onTap: () =>
-                            _showEntryDetails(context, entry, ingredientInfo),
-                      );
-                    },
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             );
           },
         );
@@ -160,20 +76,44 @@ class PantryGrid extends StatelessWidget {
     );
   }
 
-  List<PantryEntry> _filterEntries(
-    List<PantryEntry> entries,
-    Map<String, Ingredient> ingredientsMap,
+  List<PantryDisplayEntry> _filterEntries(
+    List<PantryDisplayEntry> displayEntries,
     String selectedCategory,
+    String searchQuery,
   ) {
-    if (selectedCategory == 'Tất cả') return entries;
+    // 1. Lọc theo category
+    final categoryFiltered = selectedCategory == 'Tất cả'
+        ? displayEntries
+        : displayEntries
+              .where((d) => d.ingredientInfo.category == selectedCategory)
+              .toList();
 
-    return entries.where((entry) {
-      final ingredientInfo = ingredientsMap[entry.ingredientId];
-      return ingredientInfo?.category == selectedCategory;
+    // 2. Lọc theo search query
+    if (searchQuery.trim().isEmpty) {
+      return categoryFiltered;
+    }
+
+    final lowerCaseQuery = searchQuery.toLowerCase();
+    return categoryFiltered.where((d) {
+      final info = d.ingredientInfo;
+      final nameMatch = info.name.toLowerCase().contains(lowerCaseQuery);
+      final keywordMatch = info.searchKeywords.any(
+        (kw) => kw.toLowerCase().contains(lowerCaseQuery),
+      );
+      return nameMatch || keywordMatch;
     }).toList();
   }
 
   Widget _buildEmptyState(BuildContext context) {
+    // ... (logic không thay đổi)
+    if (searchQuery.isNotEmpty) {
+      return EmptyStateWidget(
+        icon: Icons.search_off_rounded,
+        title: 'Không tìm thấy',
+        subtitle:
+            'Không có nguyên liệu nào khớp với "$searchQuery" trong danh mục này.',
+      );
+    }
     return EmptyStateWidget(
       icon: Icons.kitchen_outlined,
       title: selectedCategory == 'Tất cả'

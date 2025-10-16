@@ -1,6 +1,6 @@
 // lib/features/pantry/presentation/bloc/pantry_event.dart
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:cookora/features/pantry/domain/entities/pantry_entry.dart';
+import 'package:cookora/features/pantry/domain/entities/pantry_display_entry.dart';
 import 'package:cookora/features/pantry/domain/entities/pantry_lot.dart';
 
 part 'pantry_event.freezed.dart';
@@ -28,7 +28,7 @@ abstract class PantryEvent with _$PantryEvent {
       DeletePantryEntry;
 
   // Event nội bộ để đẩy dữ liệu mới từ stream vào state.
-  const factory PantryEvent.pantryUpdated(List<PantryEntry> entries) =
+  const factory PantryEvent.pantryUpdated(List<PantryDisplayEntry> entries) =
       PantryUpdated;
 
   // Event để reset trạng thái mutation (loading/error/success).

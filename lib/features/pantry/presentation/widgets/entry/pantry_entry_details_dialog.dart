@@ -1,17 +1,20 @@
 // lib/features/pantry/presentation/widgets/entry/pantry_entry_details_dialog.dart
 import 'package:collection/collection.dart';
-import 'package:cookora/features/pantry/domain/entities/ingredient.dart';
-import 'package:cookora/features/pantry/domain/entities/pantry_entry.dart';
-import 'package:cookora/features/pantry/domain/entities/pantry_lot.dart';
-import 'package:cookora/features/pantry/presentation/bloc/pantry_bloc.dart';
-import 'package:cookora/features/pantry/presentation/bloc/pantry_event.dart';
-import 'package:cookora/features/pantry/presentation/bloc/pantry_state.dart';
-import '../ingredient/lot_form_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+
 import 'package:cookora/core/utils/async_state.dart';
+
+import 'package:cookora/features/pantry/domain/entities/ingredient.dart';
+import 'package:cookora/features/pantry/domain/entities/pantry_entry.dart';
+import 'package:cookora/features/pantry/domain/entities/pantry_lot.dart';
+import 'package:cookora/features/pantry/domain/entities/pantry_display_entry.dart';
+import 'package:cookora/features/pantry/presentation/bloc/pantry_bloc.dart';
+import 'package:cookora/features/pantry/presentation/bloc/pantry_event.dart';
+import 'package:cookora/features/pantry/presentation/bloc/pantry_state.dart';
+import 'package:cookora/features/pantry/presentation/widgets/ingredient/lot_form_dialog.dart';
 
 class PantryEntryDetailsDialog extends StatelessWidget {
   final PantryEntry entry; // Giữ lại entry ban đầu để lấy ID
@@ -77,13 +80,14 @@ class PantryEntryDetailsDialog extends StatelessWidget {
     return BlocBuilder<PantryBloc, PantryState>(
       builder: (builderContext, state) {
         PantryEntry? currentEntry;
-        final status = state.entriesStatus;
+        final status = state.displayEntriesStatus;
 
-        // Tìm kiếm entry mới nhất trong state của BLoC
-        if (status is AsyncSuccess<List<PantryEntry>>) {
-          currentEntry = status.data.firstWhereOrNull(
-            (e) => e.ingredientId == entry.ingredientId,
-          );
+        if (status is AsyncSuccess<List<PantryDisplayEntry>>) {
+          currentEntry = status.data
+              .firstWhereOrNull(
+                (e) => e.entry.ingredientId == entry.ingredientId,
+              )
+              ?.entry;
         }
 
         // Nếu không tìm thấy entry (ví dụ đã bị xóa), tự động đóng dialog
@@ -141,6 +145,7 @@ class PantryEntryDetailsDialog extends StatelessWidget {
     );
   }
 
+  // ... (Phần còn lại của file không đổi)
   Widget _buildListHeader(ThemeData theme) {
     final textStyle = theme.textTheme.bodySmall?.copyWith(
       fontWeight: FontWeight.bold,

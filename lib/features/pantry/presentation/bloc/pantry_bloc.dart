@@ -7,7 +7,9 @@ import 'package:cookora/core/utils/exception_handler.dart';
 
 import 'package:cookora/features/user/presentation/bloc/user_bloc.dart';
 import 'package:cookora/features/user/domain/entities/user_entity.dart';
-import 'package:cookora/features/pantry/domain/entities/pantry_entry.dart';
+
+import 'package:cookora/features/pantry/domain/entities/pantry_display_entry.dart';
+import 'package:cookora/features/pantry/domain/usecases/get_pantry_with_details_usecase.dart';
 import 'package:cookora/features/pantry/domain/repositories/pantry_repository.dart';
 import 'package:cookora/features/pantry/presentation/bloc/pantry_event.dart';
 import 'package:cookora/features/pantry/presentation/bloc/pantry_state.dart';
@@ -15,17 +17,22 @@ import 'package:cookora/features/pantry/presentation/bloc/pantry_state.dart';
 class PantryBloc extends Bloc<PantryEvent, PantryState> {
   final PantryRepository _pantryRepository;
   final UserBloc _userBloc;
+  // Thêm UseCase
+  final GetPantryWithDetailsUseCase _getPantryWithDetailsUseCase;
 
-  StreamSubscription<List<PantryEntry>>? _pantrySubscription;
+  StreamSubscription<List<PantryDisplayEntry>>? _pantrySubscription;
 
   PantryBloc({
     required PantryRepository pantryRepository,
     required UserBloc userBloc,
+    // Thêm UseCase vào constructor
+    required GetPantryWithDetailsUseCase getPantryWithDetailsUseCase,
   }) : _pantryRepository = pantryRepository,
        _userBloc = userBloc,
+       _getPantryWithDetailsUseCase = getPantryWithDetailsUseCase,
        super(const PantryState()) {
     on<SubscribeToPantry>(_onSubscribeToPantry);
-    on<PantryUpdated>(_onPantryUpdated);
+    on<PantryUpdated>(_onPantryUpdated); // Đổi tên event này cho rõ nghĩa
     on<AddLot>(_onAddLot);
     on<UpdateLot>(_onUpdateLot);
     on<DeleteLot>(_onDeleteLot);
@@ -43,24 +50,26 @@ class PantryBloc extends Bloc<PantryEvent, PantryState> {
     SubscribeToPantry event,
     Emitter<PantryState> emit,
   ) {
-    emit(state.copyWith(entriesStatus: const AsyncLoading()));
+    emit(state.copyWith(displayEntriesStatus: const AsyncLoading()));
     _pantrySubscription?.cancel();
 
-    _pantrySubscription = _pantryRepository
-        .getPantryEntries(event.uid)
-        .listen(
-          (entries) => add(PantryUpdated(entries)),
-          onError: (e) {
-            final eMessage = ExceptionHandler.handle(e).toString();
-            emit(state.copyWith(entriesStatus: AsyncFailure(eMessage)));
-          },
-        );
+    // Gọi UseCase ở đây
+    _pantrySubscription = _getPantryWithDetailsUseCase(event.uid).listen(
+      (displayEntries) =>
+          add(PantryUpdated(displayEntries)), // Gửi dữ liệu đã được join
+      onError: (e) {
+        final eMessage = ExceptionHandler.handle(e).toString();
+        emit(state.copyWith(displayEntriesStatus: AsyncFailure(eMessage)));
+      },
+    );
   }
 
+  // Sửa event handler này
   void _onPantryUpdated(PantryUpdated event, Emitter<PantryState> emit) {
-    emit(state.copyWith(entriesStatus: AsyncSuccess(event.entries)));
+    emit(state.copyWith(displayEntriesStatus: AsyncSuccess(event.entries)));
   }
 
+  // ... (Các hàm xử lý mutation không thay đổi)
   Future<void> _onAddLot(AddLot event, Emitter<PantryState> emit) async {
     final uid = _getCurrentUid();
     if (uid == null) return _emitAuthError(emit);

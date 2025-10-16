@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:cookora/core/widgets/glassmorphic_container.dart';
 
 class PantrySearchField extends StatelessWidget {

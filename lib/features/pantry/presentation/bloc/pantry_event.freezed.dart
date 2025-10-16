@@ -140,7 +140,7 @@ return clearPantry(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String uid)?  subscribeToPantry,TResult Function( PantryLot lot)?  addLot,TResult Function( PantryLot lot)?  updateLot,TResult Function( String ingredientId,  String lotId)?  deleteLot,TResult Function( String ingredientId)?  deletePantryEntry,TResult Function( List<PantryEntry> entries)?  pantryUpdated,TResult Function()?  resetMutationStatus,TResult Function()?  clearPantry,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String uid)?  subscribeToPantry,TResult Function( PantryLot lot)?  addLot,TResult Function( PantryLot lot)?  updateLot,TResult Function( String ingredientId,  String lotId)?  deleteLot,TResult Function( String ingredientId)?  deletePantryEntry,TResult Function( List<PantryDisplayEntry> entries)?  pantryUpdated,TResult Function()?  resetMutationStatus,TResult Function()?  clearPantry,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case SubscribeToPantry() when subscribeToPantry != null:
 return subscribeToPantry(_that.uid);case AddLot() when addLot != null:
@@ -168,7 +168,7 @@ return clearPantry();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String uid)  subscribeToPantry,required TResult Function( PantryLot lot)  addLot,required TResult Function( PantryLot lot)  updateLot,required TResult Function( String ingredientId,  String lotId)  deleteLot,required TResult Function( String ingredientId)  deletePantryEntry,required TResult Function( List<PantryEntry> entries)  pantryUpdated,required TResult Function()  resetMutationStatus,required TResult Function()  clearPantry,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String uid)  subscribeToPantry,required TResult Function( PantryLot lot)  addLot,required TResult Function( PantryLot lot)  updateLot,required TResult Function( String ingredientId,  String lotId)  deleteLot,required TResult Function( String ingredientId)  deletePantryEntry,required TResult Function( List<PantryDisplayEntry> entries)  pantryUpdated,required TResult Function()  resetMutationStatus,required TResult Function()  clearPantry,}) {final _that = this;
 switch (_that) {
 case SubscribeToPantry():
 return subscribeToPantry(_that.uid);case AddLot():
@@ -195,7 +195,7 @@ return clearPantry();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String uid)?  subscribeToPantry,TResult? Function( PantryLot lot)?  addLot,TResult? Function( PantryLot lot)?  updateLot,TResult? Function( String ingredientId,  String lotId)?  deleteLot,TResult? Function( String ingredientId)?  deletePantryEntry,TResult? Function( List<PantryEntry> entries)?  pantryUpdated,TResult? Function()?  resetMutationStatus,TResult? Function()?  clearPantry,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String uid)?  subscribeToPantry,TResult? Function( PantryLot lot)?  addLot,TResult? Function( PantryLot lot)?  updateLot,TResult? Function( String ingredientId,  String lotId)?  deleteLot,TResult? Function( String ingredientId)?  deletePantryEntry,TResult? Function( List<PantryDisplayEntry> entries)?  pantryUpdated,TResult? Function()?  resetMutationStatus,TResult? Function()?  clearPantry,}) {final _that = this;
 switch (_that) {
 case SubscribeToPantry() when subscribeToPantry != null:
 return subscribeToPantry(_that.uid);case AddLot() when addLot != null:
@@ -567,11 +567,11 @@ as String,
 
 
 class PantryUpdated implements PantryEvent {
-  const PantryUpdated(final  List<PantryEntry> entries): _entries = entries;
+  const PantryUpdated(final  List<PantryDisplayEntry> entries): _entries = entries;
   
 
- final  List<PantryEntry> _entries;
- List<PantryEntry> get entries {
+ final  List<PantryDisplayEntry> _entries;
+ List<PantryDisplayEntry> get entries {
   if (_entries is EqualUnmodifiableListView) return _entries;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_entries);
@@ -608,7 +608,7 @@ abstract mixin class $PantryUpdatedCopyWith<$Res> implements $PantryEventCopyWit
   factory $PantryUpdatedCopyWith(PantryUpdated value, $Res Function(PantryUpdated) _then) = _$PantryUpdatedCopyWithImpl;
 @useResult
 $Res call({
- List<PantryEntry> entries
+ List<PantryDisplayEntry> entries
 });
 
 
@@ -628,7 +628,7 @@ class _$PantryUpdatedCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') $Res call({Object? entries = null,}) {
   return _then(PantryUpdated(
 null == entries ? _self._entries : entries // ignore: cast_nullable_to_non_nullable
-as List<PantryEntry>,
+as List<PantryDisplayEntry>,
   ));
 }
 
