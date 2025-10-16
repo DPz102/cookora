@@ -3,8 +3,20 @@ const { OpenAI } = require("openai");
 const sharp = require("sharp");
 const { db } = require("../common/admin");
 const { FieldValue } = require("firebase-admin/firestore");
+const { algoliasearch } = require("algoliasearch");
 
 let openai;
+let algoliaClient;
+
+// Xác định môi trường dựa vào FLAVOR hoặc project
+const IS_PROD = process.env.FLAVOR === "prod";
+const ALGOLIA_APP_ID_SECRET = IS_PROD
+  ? "ALGOLIA_APP_ID_PROD"
+  : "ALGOLIA_APP_ID_DEV";
+const ALGOLIA_ADMIN_KEY_SECRET = IS_PROD
+  ? "ALGOLIA_ADMIN_KEY_PROD"
+  : "ALGOLIA_ADMIN_KEY_DEV";
+const ALGOLIA_INDEX_NAME = IS_PROD ? "ingredients_prod" : "ingredients_dev";
 /**
  * Calculates the Perceptual Hash (pHash) for a base64 encoded image.
  * @param {string} imageBase64 The base64 encoded image string.
@@ -31,11 +43,29 @@ async function calculatePHash(imageBase64) {
 exports.scanGPTWithBase64 = onCall(
   {
     region: "asia-southeast1",
-    secrets: ["OPENAI_API_KEY"],
+    secrets: [
+      "OPENAI_API_KEY",
+      ALGOLIA_APP_ID_SECRET,
+      ALGOLIA_ADMIN_KEY_SECRET,
+    ],
   },
   async (request) => {
     if (!openai) {
       openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    }
+
+    if (!algoliaClient) {
+      const appId = process.env[ALGOLIA_APP_ID_SECRET];
+      const adminKey = process.env[ALGOLIA_ADMIN_KEY_SECRET];
+
+      if (!appId || !adminKey) {
+        throw new HttpsError(
+          "internal",
+          `Algolia credentials chưa được cấu hình cho môi trường ${IS_PROD ? "prod" : "dev"}.`
+        );
+      }
+
+      algoliaClient = algoliasearch(appId.trim(), adminKey.trim());
     }
 
     const { imageBase64, scanType } = request.data;
@@ -95,21 +125,12 @@ exports.scanGPTWithBase64 = onCall(
 
 Chỉ trả về JSON, không bao gồm khối mã Markdown hay bất kỳ lời giải thích nào. Phải bao gồm đầy đủ các trường, đặc biệt là requiredIngredients, optionalIngredients và instructions.`;
       } else {
-        prompt = `Phân tích ảnh này và liệt kê tất cả các nguyên liệu/thực phẩm có thể nhìn thấy. Trả về dưới dạng JSON:
-{
-  "ingredients": [
-    {
-      "id": "",
-      "uid": "",
-      "name": "tên nguyên liệu bằng tiếng Việt",
-      "quantity": 0,
-      "unit": "đơn vị đo lường phù hợp",
-      "confidence": số từ 0-1 (độ tin cậy)
-    }
-  ]
-}
-
-Chỉ trả về JSON, không bao gồm khối mã Markdown hay bất kỳ lời giải thích nào. Nếu không chắc chắn về quantity hoặc unit, hãy đưa ra ước lượng hợp lý hoặc để giá trị mặc định.`;
+        prompt = `Phân tích ảnh này và liệt kê tất cả các nguyên liệu/thực phẩm có thể nhìn thấy. Trả về dưới dạng một mảng JSON chứa tên các nguyên liệu bằng tiếng Việt.
+        Ví dụ:
+        {
+          "ingredients": ["cà chua", "thịt bò", "hành tây"]
+        }
+        Chỉ trả về JSON, không bao gồm khối mã Markdown hay bất kỳ lời giải thích nào.`;
       }
 
       const response = await openai.chat.completions.create({
@@ -156,6 +177,8 @@ Chỉ trả về JSON, không bao gồm khối mã Markdown hay bất kỳ lời
         );
       }
 
+      console.log("GPT Response After Parsed:", result);
+
       // Lưu kết quả vào CACHE và RECIPES
       if (scanType === "dish") {
         // Kiểm tra công thức có hợp lệ không
@@ -194,9 +217,46 @@ Chỉ trả về JSON, không bao gồm khối mã Markdown hay bất kỳ lời
         );
         const finalDoc = await newRecipeRef.get();
         return finalDoc.data();
-      }
+      } else if (scanType === "ingredients") {
+        const ingredientNames = result.ingredients || [];
+        console.log("All ingredients: ", ingredientNames);
 
-      return result;
+        if (ingredientNames.length === 0) {
+          return { ingredients: [] };
+        }
+
+        const requests = ingredientNames.map((name) => ({
+          indexName: ALGOLIA_INDEX_NAME,
+          query: name,
+          params: {
+            hitsPerPage: 1,
+          },
+        }));
+
+        const { results: searchResults } = await algoliaClient.search(requests);
+
+        const matchedIngredients = [];
+        const unmatchedNames = [];
+
+        searchResults.forEach((res, i) => {
+          if (res.hits.length > 0) {
+            matchedIngredients.push(res.hits[0]);
+          } else {
+            unmatchedNames.push(ingredientNames[i]);
+          }
+        });
+
+        if (unmatchedNames.length > 0) {
+          const logRef = db.collection("unmatched_scan_logs").doc();
+          logRef.set({
+            names: unmatchedNames,
+            createdAt: FieldValue.serverTimestamp(),
+          });
+        }
+
+        // Trả về danh sách các Ingredient object hoàn chỉnh
+        return { ingredients: matchedIngredients };
+      }
     } catch (error) {
       console.error("Lỗi trong hàm scanGPT:", error);
       throw new HttpsError("internal", "Lỗi GPT: " + error.message);

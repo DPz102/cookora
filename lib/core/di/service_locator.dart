@@ -64,7 +64,7 @@ Future<void> initializeDependencies() async {
     () => FirebaseFirestore.instance,
   );
   locator.registerLazySingleton<FirebaseFunctions>(
-    () => FirebaseFunctions.instance,
+    () => FirebaseFunctions.instanceFor(region: 'asia-southeast1'),
   );
   locator.registerLazySingleton<FirebaseStorage>(
     () => FirebaseStorage.instance,

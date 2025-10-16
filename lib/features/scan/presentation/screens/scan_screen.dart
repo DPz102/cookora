@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
-
 import 'package:camera/camera.dart';
+
 // Core & DI
 import 'package:cookora/core/di/service_locator.dart';
 import 'package:cookora/core/utils/async_state.dart';
@@ -154,45 +154,56 @@ class _ScanViewState extends State<_ScanView> {
   @override
   Widget build(BuildContext context) {
     final scanBloc = context.read<ScanBloc>();
+    final cameraBloc = context.read<CameraBloc>();
     final colorScheme = Theme.of(context).colorScheme;
 
     return BlocListener<ScanBloc, ScanState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         final status = state.scanStatus;
         if (status is AsyncSuccess<ScanResult>) {
+          cameraBloc.add(const CameraEvent.dispose());
+
           final scanResult = status.data;
-          scanResult.when(
+
+          await scanResult.when(
             dish: (recipe) => showDialog<void>(
               context: context,
               builder: (_) => BlocProvider.value(
                 value: context.read<KitchenLogBloc>(),
                 child: DishResultDialog(recipe: recipe),
               ),
-            ).then((_) => scanBloc.add(const ScanEvent.reset())),
+            ),
             ingredients: (results) {
               if (results.isEmpty) {
                 context.showSnackBar(
                   'Không nhận diện được nguyên liệu nào.',
                   type: SnackBarType.info,
                 );
-                context.read<ScanBloc>().add(const ScanEvent.reset());
-                return;
+                return Future.value(); // Không hiển thị dialog nếu không có kết quả
               }
-              showDialog<void>(
+              return showDialog<void>(
                 context: context,
                 builder: (_) => BlocProvider.value(
                   value: context.read<PantryBloc>(),
                   child: IngredientResultDialog(results: results),
                 ),
-              ).then((_) => scanBloc.add(const ScanEvent.reset()));
+              );
             },
           );
+
+          if (mounted) {
+            scanBloc.add(const ScanEvent.reset());
+            cameraBloc.add(const CameraEvent.initialize());
+          }
         } else if (status is AsyncFailure) {
           context.showSnackBar(
             (status as AsyncFailure).error,
             type: SnackBarType.error,
           );
-          context.read<ScanBloc>().add(const ScanEvent.reset());
+          if (mounted) {
+            scanBloc.add(const ScanEvent.reset());
+            cameraBloc.add(const CameraEvent.initialize());
+          }
         }
       },
       child: Scaffold(

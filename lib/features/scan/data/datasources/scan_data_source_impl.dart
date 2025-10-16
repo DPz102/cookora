@@ -145,20 +145,24 @@ class ScanDataSourceImpl implements ScanDataSource {
     File imageFile,
   ) async {
     try {
+      // 1. Gọi Cloud Function
       final data = await _callScanGPT(imageFile, 'ingredients');
-      final ingredientsWithIds = <Map<String, dynamic>>[];
 
+      // 2. Kiểm tra và trích xuất danh sách
       if (data['ingredients'] is List) {
-        for (final item in data['ingredients']) {
-          if (item is Map<String, dynamic>) {
-            final updatedData = Map<String, dynamic>.from(item);
-            updatedData['id'] = _uuid.v4();
-            ingredientsWithIds.add(updatedData);
-          }
-        }
+        // 3. Chuyển đổi kiểu dữ liệu một cách an toàn
+        final results = List<Map<String, dynamic>>.from(
+          (data['ingredients'] as List).map((item) {
+            if (item is Map) {
+              return _convertMap(item);
+            }
+            return <String, dynamic>{};
+          }),
+        );
+        return results;
       }
 
-      return ingredientsWithIds;
+      return [];
     } catch (e) {
       throw Exception('Lỗi khi nhận diện nguyên liệu: ${e.toString()}');
     }

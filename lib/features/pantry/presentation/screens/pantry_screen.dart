@@ -109,7 +109,7 @@ class _PantryViewState extends State<_PantryView> {
               centerTitle: false,
               backgroundColor: Colors.transparent,
               elevation: 0,
-              pinned: true, // Ghim AppBar lại
+              pinned: false, // Ghim AppBar lại
             ),
             // Summary Card luôn hiển thị và nhận dữ liệu từ BLoC
             SliverToBoxAdapter(

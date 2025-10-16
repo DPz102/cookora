@@ -160,8 +160,16 @@ class _LotFormDialogState extends State<LotFormDialog> {
                   onTap: () => _selectDate(
                     context: context,
                     initialDate: _purchaseDate,
-                    onDateSelected: (date) =>
-                        setState(() => _purchaseDate = date),
+                    onDateSelected: (date) => setState(() {
+                      _purchaseDate = date;
+                      /*
+                      _expiryDate = date.add(
+                        Duration(
+                          days: widget.ingredient.defaultShelfLifeInDays,
+                        ),
+                      );
+                      */
+                    }),
                   ),
                 ),
                 SizedBox(height: 20.h),
@@ -178,7 +186,7 @@ class _LotFormDialogState extends State<LotFormDialog> {
                     final baseError = Validators.validateExpiryDate(date);
                     if (baseError != null) return baseError;
                     if (date != null && date.isBefore(_purchaseDate)) {
-                      return 'HSD phải sau ngày mua';
+                      return 'Ngày hết hạn phải sau ngày mua';
                     }
                     return null;
                   },
