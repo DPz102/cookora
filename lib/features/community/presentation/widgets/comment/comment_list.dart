@@ -3,10 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:cookora/core/widgets/async_sliver_builder.dart';
+import 'package:cookora/core/utils/async_state.dart';
+
 import 'package:cookora/features/community/domain/entities/comment_entity.dart';
 import 'package:cookora/features/community/presentation/bloc/community_bloc.dart';
 import 'package:cookora/features/community/presentation/bloc/community_state.dart';
 import 'package:cookora/features/community/presentation/widgets/comment/comment_tile.dart';
+import 'package:cookora/features/user/presentation/bloc/user_bloc.dart';
 
 class CommentList extends StatelessWidget {
   final Function(CommentEntity) onReply;
@@ -22,6 +25,13 @@ class CommentList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ✅ Lấy UID của user hiện tại
+    final currentUserId = context
+        .watch<UserBloc>()
+        .state
+        .profileStatus
+        .whenOrNull(success: (user) => user.uid);
+
     // Lắng nghe trạng thái commentsStatus từ CommunityBloc
     return BlocBuilder<CommunityBloc, CommunityState>(
       buildWhen: (p, c) => p.commentsStatus != c.commentsStatus,
@@ -52,8 +62,14 @@ class CommentList extends StatelessWidget {
                   child: CommentTile(
                     comment: comment,
                     onReply: () => onReply(comment),
-                    onEdit: () => onEdit(comment),
-                    onDelete: () => onDelete(comment),
+                    // ✅ CHỈ CHO PHÉP SỬA NẾU LÀ CHỦ SỞ HỮU
+                    onEdit: currentUserId == comment.authorId
+                        ? () => onEdit(comment)
+                        : null,
+                    // ✅ CHỈ CHO PHÉP XÓA NẾU LÀ CHỦ SỞ HỮU
+                    onDelete: currentUserId == comment.authorId
+                        ? () => onDelete(comment)
+                        : null,
                   ),
                 );
               },

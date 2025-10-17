@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:cookora/core/widgets/custom_network_image.dart';
+import 'package:cookora/core/utils/async_state.dart';
 import 'package:cookora/features/community/domain/entities/comment_entity.dart';
+import 'package:cookora/features/user/presentation/bloc/user_bloc.dart';
 
 class CommentTile extends StatelessWidget {
   final CommentEntity comment;
@@ -24,6 +27,16 @@ class CommentTile extends StatelessWidget {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
     final colorScheme = theme.colorScheme;
+
+    // ✅ Lấy UID của user hiện tại
+    final currentUserId = context
+        .watch<UserBloc>()
+        .state
+        .profileStatus
+        .whenOrNull(success: (user) => user.uid);
+
+    // ✅ Kiểm tra xem user hiện tại có phải chủ comment không
+    final isOwner = currentUserId != null && currentUserId == comment.authorId;
 
     // Định dạng thời gian "X phút trước"
     timeago.setLocaleMessages('vi', timeago.ViMessages());
@@ -83,15 +96,18 @@ class CommentTile extends StatelessWidget {
                     Text(timeAgoString, style: textTheme.bodySmall),
                     SizedBox(width: 16.w),
                     _buildActionButton(textTheme, 'Trả lời', onReply),
-                    SizedBox(width: 16.w),
-                    _buildActionButton(textTheme, 'Sửa', onEdit),
-                    SizedBox(width: 16.w),
-                    _buildActionButton(
-                      textTheme,
-                      'Xóa',
-                      onDelete,
-                      color: colorScheme.error,
-                    ),
+                    // ✅ CHỈ HIỆN NÚT SỬA/XÓA NẾU LÀ CHỦ SỞ HỮU
+                    if (isOwner) ...[
+                      SizedBox(width: 16.w),
+                      _buildActionButton(textTheme, 'Sửa', onEdit),
+                      SizedBox(width: 16.w),
+                      _buildActionButton(
+                        textTheme,
+                        'Xóa',
+                        onDelete,
+                        color: colorScheme.error,
+                      ),
+                    ],
                   ],
                 ),
               ],

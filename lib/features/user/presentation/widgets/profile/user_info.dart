@@ -26,10 +26,6 @@ class UserInfo extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
 
-    final imageUrl = user.photoURL.isNotEmpty
-        ? user.photoURL
-        : 'https://ui-avatars.com/api/?name=${user.username}&background=random&size=128';
-
     return Column(
       children: [
         SizedBox(
@@ -40,11 +36,22 @@ class UserInfo extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 45.r,
-                backgroundImage: !state.isUploadingAvatar
-                    ? NetworkImage(imageUrl)
+                backgroundColor: colorScheme.primaryContainer,
+                foregroundImage:
+                    user.photoURL.isNotEmpty && !state.isUploadingAvatar
+                    ? NetworkImage(user.photoURL)
                     : null,
                 child: state.isUploadingAvatar
                     ? const CircularProgressIndicator()
+                    : user.photoURL.isEmpty
+                    ? Text(
+                        user.username.isNotEmpty
+                            ? user.username[0].toUpperCase()
+                            : '?',
+                        style: textTheme.headlineMedium?.copyWith(
+                          color: colorScheme.onPrimaryContainer,
+                        ),
+                      )
                     : null,
               ),
               Positioned(

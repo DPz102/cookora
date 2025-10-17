@@ -60,13 +60,22 @@ class PostCard extends StatelessWidget {
                   padding: EdgeInsets.fromLTRB(12.w, 12.h, 12.w, 8.h),
                   child: Row(
                     children: [
-                      CustomNetworkImage(
-                        imageUrl: post.authorAvatarUrl.isNotEmpty
-                            ? post.authorAvatarUrl
-                            : 'https://ui-avatars.com/api/?name=${post.authorUsername}&background=random',
-                        height: 32.r,
-                        width: 32.r,
-                        borderRadius: BorderRadius.circular(16.r),
+                      CircleAvatar(
+                        radius: 16.r,
+                        backgroundColor: colorScheme.primaryContainer,
+                        backgroundImage: post.authorAvatarUrl.isNotEmpty
+                            ? NetworkImage(post.authorAvatarUrl)
+                            : null,
+                        child: post.authorAvatarUrl.isEmpty
+                            ? Text(
+                                post.authorUsername.isNotEmpty
+                                    ? post.authorUsername[0].toUpperCase()
+                                    : '?',
+                                style: textTheme.labelMedium?.copyWith(
+                                  color: colorScheme.onPrimaryContainer,
+                                ),
+                              )
+                            : null,
                       ),
                       SizedBox(width: 8.w),
                       Text(post.authorUsername, style: textTheme.labelLarge),

@@ -12,14 +12,18 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Stream<UserEntity> getUserProfileStream(String uid) {
-    return _dataSource.getUserProfileStream(uid).map((data) {
-      if (data != null) {
-        //  Map dữ liệu Firestore thành UserEntity.
-        return UserEntity.fromJson(data);
-      } else {
-        throw Exception('Không tìm thấy hồ sơ người dùng với uid: $uid');
-      }
-    });
+    // SỬA LẠI HÀM NÀY
+    return _dataSource
+        .getUserProfileStream(uid)
+        // 1. Thêm toán tử `where` của RxDart (hoặc Stream API)
+        // Nó sẽ lọc và chỉ cho phép các sự kiện `data` không phải là null đi qua.
+        // Nếu `snapshots()` trả về null lúc đầu, nó sẽ bị bỏ qua.
+        .where((data) => data != null)
+        .map((data) {
+          // 2. Khi đến đây, `data` được đảm bảo không phải là null nữa.
+          // Ta có thể loại bỏ `if (data != null)` và dấu `!`.
+          return UserEntity.fromJson(data!); // Có thể để dấu ! cho null safety
+        });
   }
 
   @override
