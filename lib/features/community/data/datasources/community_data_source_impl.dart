@@ -6,6 +6,7 @@ import 'package:cookora/core/utils/image_processor.dart';
 
 import 'package:cookora/features/community/data/datasources/community_data_source.dart';
 import 'package:cookora/features/community/domain/entities/post_entity.dart';
+import 'package:cookora/features/community/domain/entities/comment_entity.dart';
 
 class CommunityDataSourceImpl implements CommunityDataSource {
   final FirebaseFirestore _firestore;
@@ -13,18 +14,27 @@ class CommunityDataSourceImpl implements CommunityDataSource {
 
   CommunityDataSourceImpl(this._firestore, this._storage);
 
+  // Helper để lấy reference đến collection comments của một bài post
+  CollectionReference _commentsRef(String postId) {
+    return _firestore.collection('posts').doc(postId).collection('comments');
+  }
+
   @override
   Stream<List<({String id, Map<String, dynamic> data})>>
-  getCommunityFeedStream() {
-    return _firestore
+  getCommunityFeedStream({DocumentSnapshot? lastDocument, int limit = 20}) {
+    var query = _firestore
         .collection('posts')
         .orderBy('createdAt', descending: true)
-        .snapshots()
-        .map(
-          (snapshot) => snapshot.docs
-              .map((doc) => (id: doc.id, data: doc.data()))
-              .toList(),
-        );
+        .limit(limit);
+
+    if (lastDocument != null) {
+      query = query.startAfterDocument(lastDocument);
+    }
+
+    return query.snapshots().map(
+      (snapshot) =>
+          snapshot.docs.map((doc) => (id: doc.id, data: doc.data())).toList(),
+    );
   }
 
   @override
@@ -39,6 +49,22 @@ class CommunityDataSourceImpl implements CommunityDataSource {
         .map(
           (snapshot) => snapshot.docs
               .map((doc) => (id: doc.id, data: doc.data()))
+              .toList(),
+        );
+  }
+
+  @override
+  Stream<List<({String id, Map<String, dynamic> data})>> getCommentsStream(
+    String postId,
+  ) {
+    return _commentsRef(postId)
+        .orderBy('createdAt', descending: false)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map(
+                (doc) => (id: doc.id, data: doc.data() as Map<String, dynamic>),
+              )
               .toList(),
         );
   }
@@ -87,5 +113,59 @@ class CommunityDataSourceImpl implements CommunityDataSource {
         : FieldValue.arrayRemove([uid]);
 
     await docRef.update({'likes': updateValue});
+  }
+
+  @override
+  Future<void> addComment({
+    required String postId,
+    required CommentEntity comment,
+  }) async {
+    // Lấy reference đến post và comment mới
+    final postRef = _firestore.collection('posts').doc(postId);
+    final commentRef = _commentsRef(postId).doc(); // Tạo ref cho comment mới
+
+    final commentJson = comment.toJson();
+    commentJson['createdAt'] = FieldValue.serverTimestamp();
+
+    // Dùng batch để ghi comment và cập nhật counter
+    final batch = _firestore.batch();
+
+    // 1. Thêm comment mới vào subcollection
+    batch.set(commentRef, commentJson);
+    // 2. Tăng giá trị của trường commentCount lên 1
+    batch.update(postRef, {'commentCount': FieldValue.increment(1)});
+
+    // Thực thi cả 2 hành động
+    await batch.commit();
+  }
+
+  @override
+  Future<void> updateComment({
+    required String postId,
+    required String commentId,
+    required String content,
+  }) async {
+    await _commentsRef(postId).doc(commentId).update({'content': content});
+  }
+
+  @override
+  Future<void> deleteComment({
+    required String postId,
+    required String commentId,
+  }) async {
+    // Lấy reference đến post và comment cần xóa
+    final postRef = _firestore.collection('posts').doc(postId);
+    final commentRef = _commentsRef(postId).doc(commentId);
+
+    // Dùng batch để xóa comment và cập nhật counter
+    final batch = _firestore.batch();
+
+    // 1. Xóa comment khỏi subcollection
+    batch.delete(commentRef);
+    // 2. Giảm giá trị của trường commentCount đi 1
+    batch.update(postRef, {'commentCount': FieldValue.increment(-1)});
+
+    // Thực thi cả 2 hành động
+    await batch.commit();
   }
 }

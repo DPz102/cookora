@@ -64,17 +64,63 @@ service cloud.firestore {
           && post.caption is string
           && post.caption.size() <= 500
           && post.authorId is string
-          && post.likes is list;
+          && post.likes is list
+          && post.likes.size() == 0 // Khi tạo mới, likes phải là mảng rỗng
+          && post.commentCount is number 
+          && post.commentCount == 0 // commentCount khởi tạo là 0
+          && post.authorUsername is string // Thêm kiểm tra cho authorUsername
+          && post.authorAvatarUrl is string; // Thêm kiểm tra cho authorAvatarUrl
       }
       
       allow create: if isAuthenticated()
         && isValidPost()
         && request.resource.data.authorId == request.auth.uid;
       
-      allow update: if isAuthenticated()
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes']);
-      
+      allow update: if isAuthenticated() &&
+        (
+          // Cho phép chỉ cập nhật 'likes'
+          (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes'])) ||
+
+          // HOẶC cho phép chỉ cập nhật 'commentCount' với điều kiện chặt chẽ hơn
+          (
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly(['commentCount']) &&
+            (
+              // THÊM: Xử lý trường hợp tăng count (kể cả khi trường cũ chưa có)
+              // resource.data.get('commentCount', 0) sẽ trả về 0 nếu trường không tồn tại.
+              request.resource.data.commentCount == resource.data.get('commentCount', 0) + 1 ||
+          
+              // SỬA: Xử lý trường hợp giảm count (chỉ xảy ra khi trường cũ đã có giá trị)
+              request.resource.data.commentCount == resource.data.commentCount - 1
+            )
+          )
+        );
+
       allow delete: if isAuthenticated() && resource.data.authorId == request.auth.uid;
+
+      // --- RULE MỚI CHO COMMENTS SUB-COLLECTION ---
+      match /comments/{commentId} {
+        function isCommentOwner() {
+          return request.auth.uid == resource.data.authorId;
+        }
+        function isValidComment() {
+          let comment = request.resource.data;
+          return comment.content is string
+              && comment.content.size() > 0
+              && comment.content.size() <= 1000
+              && comment.authorId == request.auth.uid;
+        }
+
+        // Ai cũng có quyền đọc comment
+        allow read: if isAuthenticated();
+        // Chỉ người đã đăng nhập mới được tạo comment hợp lệ
+        allow create: if isAuthenticated() && isValidComment();
+        // Chỉ chủ comment mới được sửa content
+        allow update: if isAuthenticated() 
+                  && isCommentOwner()
+                  && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['content']);
+        // Chỉ chủ comment mới được xóa
+        allow delete: if isAuthenticated() && isCommentOwner();
+      }
     }
 
     // === DEFAULT RULE ===

@@ -1,8 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-part 'post_entity.freezed.dart';
-part 'post_entity.g.dart';
+part 'comment_entity.freezed.dart';
+part 'comment_entity.g.dart';
 
 // Converter để xử lý Timestamp
 DateTime? _timestampToDateTime(Timestamp? timestamp) => timestamp?.toDate();
@@ -10,23 +10,18 @@ Timestamp? _dateTimeToTimestamp(DateTime? dateTime) =>
     dateTime == null ? null : Timestamp.fromDate(dateTime);
 
 @freezed
-abstract class PostEntity with _$PostEntity {
-  const factory PostEntity({
+abstract class CommentEntity with _$CommentEntity {
+  const factory CommentEntity({
     String? id,
-    required String imageUrl,
-    required String caption,
-
+    String? parentId,
+    required String content,
     required String authorId,
     @Default('') String authorUsername,
     @Default('') String authorAvatarUrl,
-
-    required List<String> likes,
-    @Default(0) int commentCount,
-
     @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp)
     DateTime? createdAt,
-  }) = _PostEntity;
+  }) = _CommentEntity;
 
-  factory PostEntity.fromJson(Map<String, dynamic> json) =>
-      _$PostEntityFromJson(json);
+  factory CommentEntity.fromJson(Map<String, dynamic> json) =>
+      _$CommentEntityFromJson(json);
 }

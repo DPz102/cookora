@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cookora/features/community/domain/entities/post_entity.dart';
+import 'package:cookora/features/community/domain/entities/comment_entity.dart';
 
 abstract class CommunityDataSource {
   Stream<List<({String id, Map<String, dynamic> data})>>
@@ -8,6 +9,10 @@ abstract class CommunityDataSource {
 
   Stream<List<({String id, Map<String, dynamic> data})>> getPostsByUserStream(
     String userId,
+  );
+
+  Stream<List<({String id, Map<String, dynamic> data})>> getCommentsStream(
+    String postId,
   );
 
   // Tải ảnh lên Storage và trả về URL
@@ -28,5 +33,24 @@ abstract class CommunityDataSource {
     required String postId,
     required String uid,
     required bool isLiking,
+  });
+
+  /// Tạo document comment mới trên Firestore.
+  Future<void> addComment({
+    required String postId,
+    required CommentEntity comment,
+  });
+
+  /// Cập nhật document comment trên Firestore.
+  Future<void> updateComment({
+    required String postId,
+    required String commentId,
+    required String content,
+  });
+
+  /// Xóa document comment trên Firestore.
+  Future<void> deleteComment({
+    required String postId,
+    required String commentId,
   });
 }

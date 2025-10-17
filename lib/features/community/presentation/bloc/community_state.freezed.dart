@@ -16,7 +16,8 @@ mixin _$CommunityState {
 
 // Trạng thái của danh sách bài đăng.
  AsyncState<List<PostEntity>> get feedStatus;// Trạng thái của hành động tạo bài đăng.
- AsyncState<void> get createPostStatus;
+ AsyncState<void> get createPostStatus;/// Quản lý trạng thái tải danh sách comment của một bài viết.
+ AsyncState<List<CommentEntity>> get commentsStatus;
 /// Create a copy of CommunityState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,16 +28,16 @@ $CommunityStateCopyWith<CommunityState> get copyWith => _$CommunityStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommunityState&&(identical(other.feedStatus, feedStatus) || other.feedStatus == feedStatus)&&(identical(other.createPostStatus, createPostStatus) || other.createPostStatus == createPostStatus));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommunityState&&(identical(other.feedStatus, feedStatus) || other.feedStatus == feedStatus)&&(identical(other.createPostStatus, createPostStatus) || other.createPostStatus == createPostStatus)&&(identical(other.commentsStatus, commentsStatus) || other.commentsStatus == commentsStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,feedStatus,createPostStatus);
+int get hashCode => Object.hash(runtimeType,feedStatus,createPostStatus,commentsStatus);
 
 @override
 String toString() {
-  return 'CommunityState(feedStatus: $feedStatus, createPostStatus: $createPostStatus)';
+  return 'CommunityState(feedStatus: $feedStatus, createPostStatus: $createPostStatus, commentsStatus: $commentsStatus)';
 }
 
 
@@ -47,11 +48,11 @@ abstract mixin class $CommunityStateCopyWith<$Res>  {
   factory $CommunityStateCopyWith(CommunityState value, $Res Function(CommunityState) _then) = _$CommunityStateCopyWithImpl;
 @useResult
 $Res call({
- AsyncState<List<PostEntity>> feedStatus, AsyncState<void> createPostStatus
+ AsyncState<List<PostEntity>> feedStatus, AsyncState<void> createPostStatus, AsyncState<List<CommentEntity>> commentsStatus
 });
 
 
-$AsyncStateCopyWith<List<PostEntity>, $Res> get feedStatus;$AsyncStateCopyWith<void, $Res> get createPostStatus;
+$AsyncStateCopyWith<List<PostEntity>, $Res> get feedStatus;$AsyncStateCopyWith<void, $Res> get createPostStatus;$AsyncStateCopyWith<List<CommentEntity>, $Res> get commentsStatus;
 
 }
 /// @nodoc
@@ -64,11 +65,12 @@ class _$CommunityStateCopyWithImpl<$Res>
 
 /// Create a copy of CommunityState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? feedStatus = null,Object? createPostStatus = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? feedStatus = null,Object? createPostStatus = null,Object? commentsStatus = null,}) {
   return _then(_self.copyWith(
 feedStatus: null == feedStatus ? _self.feedStatus : feedStatus // ignore: cast_nullable_to_non_nullable
 as AsyncState<List<PostEntity>>,createPostStatus: null == createPostStatus ? _self.createPostStatus : createPostStatus // ignore: cast_nullable_to_non_nullable
-as AsyncState<void>,
+as AsyncState<void>,commentsStatus: null == commentsStatus ? _self.commentsStatus : commentsStatus // ignore: cast_nullable_to_non_nullable
+as AsyncState<List<CommentEntity>>,
   ));
 }
 /// Create a copy of CommunityState
@@ -88,6 +90,15 @@ $AsyncStateCopyWith<void, $Res> get createPostStatus {
   
   return $AsyncStateCopyWith<void, $Res>(_self.createPostStatus, (value) {
     return _then(_self.copyWith(createPostStatus: value));
+  });
+}/// Create a copy of CommunityState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AsyncStateCopyWith<List<CommentEntity>, $Res> get commentsStatus {
+  
+  return $AsyncStateCopyWith<List<CommentEntity>, $Res>(_self.commentsStatus, (value) {
+    return _then(_self.copyWith(commentsStatus: value));
   });
 }
 }
@@ -171,10 +182,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( AsyncState<List<PostEntity>> feedStatus,  AsyncState<void> createPostStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( AsyncState<List<PostEntity>> feedStatus,  AsyncState<void> createPostStatus,  AsyncState<List<CommentEntity>> commentsStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CommunityState() when $default != null:
-return $default(_that.feedStatus,_that.createPostStatus);case _:
+return $default(_that.feedStatus,_that.createPostStatus,_that.commentsStatus);case _:
   return orElse();
 
 }
@@ -192,10 +203,10 @@ return $default(_that.feedStatus,_that.createPostStatus);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( AsyncState<List<PostEntity>> feedStatus,  AsyncState<void> createPostStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( AsyncState<List<PostEntity>> feedStatus,  AsyncState<void> createPostStatus,  AsyncState<List<CommentEntity>> commentsStatus)  $default,) {final _that = this;
 switch (_that) {
 case _CommunityState():
-return $default(_that.feedStatus,_that.createPostStatus);case _:
+return $default(_that.feedStatus,_that.createPostStatus,_that.commentsStatus);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -212,10 +223,10 @@ return $default(_that.feedStatus,_that.createPostStatus);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( AsyncState<List<PostEntity>> feedStatus,  AsyncState<void> createPostStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( AsyncState<List<PostEntity>> feedStatus,  AsyncState<void> createPostStatus,  AsyncState<List<CommentEntity>> commentsStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _CommunityState() when $default != null:
-return $default(_that.feedStatus,_that.createPostStatus);case _:
+return $default(_that.feedStatus,_that.createPostStatus,_that.commentsStatus);case _:
   return null;
 
 }
@@ -227,13 +238,15 @@ return $default(_that.feedStatus,_that.createPostStatus);case _:
 
 
 class _CommunityState implements CommunityState {
-  const _CommunityState({this.feedStatus = const AsyncInitial(), this.createPostStatus = const AsyncInitial()});
+  const _CommunityState({this.feedStatus = const AsyncInitial(), this.createPostStatus = const AsyncInitial(), this.commentsStatus = const AsyncInitial()});
   
 
 // Trạng thái của danh sách bài đăng.
 @override@JsonKey() final  AsyncState<List<PostEntity>> feedStatus;
 // Trạng thái của hành động tạo bài đăng.
 @override@JsonKey() final  AsyncState<void> createPostStatus;
+/// Quản lý trạng thái tải danh sách comment của một bài viết.
+@override@JsonKey() final  AsyncState<List<CommentEntity>> commentsStatus;
 
 /// Create a copy of CommunityState
 /// with the given fields replaced by the non-null parameter values.
@@ -245,16 +258,16 @@ _$CommunityStateCopyWith<_CommunityState> get copyWith => __$CommunityStateCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommunityState&&(identical(other.feedStatus, feedStatus) || other.feedStatus == feedStatus)&&(identical(other.createPostStatus, createPostStatus) || other.createPostStatus == createPostStatus));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommunityState&&(identical(other.feedStatus, feedStatus) || other.feedStatus == feedStatus)&&(identical(other.createPostStatus, createPostStatus) || other.createPostStatus == createPostStatus)&&(identical(other.commentsStatus, commentsStatus) || other.commentsStatus == commentsStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,feedStatus,createPostStatus);
+int get hashCode => Object.hash(runtimeType,feedStatus,createPostStatus,commentsStatus);
 
 @override
 String toString() {
-  return 'CommunityState(feedStatus: $feedStatus, createPostStatus: $createPostStatus)';
+  return 'CommunityState(feedStatus: $feedStatus, createPostStatus: $createPostStatus, commentsStatus: $commentsStatus)';
 }
 
 
@@ -265,11 +278,11 @@ abstract mixin class _$CommunityStateCopyWith<$Res> implements $CommunityStateCo
   factory _$CommunityStateCopyWith(_CommunityState value, $Res Function(_CommunityState) _then) = __$CommunityStateCopyWithImpl;
 @override @useResult
 $Res call({
- AsyncState<List<PostEntity>> feedStatus, AsyncState<void> createPostStatus
+ AsyncState<List<PostEntity>> feedStatus, AsyncState<void> createPostStatus, AsyncState<List<CommentEntity>> commentsStatus
 });
 
 
-@override $AsyncStateCopyWith<List<PostEntity>, $Res> get feedStatus;@override $AsyncStateCopyWith<void, $Res> get createPostStatus;
+@override $AsyncStateCopyWith<List<PostEntity>, $Res> get feedStatus;@override $AsyncStateCopyWith<void, $Res> get createPostStatus;@override $AsyncStateCopyWith<List<CommentEntity>, $Res> get commentsStatus;
 
 }
 /// @nodoc
@@ -282,11 +295,12 @@ class __$CommunityStateCopyWithImpl<$Res>
 
 /// Create a copy of CommunityState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? feedStatus = null,Object? createPostStatus = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? feedStatus = null,Object? createPostStatus = null,Object? commentsStatus = null,}) {
   return _then(_CommunityState(
 feedStatus: null == feedStatus ? _self.feedStatus : feedStatus // ignore: cast_nullable_to_non_nullable
 as AsyncState<List<PostEntity>>,createPostStatus: null == createPostStatus ? _self.createPostStatus : createPostStatus // ignore: cast_nullable_to_non_nullable
-as AsyncState<void>,
+as AsyncState<void>,commentsStatus: null == commentsStatus ? _self.commentsStatus : commentsStatus // ignore: cast_nullable_to_non_nullable
+as AsyncState<List<CommentEntity>>,
   ));
 }
 
@@ -307,6 +321,15 @@ $AsyncStateCopyWith<void, $Res> get createPostStatus {
   
   return $AsyncStateCopyWith<void, $Res>(_self.createPostStatus, (value) {
     return _then(_self.copyWith(createPostStatus: value));
+  });
+}/// Create a copy of CommunityState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AsyncStateCopyWith<List<CommentEntity>, $Res> get commentsStatus {
+  
+  return $AsyncStateCopyWith<List<CommentEntity>, $Res>(_self.commentsStatus, (value) {
+    return _then(_self.copyWith(commentsStatus: value));
   });
 }
 }

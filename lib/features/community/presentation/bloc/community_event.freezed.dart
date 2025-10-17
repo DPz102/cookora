@@ -55,16 +55,22 @@ extension CommunityEventPatterns on CommunityEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( SubscribeToCommunityFeed value)?  subscribeToCommunityFeed,TResult Function( CreatePost value)?  createPost,TResult Function( ResetCreatePostStatus value)?  resetCreatePostStatus,TResult Function( LikePost value)?  likePost,TResult Function( UnlikePost value)?  unlikePost,TResult Function( FeedUpdated value)?  feedUpdated,TResult Function( ClearFeed value)?  clearFeed,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( SubscribeToCommunityFeed value)?  subscribeToCommunityFeed,TResult Function( SubscribeToComments value)?  subscribeToComments,TResult Function( CreatePost value)?  createPost,TResult Function( ResetCreatePostStatus value)?  resetCreatePostStatus,TResult Function( LikePost value)?  likePost,TResult Function( UnlikePost value)?  unlikePost,TResult Function( FeedUpdated value)?  feedUpdated,TResult Function( CommentsUpdated value)?  commentsUpdated,TResult Function( AddComment value)?  addComment,TResult Function( UpdateComment value)?  updateComment,TResult Function( DeleteComment value)?  deleteComment,TResult Function( ClearComments value)?  clearComments,TResult Function( ClearFeed value)?  clearFeed,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case SubscribeToCommunityFeed() when subscribeToCommunityFeed != null:
-return subscribeToCommunityFeed(_that);case CreatePost() when createPost != null:
+return subscribeToCommunityFeed(_that);case SubscribeToComments() when subscribeToComments != null:
+return subscribeToComments(_that);case CreatePost() when createPost != null:
 return createPost(_that);case ResetCreatePostStatus() when resetCreatePostStatus != null:
 return resetCreatePostStatus(_that);case LikePost() when likePost != null:
 return likePost(_that);case UnlikePost() when unlikePost != null:
 return unlikePost(_that);case FeedUpdated() when feedUpdated != null:
-return feedUpdated(_that);case ClearFeed() when clearFeed != null:
+return feedUpdated(_that);case CommentsUpdated() when commentsUpdated != null:
+return commentsUpdated(_that);case AddComment() when addComment != null:
+return addComment(_that);case UpdateComment() when updateComment != null:
+return updateComment(_that);case DeleteComment() when deleteComment != null:
+return deleteComment(_that);case ClearComments() when clearComments != null:
+return clearComments(_that);case ClearFeed() when clearFeed != null:
 return clearFeed(_that);case _:
   return orElse();
 
@@ -83,16 +89,22 @@ return clearFeed(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( SubscribeToCommunityFeed value)  subscribeToCommunityFeed,required TResult Function( CreatePost value)  createPost,required TResult Function( ResetCreatePostStatus value)  resetCreatePostStatus,required TResult Function( LikePost value)  likePost,required TResult Function( UnlikePost value)  unlikePost,required TResult Function( FeedUpdated value)  feedUpdated,required TResult Function( ClearFeed value)  clearFeed,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( SubscribeToCommunityFeed value)  subscribeToCommunityFeed,required TResult Function( SubscribeToComments value)  subscribeToComments,required TResult Function( CreatePost value)  createPost,required TResult Function( ResetCreatePostStatus value)  resetCreatePostStatus,required TResult Function( LikePost value)  likePost,required TResult Function( UnlikePost value)  unlikePost,required TResult Function( FeedUpdated value)  feedUpdated,required TResult Function( CommentsUpdated value)  commentsUpdated,required TResult Function( AddComment value)  addComment,required TResult Function( UpdateComment value)  updateComment,required TResult Function( DeleteComment value)  deleteComment,required TResult Function( ClearComments value)  clearComments,required TResult Function( ClearFeed value)  clearFeed,}){
 final _that = this;
 switch (_that) {
 case SubscribeToCommunityFeed():
-return subscribeToCommunityFeed(_that);case CreatePost():
+return subscribeToCommunityFeed(_that);case SubscribeToComments():
+return subscribeToComments(_that);case CreatePost():
 return createPost(_that);case ResetCreatePostStatus():
 return resetCreatePostStatus(_that);case LikePost():
 return likePost(_that);case UnlikePost():
 return unlikePost(_that);case FeedUpdated():
-return feedUpdated(_that);case ClearFeed():
+return feedUpdated(_that);case CommentsUpdated():
+return commentsUpdated(_that);case AddComment():
+return addComment(_that);case UpdateComment():
+return updateComment(_that);case DeleteComment():
+return deleteComment(_that);case ClearComments():
+return clearComments(_that);case ClearFeed():
 return clearFeed(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -110,16 +122,22 @@ return clearFeed(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( SubscribeToCommunityFeed value)?  subscribeToCommunityFeed,TResult? Function( CreatePost value)?  createPost,TResult? Function( ResetCreatePostStatus value)?  resetCreatePostStatus,TResult? Function( LikePost value)?  likePost,TResult? Function( UnlikePost value)?  unlikePost,TResult? Function( FeedUpdated value)?  feedUpdated,TResult? Function( ClearFeed value)?  clearFeed,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( SubscribeToCommunityFeed value)?  subscribeToCommunityFeed,TResult? Function( SubscribeToComments value)?  subscribeToComments,TResult? Function( CreatePost value)?  createPost,TResult? Function( ResetCreatePostStatus value)?  resetCreatePostStatus,TResult? Function( LikePost value)?  likePost,TResult? Function( UnlikePost value)?  unlikePost,TResult? Function( FeedUpdated value)?  feedUpdated,TResult? Function( CommentsUpdated value)?  commentsUpdated,TResult? Function( AddComment value)?  addComment,TResult? Function( UpdateComment value)?  updateComment,TResult? Function( DeleteComment value)?  deleteComment,TResult? Function( ClearComments value)?  clearComments,TResult? Function( ClearFeed value)?  clearFeed,}){
 final _that = this;
 switch (_that) {
 case SubscribeToCommunityFeed() when subscribeToCommunityFeed != null:
-return subscribeToCommunityFeed(_that);case CreatePost() when createPost != null:
+return subscribeToCommunityFeed(_that);case SubscribeToComments() when subscribeToComments != null:
+return subscribeToComments(_that);case CreatePost() when createPost != null:
 return createPost(_that);case ResetCreatePostStatus() when resetCreatePostStatus != null:
 return resetCreatePostStatus(_that);case LikePost() when likePost != null:
 return likePost(_that);case UnlikePost() when unlikePost != null:
 return unlikePost(_that);case FeedUpdated() when feedUpdated != null:
-return feedUpdated(_that);case ClearFeed() when clearFeed != null:
+return feedUpdated(_that);case CommentsUpdated() when commentsUpdated != null:
+return commentsUpdated(_that);case AddComment() when addComment != null:
+return addComment(_that);case UpdateComment() when updateComment != null:
+return updateComment(_that);case DeleteComment() when deleteComment != null:
+return deleteComment(_that);case ClearComments() when clearComments != null:
+return clearComments(_that);case ClearFeed() when clearFeed != null:
 return clearFeed(_that);case _:
   return null;
 
@@ -137,15 +155,21 @@ return clearFeed(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String uid)?  subscribeToCommunityFeed,TResult Function( File imageFile,  String caption)?  createPost,TResult Function()?  resetCreatePostStatus,TResult Function( String postId)?  likePost,TResult Function( String postId)?  unlikePost,TResult Function( List<PostEntity> posts)?  feedUpdated,TResult Function()?  clearFeed,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String uid)?  subscribeToCommunityFeed,TResult Function( String postId)?  subscribeToComments,TResult Function( File imageFile,  String caption)?  createPost,TResult Function()?  resetCreatePostStatus,TResult Function( String postId)?  likePost,TResult Function( String postId)?  unlikePost,TResult Function( List<PostEntity> posts)?  feedUpdated,TResult Function( List<CommentEntity> comments)?  commentsUpdated,TResult Function( String postId,  String content,  String? parentId)?  addComment,TResult Function( String postId,  String commentId,  String content)?  updateComment,TResult Function( String postId,  String commentId)?  deleteComment,TResult Function()?  clearComments,TResult Function()?  clearFeed,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case SubscribeToCommunityFeed() when subscribeToCommunityFeed != null:
-return subscribeToCommunityFeed(_that.uid);case CreatePost() when createPost != null:
+return subscribeToCommunityFeed(_that.uid);case SubscribeToComments() when subscribeToComments != null:
+return subscribeToComments(_that.postId);case CreatePost() when createPost != null:
 return createPost(_that.imageFile,_that.caption);case ResetCreatePostStatus() when resetCreatePostStatus != null:
 return resetCreatePostStatus();case LikePost() when likePost != null:
 return likePost(_that.postId);case UnlikePost() when unlikePost != null:
 return unlikePost(_that.postId);case FeedUpdated() when feedUpdated != null:
-return feedUpdated(_that.posts);case ClearFeed() when clearFeed != null:
+return feedUpdated(_that.posts);case CommentsUpdated() when commentsUpdated != null:
+return commentsUpdated(_that.comments);case AddComment() when addComment != null:
+return addComment(_that.postId,_that.content,_that.parentId);case UpdateComment() when updateComment != null:
+return updateComment(_that.postId,_that.commentId,_that.content);case DeleteComment() when deleteComment != null:
+return deleteComment(_that.postId,_that.commentId);case ClearComments() when clearComments != null:
+return clearComments();case ClearFeed() when clearFeed != null:
 return clearFeed();case _:
   return orElse();
 
@@ -164,15 +188,21 @@ return clearFeed();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String uid)  subscribeToCommunityFeed,required TResult Function( File imageFile,  String caption)  createPost,required TResult Function()  resetCreatePostStatus,required TResult Function( String postId)  likePost,required TResult Function( String postId)  unlikePost,required TResult Function( List<PostEntity> posts)  feedUpdated,required TResult Function()  clearFeed,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String uid)  subscribeToCommunityFeed,required TResult Function( String postId)  subscribeToComments,required TResult Function( File imageFile,  String caption)  createPost,required TResult Function()  resetCreatePostStatus,required TResult Function( String postId)  likePost,required TResult Function( String postId)  unlikePost,required TResult Function( List<PostEntity> posts)  feedUpdated,required TResult Function( List<CommentEntity> comments)  commentsUpdated,required TResult Function( String postId,  String content,  String? parentId)  addComment,required TResult Function( String postId,  String commentId,  String content)  updateComment,required TResult Function( String postId,  String commentId)  deleteComment,required TResult Function()  clearComments,required TResult Function()  clearFeed,}) {final _that = this;
 switch (_that) {
 case SubscribeToCommunityFeed():
-return subscribeToCommunityFeed(_that.uid);case CreatePost():
+return subscribeToCommunityFeed(_that.uid);case SubscribeToComments():
+return subscribeToComments(_that.postId);case CreatePost():
 return createPost(_that.imageFile,_that.caption);case ResetCreatePostStatus():
 return resetCreatePostStatus();case LikePost():
 return likePost(_that.postId);case UnlikePost():
 return unlikePost(_that.postId);case FeedUpdated():
-return feedUpdated(_that.posts);case ClearFeed():
+return feedUpdated(_that.posts);case CommentsUpdated():
+return commentsUpdated(_that.comments);case AddComment():
+return addComment(_that.postId,_that.content,_that.parentId);case UpdateComment():
+return updateComment(_that.postId,_that.commentId,_that.content);case DeleteComment():
+return deleteComment(_that.postId,_that.commentId);case ClearComments():
+return clearComments();case ClearFeed():
 return clearFeed();case _:
   throw StateError('Unexpected subclass');
 
@@ -190,15 +220,21 @@ return clearFeed();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String uid)?  subscribeToCommunityFeed,TResult? Function( File imageFile,  String caption)?  createPost,TResult? Function()?  resetCreatePostStatus,TResult? Function( String postId)?  likePost,TResult? Function( String postId)?  unlikePost,TResult? Function( List<PostEntity> posts)?  feedUpdated,TResult? Function()?  clearFeed,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String uid)?  subscribeToCommunityFeed,TResult? Function( String postId)?  subscribeToComments,TResult? Function( File imageFile,  String caption)?  createPost,TResult? Function()?  resetCreatePostStatus,TResult? Function( String postId)?  likePost,TResult? Function( String postId)?  unlikePost,TResult? Function( List<PostEntity> posts)?  feedUpdated,TResult? Function( List<CommentEntity> comments)?  commentsUpdated,TResult? Function( String postId,  String content,  String? parentId)?  addComment,TResult? Function( String postId,  String commentId,  String content)?  updateComment,TResult? Function( String postId,  String commentId)?  deleteComment,TResult? Function()?  clearComments,TResult? Function()?  clearFeed,}) {final _that = this;
 switch (_that) {
 case SubscribeToCommunityFeed() when subscribeToCommunityFeed != null:
-return subscribeToCommunityFeed(_that.uid);case CreatePost() when createPost != null:
+return subscribeToCommunityFeed(_that.uid);case SubscribeToComments() when subscribeToComments != null:
+return subscribeToComments(_that.postId);case CreatePost() when createPost != null:
 return createPost(_that.imageFile,_that.caption);case ResetCreatePostStatus() when resetCreatePostStatus != null:
 return resetCreatePostStatus();case LikePost() when likePost != null:
 return likePost(_that.postId);case UnlikePost() when unlikePost != null:
 return unlikePost(_that.postId);case FeedUpdated() when feedUpdated != null:
-return feedUpdated(_that.posts);case ClearFeed() when clearFeed != null:
+return feedUpdated(_that.posts);case CommentsUpdated() when commentsUpdated != null:
+return commentsUpdated(_that.comments);case AddComment() when addComment != null:
+return addComment(_that.postId,_that.content,_that.parentId);case UpdateComment() when updateComment != null:
+return updateComment(_that.postId,_that.commentId,_that.content);case DeleteComment() when deleteComment != null:
+return deleteComment(_that.postId,_that.commentId);case ClearComments() when clearComments != null:
+return clearComments();case ClearFeed() when clearFeed != null:
 return clearFeed();case _:
   return null;
 
@@ -266,6 +302,72 @@ class _$SubscribeToCommunityFeedCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') $Res call({Object? uid = null,}) {
   return _then(SubscribeToCommunityFeed(
 uid: null == uid ? _self.uid : uid // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class SubscribeToComments implements CommunityEvent {
+  const SubscribeToComments({required this.postId});
+  
+
+ final  String postId;
+
+/// Create a copy of CommunityEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SubscribeToCommentsCopyWith<SubscribeToComments> get copyWith => _$SubscribeToCommentsCopyWithImpl<SubscribeToComments>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SubscribeToComments&&(identical(other.postId, postId) || other.postId == postId));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,postId);
+
+@override
+String toString() {
+  return 'CommunityEvent.subscribeToComments(postId: $postId)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $SubscribeToCommentsCopyWith<$Res> implements $CommunityEventCopyWith<$Res> {
+  factory $SubscribeToCommentsCopyWith(SubscribeToComments value, $Res Function(SubscribeToComments) _then) = _$SubscribeToCommentsCopyWithImpl;
+@useResult
+$Res call({
+ String postId
+});
+
+
+
+
+}
+/// @nodoc
+class _$SubscribeToCommentsCopyWithImpl<$Res>
+    implements $SubscribeToCommentsCopyWith<$Res> {
+  _$SubscribeToCommentsCopyWithImpl(this._self, this._then);
+
+  final SubscribeToComments _self;
+  final $Res Function(SubscribeToComments) _then;
+
+/// Create a copy of CommunityEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? postId = null,}) {
+  return _then(SubscribeToComments(
+postId: null == postId ? _self.postId : postId // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -576,6 +678,318 @@ as List<PostEntity>,
 
 
 }
+
+/// @nodoc
+
+
+class CommentsUpdated implements CommunityEvent {
+  const CommentsUpdated(final  List<CommentEntity> comments): _comments = comments;
+  
+
+ final  List<CommentEntity> _comments;
+ List<CommentEntity> get comments {
+  if (_comments is EqualUnmodifiableListView) return _comments;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_comments);
+}
+
+
+/// Create a copy of CommunityEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CommentsUpdatedCopyWith<CommentsUpdated> get copyWith => _$CommentsUpdatedCopyWithImpl<CommentsUpdated>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommentsUpdated&&const DeepCollectionEquality().equals(other._comments, _comments));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_comments));
+
+@override
+String toString() {
+  return 'CommunityEvent.commentsUpdated(comments: $comments)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CommentsUpdatedCopyWith<$Res> implements $CommunityEventCopyWith<$Res> {
+  factory $CommentsUpdatedCopyWith(CommentsUpdated value, $Res Function(CommentsUpdated) _then) = _$CommentsUpdatedCopyWithImpl;
+@useResult
+$Res call({
+ List<CommentEntity> comments
+});
+
+
+
+
+}
+/// @nodoc
+class _$CommentsUpdatedCopyWithImpl<$Res>
+    implements $CommentsUpdatedCopyWith<$Res> {
+  _$CommentsUpdatedCopyWithImpl(this._self, this._then);
+
+  final CommentsUpdated _self;
+  final $Res Function(CommentsUpdated) _then;
+
+/// Create a copy of CommunityEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? comments = null,}) {
+  return _then(CommentsUpdated(
+null == comments ? _self._comments : comments // ignore: cast_nullable_to_non_nullable
+as List<CommentEntity>,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class AddComment implements CommunityEvent {
+  const AddComment({required this.postId, required this.content, this.parentId});
+  
+
+ final  String postId;
+ final  String content;
+ final  String? parentId;
+
+/// Create a copy of CommunityEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$AddCommentCopyWith<AddComment> get copyWith => _$AddCommentCopyWithImpl<AddComment>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AddComment&&(identical(other.postId, postId) || other.postId == postId)&&(identical(other.content, content) || other.content == content)&&(identical(other.parentId, parentId) || other.parentId == parentId));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,postId,content,parentId);
+
+@override
+String toString() {
+  return 'CommunityEvent.addComment(postId: $postId, content: $content, parentId: $parentId)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $AddCommentCopyWith<$Res> implements $CommunityEventCopyWith<$Res> {
+  factory $AddCommentCopyWith(AddComment value, $Res Function(AddComment) _then) = _$AddCommentCopyWithImpl;
+@useResult
+$Res call({
+ String postId, String content, String? parentId
+});
+
+
+
+
+}
+/// @nodoc
+class _$AddCommentCopyWithImpl<$Res>
+    implements $AddCommentCopyWith<$Res> {
+  _$AddCommentCopyWithImpl(this._self, this._then);
+
+  final AddComment _self;
+  final $Res Function(AddComment) _then;
+
+/// Create a copy of CommunityEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? postId = null,Object? content = null,Object? parentId = freezed,}) {
+  return _then(AddComment(
+postId: null == postId ? _self.postId : postId // ignore: cast_nullable_to_non_nullable
+as String,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
+as String,parentId: freezed == parentId ? _self.parentId : parentId // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class UpdateComment implements CommunityEvent {
+  const UpdateComment({required this.postId, required this.commentId, required this.content});
+  
+
+ final  String postId;
+ final  String commentId;
+ final  String content;
+
+/// Create a copy of CommunityEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$UpdateCommentCopyWith<UpdateComment> get copyWith => _$UpdateCommentCopyWithImpl<UpdateComment>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UpdateComment&&(identical(other.postId, postId) || other.postId == postId)&&(identical(other.commentId, commentId) || other.commentId == commentId)&&(identical(other.content, content) || other.content == content));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,postId,commentId,content);
+
+@override
+String toString() {
+  return 'CommunityEvent.updateComment(postId: $postId, commentId: $commentId, content: $content)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $UpdateCommentCopyWith<$Res> implements $CommunityEventCopyWith<$Res> {
+  factory $UpdateCommentCopyWith(UpdateComment value, $Res Function(UpdateComment) _then) = _$UpdateCommentCopyWithImpl;
+@useResult
+$Res call({
+ String postId, String commentId, String content
+});
+
+
+
+
+}
+/// @nodoc
+class _$UpdateCommentCopyWithImpl<$Res>
+    implements $UpdateCommentCopyWith<$Res> {
+  _$UpdateCommentCopyWithImpl(this._self, this._then);
+
+  final UpdateComment _self;
+  final $Res Function(UpdateComment) _then;
+
+/// Create a copy of CommunityEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? postId = null,Object? commentId = null,Object? content = null,}) {
+  return _then(UpdateComment(
+postId: null == postId ? _self.postId : postId // ignore: cast_nullable_to_non_nullable
+as String,commentId: null == commentId ? _self.commentId : commentId // ignore: cast_nullable_to_non_nullable
+as String,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class DeleteComment implements CommunityEvent {
+  const DeleteComment({required this.postId, required this.commentId});
+  
+
+ final  String postId;
+ final  String commentId;
+
+/// Create a copy of CommunityEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$DeleteCommentCopyWith<DeleteComment> get copyWith => _$DeleteCommentCopyWithImpl<DeleteComment>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DeleteComment&&(identical(other.postId, postId) || other.postId == postId)&&(identical(other.commentId, commentId) || other.commentId == commentId));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,postId,commentId);
+
+@override
+String toString() {
+  return 'CommunityEvent.deleteComment(postId: $postId, commentId: $commentId)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $DeleteCommentCopyWith<$Res> implements $CommunityEventCopyWith<$Res> {
+  factory $DeleteCommentCopyWith(DeleteComment value, $Res Function(DeleteComment) _then) = _$DeleteCommentCopyWithImpl;
+@useResult
+$Res call({
+ String postId, String commentId
+});
+
+
+
+
+}
+/// @nodoc
+class _$DeleteCommentCopyWithImpl<$Res>
+    implements $DeleteCommentCopyWith<$Res> {
+  _$DeleteCommentCopyWithImpl(this._self, this._then);
+
+  final DeleteComment _self;
+  final $Res Function(DeleteComment) _then;
+
+/// Create a copy of CommunityEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? postId = null,Object? commentId = null,}) {
+  return _then(DeleteComment(
+postId: null == postId ? _self.postId : postId // ignore: cast_nullable_to_non_nullable
+as String,commentId: null == commentId ? _self.commentId : commentId // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class ClearComments implements CommunityEvent {
+  const ClearComments();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ClearComments);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'CommunityEvent.clearComments()';
+}
+
+
+}
+
+
+
 
 /// @nodoc
 

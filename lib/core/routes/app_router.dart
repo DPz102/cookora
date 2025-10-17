@@ -1,24 +1,29 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:cookora/core/routes/main_shell.dart';
 import 'package:cookora/core/routes/main_shell_provider.dart';
+
 import 'package:cookora/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:cookora/features/auth/presentation/bloc/auth_state.dart';
-import 'package:cookora/features/auth/presentation/screens/signin_screen.dart';
-import 'package:cookora/features/auth/presentation/screens/signup_screen.dart';
-import 'package:cookora/features/community/presentation/screens/community_screen.dart';
-import 'package:cookora/features/pantry/presentation/screens/pantry_screen.dart';
-import 'package:cookora/features/scan/presentation/screens/scan_screen.dart';
+import 'package:cookora/features/community/domain/entities/post_entity.dart';
+
 // Màn hình public
 import 'package:cookora/features/splash/screens/splash_screen.dart';
+import 'package:cookora/features/welcome/screens/welcome_screen.dart';
+import 'package:cookora/features/auth/presentation/screens/signin_screen.dart';
+import 'package:cookora/features/auth/presentation/screens/signup_screen.dart';
+
 // Màn hình private
 import 'package:cookora/features/suggestion/presentation/screens/suggestion_screen.dart';
-import 'package:cookora/features/user/presentation/screens/edit_password_screen.dart';
+import 'package:cookora/features/pantry/presentation/screens/pantry_screen.dart';
+import 'package:cookora/features/scan/presentation/screens/scan_screen.dart';
+import 'package:cookora/features/community/presentation/screens/community_screen.dart';
+import 'package:cookora/features/community/presentation/screens/post_detail_screen.dart';
 import 'package:cookora/features/user/presentation/screens/profile_screen.dart';
 import 'package:cookora/features/user/presentation/screens/setting_screen.dart';
-import 'package:cookora/features/welcome/screens/welcome_screen.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:cookora/features/user/presentation/screens/edit_password_screen.dart';
 
 GoRouter appRouter(AuthBloc authBloc) {
   // Các route không cần xác thực
@@ -113,6 +118,16 @@ GoRouter appRouter(AuthBloc authBloc) {
               GoRoute(
                 path: '/community',
                 builder: (context, state) => const CommunityScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'post/:postId', // Dùng path parameter
+                    builder: (context, state) {
+                      // Nhận PostEntity được truyền qua 'extra'
+                      final post = state.extra as PostEntity;
+                      return PostDetailScreen(post: post);
+                    },
+                  ),
+                ],
               ),
             ],
           ),

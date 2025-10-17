@@ -263,7 +263,7 @@ class _CreatePostOverlayState extends State<CreatePostOverlay> {
   }
 
   Widget _buildFooter(BuildContext context, TextEditingValue value) {
-    final canPost = _imageFile != null || value.text.isNotEmpty;
+    final canPost = _imageFile != null && value.text.isNotEmpty;
     return Padding(
       padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 90.h),
       child: BlocBuilder<CommunityBloc, CommunityState>(

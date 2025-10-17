@@ -1,16 +1,21 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:cookora/core/widgets/custom_network_image.dart';
 import 'package:cookora/core/widgets/glassmorphic_container.dart';
+
 import 'package:cookora/features/community/domain/entities/post_entity.dart';
 import 'package:cookora/features/community/presentation/bloc/community_bloc.dart';
 import 'package:cookora/features/community/presentation/bloc/community_event.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PostCard extends StatelessWidget {
   final PostEntity post;
-  const PostCard({super.key, required this.post});
+  final bool isDetailView;
+
+  const PostCard({super.key, required this.post, this.isDetailView = false});
 
   @override
   Widget build(BuildContext context) {
@@ -102,21 +107,26 @@ class PostCard extends StatelessWidget {
                       _buildInteractionItem(
                         context,
                         icon: Icons.chat_bubble_outline,
-                        count: 12,
-                        onPressed: () {},
+                        count: post.commentCount,
+                        onPressed: isDetailView
+                            ? null
+                            : () {
+                                if (post.id != null) {
+                                  context.push(
+                                    '/community/post/${post.id}',
+                                    extra: post,
+                                  );
+                                }
+                              },
                       ),
                       SizedBox(width: 16.w),
                       _buildInteractionItem(
                         context,
-                        icon: Icons.send_outlined,
+                        icon: Icons.bookmark_border_outlined,
                         count: 5,
                         onPressed: () {},
                       ),
                     ],
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.bookmark_border_outlined, size: 26.sp),
-                    onPressed: () {},
                   ),
                 ],
               ),
@@ -131,7 +141,7 @@ class PostCard extends StatelessWidget {
     BuildContext context, {
     required IconData icon,
     required int count,
-    required VoidCallback onPressed,
+    required VoidCallback? onPressed,
     Color? iconColor,
   }) {
     return InkWell(
@@ -141,7 +151,13 @@ class PostCard extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 6.w),
         child: Row(
           children: [
-            Icon(icon, size: 26.sp, color: iconColor),
+            Icon(
+              icon,
+              size: 26.sp,
+              color: onPressed == null
+                  ? Theme.of(context).disabledColor
+                  : iconColor,
+            ),
             SizedBox(width: 6.w),
             Text(
               count.toString(),

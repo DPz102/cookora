@@ -14,6 +14,7 @@ _PostEntity _$PostEntityFromJson(Map<String, dynamic> json) => _PostEntity(
   authorUsername: json['authorUsername'] as String? ?? '',
   authorAvatarUrl: json['authorAvatarUrl'] as String? ?? '',
   likes: (json['likes'] as List<dynamic>).map((e) => e as String).toList(),
+  commentCount: (json['commentCount'] as num?)?.toInt() ?? 0,
   createdAt: _timestampToDateTime(json['createdAt'] as Timestamp?),
 );
 
@@ -26,5 +27,6 @@ Map<String, dynamic> _$PostEntityToJson(_PostEntity instance) =>
       'authorUsername': instance.authorUsername,
       'authorAvatarUrl': instance.authorAvatarUrl,
       'likes': instance.likes,
+      'commentCount': instance.commentCount,
       'createdAt': _dateTimeToTimestamp(instance.createdAt),
     };

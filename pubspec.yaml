@@ -72,6 +72,7 @@ dependencies:
   algoliasearch: ^1.38.0
   collection: ^1.19.1
   http: ^1.5.0
+  timeago: ^3.7.1
 
 dev_dependencies:
   flutter_test:

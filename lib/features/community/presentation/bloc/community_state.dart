@@ -1,6 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:cookora/core/utils/async_state.dart';
+
 import 'package:cookora/features/community/domain/entities/post_entity.dart';
+import 'package:cookora/features/community/domain/entities/comment_entity.dart';
 
 part 'community_state.freezed.dart';
 
@@ -12,5 +14,8 @@ abstract class CommunityState with _$CommunityState {
 
     // Trạng thái của hành động tạo bài đăng.
     @Default(AsyncInitial()) AsyncState<void> createPostStatus,
+
+    /// Quản lý trạng thái tải danh sách comment của một bài viết.
+    @Default(AsyncInitial()) AsyncState<List<CommentEntity>> commentsStatus,
   }) = _CommunityState;
 }
