@@ -20,6 +20,7 @@ abstract class UserEntity with _$UserEntity {
     @Default('') String photoURL,
     @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp)
     DateTime? createdAt,
+    @Default([]) List<String> savedPosts,
   }) = _UserEntity;
 
   // Factory để parse dữ liệu từ Firestore

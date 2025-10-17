@@ -168,4 +168,21 @@ class CommunityDataSourceImpl implements CommunityDataSource {
     // Thực thi cả 2 hành động
     await batch.commit();
   }
+
+  @override
+  Stream<List<({String id, Map<String, dynamic> data})>> getPostsByIdsStream(
+    List<String> postIds,
+  ) {
+    // Firestore `whereIn` chỉ hỗ trợ tối đa 30 item mỗi query
+    // Nếu cần hỗ trợ nhiều hơn, bạn sẽ phải chia `postIds` thành nhiều batch
+    return _firestore
+        .collection('posts')
+        .where(FieldPath.documentId, whereIn: postIds)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => (id: doc.id, data: doc.data()))
+              .toList(),
+        );
+  }
 }

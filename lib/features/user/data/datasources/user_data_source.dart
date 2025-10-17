@@ -12,4 +12,6 @@ abstract class UserDataSource {
   });
 
   Future<String> uploadAvatar({required String uid, required XFile imageFile});
+  Future<void> savePost({required String uid, required String postId});
+  Future<void> unsavePost({required String uid, required String postId});
 }

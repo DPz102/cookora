@@ -26,6 +26,14 @@ abstract class UserEvent with _$UserEvent {
 
   const factory UserEvent.updateAvatar(XFile imageFile) = UpdateAvatar;
 
+  const factory UserEvent.savePost(String postId) = SavePost;
+
+  const factory UserEvent.unsavePost(String postId) = UnsavePost;
+
+  // Event nội bộ để cập nhật danh sách bài đã lưu
+  const factory UserEvent.savedPostsUpdated(List<PostEntity> savedPosts) =
+      SavedPostsUpdated;
+
   // Xóa dữ liệu người dùng hiện tại (khi đăng xuất)
   const factory UserEvent.clearProfile() = ClearProfile;
 }

@@ -15,6 +15,10 @@ abstract class CommunityDataSource {
     String postId,
   );
 
+  Stream<List<({String id, Map<String, dynamic> data})>> getPostsByIdsStream(
+    List<String> postIds,
+  );
+
   // Tải ảnh lên Storage và trả về URL
   Future<String> uploadPostImage({
     required File imageFile,

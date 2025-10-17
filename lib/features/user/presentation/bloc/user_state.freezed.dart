@@ -16,7 +16,7 @@ mixin _$UserState {
 
 // Trạng thái của thông tin profile (UserEntity).
  AsyncState<UserEntity> get profileStatus;// Trạng thái của danh sách bài đăng.
- AsyncState<List<PostEntity>> get postsStatus;// Trạng thái của hành động cập nhật profile.
+ AsyncState<List<PostEntity>> get postsStatus; AsyncState<List<PostEntity>> get savedPostsStatus;// Trạng thái của hành động cập nhật profile.
  AsyncState<void> get updateProfileStatus;// Theo dõi quá trình tải avatar.
  bool get isUploadingAvatar;
 /// Create a copy of UserState
@@ -29,16 +29,16 @@ $UserStateCopyWith<UserState> get copyWith => _$UserStateCopyWithImpl<UserState>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserState&&(identical(other.profileStatus, profileStatus) || other.profileStatus == profileStatus)&&(identical(other.postsStatus, postsStatus) || other.postsStatus == postsStatus)&&(identical(other.updateProfileStatus, updateProfileStatus) || other.updateProfileStatus == updateProfileStatus)&&(identical(other.isUploadingAvatar, isUploadingAvatar) || other.isUploadingAvatar == isUploadingAvatar));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserState&&(identical(other.profileStatus, profileStatus) || other.profileStatus == profileStatus)&&(identical(other.postsStatus, postsStatus) || other.postsStatus == postsStatus)&&(identical(other.savedPostsStatus, savedPostsStatus) || other.savedPostsStatus == savedPostsStatus)&&(identical(other.updateProfileStatus, updateProfileStatus) || other.updateProfileStatus == updateProfileStatus)&&(identical(other.isUploadingAvatar, isUploadingAvatar) || other.isUploadingAvatar == isUploadingAvatar));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,profileStatus,postsStatus,updateProfileStatus,isUploadingAvatar);
+int get hashCode => Object.hash(runtimeType,profileStatus,postsStatus,savedPostsStatus,updateProfileStatus,isUploadingAvatar);
 
 @override
 String toString() {
-  return 'UserState(profileStatus: $profileStatus, postsStatus: $postsStatus, updateProfileStatus: $updateProfileStatus, isUploadingAvatar: $isUploadingAvatar)';
+  return 'UserState(profileStatus: $profileStatus, postsStatus: $postsStatus, savedPostsStatus: $savedPostsStatus, updateProfileStatus: $updateProfileStatus, isUploadingAvatar: $isUploadingAvatar)';
 }
 
 
@@ -49,11 +49,11 @@ abstract mixin class $UserStateCopyWith<$Res>  {
   factory $UserStateCopyWith(UserState value, $Res Function(UserState) _then) = _$UserStateCopyWithImpl;
 @useResult
 $Res call({
- AsyncState<UserEntity> profileStatus, AsyncState<List<PostEntity>> postsStatus, AsyncState<void> updateProfileStatus, bool isUploadingAvatar
+ AsyncState<UserEntity> profileStatus, AsyncState<List<PostEntity>> postsStatus, AsyncState<List<PostEntity>> savedPostsStatus, AsyncState<void> updateProfileStatus, bool isUploadingAvatar
 });
 
 
-$AsyncStateCopyWith<UserEntity, $Res> get profileStatus;$AsyncStateCopyWith<List<PostEntity>, $Res> get postsStatus;$AsyncStateCopyWith<void, $Res> get updateProfileStatus;
+$AsyncStateCopyWith<UserEntity, $Res> get profileStatus;$AsyncStateCopyWith<List<PostEntity>, $Res> get postsStatus;$AsyncStateCopyWith<List<PostEntity>, $Res> get savedPostsStatus;$AsyncStateCopyWith<void, $Res> get updateProfileStatus;
 
 }
 /// @nodoc
@@ -66,10 +66,11 @@ class _$UserStateCopyWithImpl<$Res>
 
 /// Create a copy of UserState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? profileStatus = null,Object? postsStatus = null,Object? updateProfileStatus = null,Object? isUploadingAvatar = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? profileStatus = null,Object? postsStatus = null,Object? savedPostsStatus = null,Object? updateProfileStatus = null,Object? isUploadingAvatar = null,}) {
   return _then(_self.copyWith(
 profileStatus: null == profileStatus ? _self.profileStatus : profileStatus // ignore: cast_nullable_to_non_nullable
 as AsyncState<UserEntity>,postsStatus: null == postsStatus ? _self.postsStatus : postsStatus // ignore: cast_nullable_to_non_nullable
+as AsyncState<List<PostEntity>>,savedPostsStatus: null == savedPostsStatus ? _self.savedPostsStatus : savedPostsStatus // ignore: cast_nullable_to_non_nullable
 as AsyncState<List<PostEntity>>,updateProfileStatus: null == updateProfileStatus ? _self.updateProfileStatus : updateProfileStatus // ignore: cast_nullable_to_non_nullable
 as AsyncState<void>,isUploadingAvatar: null == isUploadingAvatar ? _self.isUploadingAvatar : isUploadingAvatar // ignore: cast_nullable_to_non_nullable
 as bool,
@@ -92,6 +93,15 @@ $AsyncStateCopyWith<List<PostEntity>, $Res> get postsStatus {
   
   return $AsyncStateCopyWith<List<PostEntity>, $Res>(_self.postsStatus, (value) {
     return _then(_self.copyWith(postsStatus: value));
+  });
+}/// Create a copy of UserState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AsyncStateCopyWith<List<PostEntity>, $Res> get savedPostsStatus {
+  
+  return $AsyncStateCopyWith<List<PostEntity>, $Res>(_self.savedPostsStatus, (value) {
+    return _then(_self.copyWith(savedPostsStatus: value));
   });
 }/// Create a copy of UserState
 /// with the given fields replaced by the non-null parameter values.
@@ -184,10 +194,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( AsyncState<UserEntity> profileStatus,  AsyncState<List<PostEntity>> postsStatus,  AsyncState<void> updateProfileStatus,  bool isUploadingAvatar)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( AsyncState<UserEntity> profileStatus,  AsyncState<List<PostEntity>> postsStatus,  AsyncState<List<PostEntity>> savedPostsStatus,  AsyncState<void> updateProfileStatus,  bool isUploadingAvatar)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserState() when $default != null:
-return $default(_that.profileStatus,_that.postsStatus,_that.updateProfileStatus,_that.isUploadingAvatar);case _:
+return $default(_that.profileStatus,_that.postsStatus,_that.savedPostsStatus,_that.updateProfileStatus,_that.isUploadingAvatar);case _:
   return orElse();
 
 }
@@ -205,10 +215,10 @@ return $default(_that.profileStatus,_that.postsStatus,_that.updateProfileStatus,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( AsyncState<UserEntity> profileStatus,  AsyncState<List<PostEntity>> postsStatus,  AsyncState<void> updateProfileStatus,  bool isUploadingAvatar)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( AsyncState<UserEntity> profileStatus,  AsyncState<List<PostEntity>> postsStatus,  AsyncState<List<PostEntity>> savedPostsStatus,  AsyncState<void> updateProfileStatus,  bool isUploadingAvatar)  $default,) {final _that = this;
 switch (_that) {
 case _UserState():
-return $default(_that.profileStatus,_that.postsStatus,_that.updateProfileStatus,_that.isUploadingAvatar);case _:
+return $default(_that.profileStatus,_that.postsStatus,_that.savedPostsStatus,_that.updateProfileStatus,_that.isUploadingAvatar);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -225,10 +235,10 @@ return $default(_that.profileStatus,_that.postsStatus,_that.updateProfileStatus,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( AsyncState<UserEntity> profileStatus,  AsyncState<List<PostEntity>> postsStatus,  AsyncState<void> updateProfileStatus,  bool isUploadingAvatar)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( AsyncState<UserEntity> profileStatus,  AsyncState<List<PostEntity>> postsStatus,  AsyncState<List<PostEntity>> savedPostsStatus,  AsyncState<void> updateProfileStatus,  bool isUploadingAvatar)?  $default,) {final _that = this;
 switch (_that) {
 case _UserState() when $default != null:
-return $default(_that.profileStatus,_that.postsStatus,_that.updateProfileStatus,_that.isUploadingAvatar);case _:
+return $default(_that.profileStatus,_that.postsStatus,_that.savedPostsStatus,_that.updateProfileStatus,_that.isUploadingAvatar);case _:
   return null;
 
 }
@@ -240,13 +250,14 @@ return $default(_that.profileStatus,_that.postsStatus,_that.updateProfileStatus,
 
 
 class _UserState implements UserState {
-  const _UserState({this.profileStatus = const AsyncInitial(), this.postsStatus = const AsyncInitial(), this.updateProfileStatus = const AsyncInitial(), this.isUploadingAvatar = false});
+  const _UserState({this.profileStatus = const AsyncInitial(), this.postsStatus = const AsyncInitial(), this.savedPostsStatus = const AsyncInitial(), this.updateProfileStatus = const AsyncInitial(), this.isUploadingAvatar = false});
   
 
 // Trạng thái của thông tin profile (UserEntity).
 @override@JsonKey() final  AsyncState<UserEntity> profileStatus;
 // Trạng thái của danh sách bài đăng.
 @override@JsonKey() final  AsyncState<List<PostEntity>> postsStatus;
+@override@JsonKey() final  AsyncState<List<PostEntity>> savedPostsStatus;
 // Trạng thái của hành động cập nhật profile.
 @override@JsonKey() final  AsyncState<void> updateProfileStatus;
 // Theo dõi quá trình tải avatar.
@@ -262,16 +273,16 @@ _$UserStateCopyWith<_UserState> get copyWith => __$UserStateCopyWithImpl<_UserSt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserState&&(identical(other.profileStatus, profileStatus) || other.profileStatus == profileStatus)&&(identical(other.postsStatus, postsStatus) || other.postsStatus == postsStatus)&&(identical(other.updateProfileStatus, updateProfileStatus) || other.updateProfileStatus == updateProfileStatus)&&(identical(other.isUploadingAvatar, isUploadingAvatar) || other.isUploadingAvatar == isUploadingAvatar));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserState&&(identical(other.profileStatus, profileStatus) || other.profileStatus == profileStatus)&&(identical(other.postsStatus, postsStatus) || other.postsStatus == postsStatus)&&(identical(other.savedPostsStatus, savedPostsStatus) || other.savedPostsStatus == savedPostsStatus)&&(identical(other.updateProfileStatus, updateProfileStatus) || other.updateProfileStatus == updateProfileStatus)&&(identical(other.isUploadingAvatar, isUploadingAvatar) || other.isUploadingAvatar == isUploadingAvatar));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,profileStatus,postsStatus,updateProfileStatus,isUploadingAvatar);
+int get hashCode => Object.hash(runtimeType,profileStatus,postsStatus,savedPostsStatus,updateProfileStatus,isUploadingAvatar);
 
 @override
 String toString() {
-  return 'UserState(profileStatus: $profileStatus, postsStatus: $postsStatus, updateProfileStatus: $updateProfileStatus, isUploadingAvatar: $isUploadingAvatar)';
+  return 'UserState(profileStatus: $profileStatus, postsStatus: $postsStatus, savedPostsStatus: $savedPostsStatus, updateProfileStatus: $updateProfileStatus, isUploadingAvatar: $isUploadingAvatar)';
 }
 
 
@@ -282,11 +293,11 @@ abstract mixin class _$UserStateCopyWith<$Res> implements $UserStateCopyWith<$Re
   factory _$UserStateCopyWith(_UserState value, $Res Function(_UserState) _then) = __$UserStateCopyWithImpl;
 @override @useResult
 $Res call({
- AsyncState<UserEntity> profileStatus, AsyncState<List<PostEntity>> postsStatus, AsyncState<void> updateProfileStatus, bool isUploadingAvatar
+ AsyncState<UserEntity> profileStatus, AsyncState<List<PostEntity>> postsStatus, AsyncState<List<PostEntity>> savedPostsStatus, AsyncState<void> updateProfileStatus, bool isUploadingAvatar
 });
 
 
-@override $AsyncStateCopyWith<UserEntity, $Res> get profileStatus;@override $AsyncStateCopyWith<List<PostEntity>, $Res> get postsStatus;@override $AsyncStateCopyWith<void, $Res> get updateProfileStatus;
+@override $AsyncStateCopyWith<UserEntity, $Res> get profileStatus;@override $AsyncStateCopyWith<List<PostEntity>, $Res> get postsStatus;@override $AsyncStateCopyWith<List<PostEntity>, $Res> get savedPostsStatus;@override $AsyncStateCopyWith<void, $Res> get updateProfileStatus;
 
 }
 /// @nodoc
@@ -299,10 +310,11 @@ class __$UserStateCopyWithImpl<$Res>
 
 /// Create a copy of UserState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? profileStatus = null,Object? postsStatus = null,Object? updateProfileStatus = null,Object? isUploadingAvatar = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? profileStatus = null,Object? postsStatus = null,Object? savedPostsStatus = null,Object? updateProfileStatus = null,Object? isUploadingAvatar = null,}) {
   return _then(_UserState(
 profileStatus: null == profileStatus ? _self.profileStatus : profileStatus // ignore: cast_nullable_to_non_nullable
 as AsyncState<UserEntity>,postsStatus: null == postsStatus ? _self.postsStatus : postsStatus // ignore: cast_nullable_to_non_nullable
+as AsyncState<List<PostEntity>>,savedPostsStatus: null == savedPostsStatus ? _self.savedPostsStatus : savedPostsStatus // ignore: cast_nullable_to_non_nullable
 as AsyncState<List<PostEntity>>,updateProfileStatus: null == updateProfileStatus ? _self.updateProfileStatus : updateProfileStatus // ignore: cast_nullable_to_non_nullable
 as AsyncState<void>,isUploadingAvatar: null == isUploadingAvatar ? _self.isUploadingAvatar : isUploadingAvatar // ignore: cast_nullable_to_non_nullable
 as bool,
@@ -326,6 +338,15 @@ $AsyncStateCopyWith<List<PostEntity>, $Res> get postsStatus {
   
   return $AsyncStateCopyWith<List<PostEntity>, $Res>(_self.postsStatus, (value) {
     return _then(_self.copyWith(postsStatus: value));
+  });
+}/// Create a copy of UserState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AsyncStateCopyWith<List<PostEntity>, $Res> get savedPostsStatus {
+  
+  return $AsyncStateCopyWith<List<PostEntity>, $Res>(_self.savedPostsStatus, (value) {
+    return _then(_self.copyWith(savedPostsStatus: value));
   });
 }/// Create a copy of UserState
 /// with the given fields replaced by the non-null parameter values.

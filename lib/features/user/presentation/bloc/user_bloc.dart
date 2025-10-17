@@ -21,6 +21,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   StreamSubscription<AuthState>? _authSubscription;
   StreamSubscription<UserEntity>? _profileSubscription;
   StreamSubscription<List<PostEntity>>? _postsSubscription;
+  StreamSubscription<List<PostEntity>>? _savedPostsSubscription;
 
   UserBloc({
     required UserRepository userRepository,
@@ -36,6 +37,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     on<UpdateProfile>(_onUpdateProfile);
     on<ClearProfile>(_onClearProfile);
     on<UpdateAvatar>(_onUpdateAvatar);
+    on<SavePost>(_onSavePost);
+    on<UnsavePost>(_onUnsavePost);
+    on<SavedPostsUpdated>(_onSavedPostsUpdated);
 
     // Ngay khi UserBloc được tạo, nó sẽ bắt đầu lắng nghe AuthBloc
     _authSubscription = _authBloc.stream.listen((authState) {
@@ -52,6 +56,14 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     });
   }
 
+  String? _getCurrentUid() {
+    final authState = _authBloc.state;
+    if (authState is Authenticated) {
+      return authState.user.uid;
+    }
+    return null;
+  }
+
   void _onSubscribeToProfile(
     SubscribeToProfile event,
     Emitter<UserState> emit,
@@ -60,6 +72,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       state.copyWith(
         profileStatus: const AsyncLoading(),
         postsStatus: const AsyncLoading(),
+        savedPostsStatus: const AsyncLoading(),
       ),
     );
 
@@ -89,10 +102,49 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
   void _onProfileUpdated(ProfileUpdated event, Emitter<UserState> emit) {
     emit(state.copyWith(profileStatus: AsyncSuccess(event.userProfile)));
+
+    // Lắng nghe sự thay đổi của user profile để fetch lại danh sách bài đã lưu
+    final savedPostIds = event.userProfile.savedPosts;
+    _savedPostsSubscription?.cancel();
+    _savedPostsSubscription = _communityRepository
+        .getPostsByIds(savedPostIds)
+        .listen(
+          (posts) => add(SavedPostsUpdated(posts)),
+          onError: (e) {
+            final eMessage = ExceptionHandler.handle(e).toString();
+            emit(state.copyWith(savedPostsStatus: AsyncFailure(eMessage)));
+          },
+        );
   }
 
   void _onPostsUpdated(PostsUpdated event, Emitter<UserState> emit) {
     emit(state.copyWith(postsStatus: AsyncSuccess(event.posts)));
+  }
+
+  void _onSavedPostsUpdated(SavedPostsUpdated event, Emitter<UserState> emit) {
+    emit(state.copyWith(savedPostsStatus: AsyncSuccess(event.savedPosts)));
+  }
+
+  Future<void> _onSavePost(SavePost event, Emitter<UserState> emit) async {
+    final uid = _getCurrentUid();
+    if (uid != null) {
+      try {
+        await _userRepository.savePost(uid: uid, postId: event.postId);
+      } catch (e) {
+        throw Exception(e);
+      }
+    }
+  }
+
+  Future<void> _onUnsavePost(UnsavePost event, Emitter<UserState> emit) async {
+    final uid = _getCurrentUid();
+    if (uid != null) {
+      try {
+        await _userRepository.unsavePost(uid: uid, postId: event.postId);
+      } catch (e) {
+        throw Exception(e);
+      }
+    }
   }
 
   Future<void> _onUpdateProfile(
@@ -152,6 +204,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   void _onClearProfile(ClearProfile event, Emitter<UserState> emit) {
     _profileSubscription?.cancel();
     _postsSubscription?.cancel();
+    _savedPostsSubscription?.cancel();
     emit(const UserState());
   }
 
@@ -160,6 +213,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     _profileSubscription?.cancel();
     _postsSubscription?.cancel();
     _authSubscription?.cancel();
+    _savedPostsSubscription?.cancel();
     return super.close();
   }
 }

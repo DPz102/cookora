@@ -51,4 +51,38 @@ class UserDataSourceImpl implements UserDataSource {
       rethrow;
     }
   }
+
+  @override
+  Future<void> savePost({required String uid, required String postId}) async {
+    final batch = _firestore.batch();
+
+    // 1. Cập nhật document của user
+    final userRef = _firestore.collection('users').doc(uid);
+    batch.update(userRef, {
+      'savedPosts': FieldValue.arrayUnion([postId]),
+    });
+
+    // 2. Cập nhật document của post
+    final postRef = _firestore.collection('posts').doc(postId);
+    batch.update(postRef, {'bookmarkCount': FieldValue.increment(1)});
+
+    await batch.commit();
+  }
+
+  @override
+  Future<void> unsavePost({required String uid, required String postId}) async {
+    final batch = _firestore.batch();
+
+    // 1. Cập nhật document của user
+    final userRef = _firestore.collection('users').doc(uid);
+    batch.update(userRef, {
+      'savedPosts': FieldValue.arrayRemove([postId]),
+    });
+
+    // 2. Cập nhật document của post
+    final postRef = _firestore.collection('posts').doc(postId);
+    batch.update(postRef, {'bookmarkCount': FieldValue.increment(-1)});
+
+    await batch.commit();
+  }
 }

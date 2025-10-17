@@ -16,6 +16,8 @@ abstract class UserState with _$UserState {
     // Trạng thái của danh sách bài đăng.
     @Default(AsyncInitial()) AsyncState<List<PostEntity>> postsStatus,
 
+    @Default(AsyncInitial()) AsyncState<List<PostEntity>> savedPostsStatus,
+
     // Trạng thái của hành động cập nhật profile.
     @Default(AsyncInitial()) AsyncState<void> updateProfileStatus,
 

@@ -22,6 +22,7 @@ abstract class PostEntity with _$PostEntity {
 
     required List<String> likes,
     @Default(0) int commentCount,
+    @Default(0) int bookmarkCount,
 
     @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp)
     DateTime? createdAt,

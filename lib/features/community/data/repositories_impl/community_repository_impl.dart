@@ -199,4 +199,76 @@ class CommunityRepositoryImpl implements CommunityRepository {
   }) async {
     await _dataSource.deleteComment(postId: postId, commentId: commentId);
   }
+
+  @override
+  Stream<List<PostEntity>> getPostsByIds(List<String> postIds) {
+    if (postIds.isEmpty) {
+      return Stream.value([]);
+    }
+
+    // Chia danh sách postIds thành các chunks, mỗi chunk tối đa 30 phần tử
+    final List<List<String>> chunks = [];
+    for (var i = 0; i < postIds.length; i += 30) {
+      chunks.add(
+        postIds.sublist(i, i + 30 > postIds.length ? postIds.length : i + 30),
+      );
+    }
+
+    // Tạo một stream cho mỗi chunk
+    final streams = chunks
+        .map((chunk) => _dataSource.getPostsByIdsStream(chunk))
+        .toList();
+
+    // Kết hợp các stream lại và làm phẳng kết quả
+    return CombineLatestStream.list(streams)
+        .map((listOfLists) => listOfLists.expand((list) => list).toList())
+        .switchMap((postsData) async* {
+          if (postsData.isEmpty) {
+            yield [];
+            return;
+          }
+          // ... (copy logic fetch author từ hàm getCommunityFeed)
+          final authorIds = postsData
+              .map((post) => post.data['authorId'] as String)
+              .toSet()
+              .toList();
+          final Map<String, UserEntity> authorCache = {};
+          // ... (phần code còn lại để fetch và map author)
+          final batches = <Future<List<UserEntity>>>[];
+          for (var i = 0; i < authorIds.length; i += 10) {
+            final batch = authorIds.skip(i).take(10).toList();
+            batches.add(
+              _firestore
+                  .collection('users')
+                  .where(FieldPath.documentId, whereIn: batch)
+                  .get()
+                  .then(
+                    (snap) => snap.docs
+                        .map((doc) => UserEntity.fromJson(doc.data()))
+                        .toList(),
+                  ),
+            );
+          }
+
+          // Chờ tất cả batches hoàn thành
+          final allUsers = (await Future.wait(batches)).expand((x) => x);
+          for (final user in allUsers) {
+            authorCache[user.uid] = user;
+          }
+
+          // Map posts với thông tin author
+          final posts = postsData.map((postData) {
+            final authorId = postData.data['authorId'] as String;
+            final author = authorCache[authorId];
+
+            return PostEntity.fromJson(postData.data).copyWith(
+              id: postData.id,
+              authorUsername: author?.username ?? 'Unknown User',
+              authorAvatarUrl: author?.photoURL ?? '',
+            );
+          }).toList();
+
+          yield posts;
+        });
+  }
 }

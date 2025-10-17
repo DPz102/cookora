@@ -41,4 +41,14 @@ class UserRepositoryImpl implements UserRepository {
   }) async {
     return await _dataSource.uploadAvatar(uid: uid, imageFile: imageFile);
   }
+
+  @override
+  Future<void> savePost({required String uid, required String postId}) {
+    return _dataSource.savePost(uid: uid, postId: postId);
+  }
+
+  @override
+  Future<void> unsavePost({required String uid, required String postId}) {
+    return _dataSource.unsavePost(uid: uid, postId: postId);
+  }
 }

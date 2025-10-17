@@ -13,50 +13,42 @@ service cloud.firestore {
     }
 
     // === INGREDIENTS COLLECTION (MASTER DATA) ===
-    // SỬA LỖI: Thêm luật này vào
     match /ingredients/{ingredientId} {
-      // Cho phép bất kỳ ai đã đăng nhập đều có quyền đọc master data
       allow read: if isAuthenticated();
-      // Chặn mọi hành vi ghi/sửa/xóa từ client để bảo vệ dữ liệu gốc
       allow write: if false;
     }
 
     // === USERS COLLECTION ===
     match /users/{userId} {
       allow read: if isAuthenticated();
-      // GÓP Ý: Nên thắt chặt hơn một chút. Chỉ chủ sở hữu mới được sửa username/photoURL
-      allow update: if isOwner(userId) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['username', 'photoURL']);
-      allow create: if request.auth != null; // Rule này thường được xử lý bởi Cloud Function
+      allow update: if isOwner(userId) && !(request.resource.data.diff(resource.data).affectedKeys().hasAny(['uid', 'email', 'createdAt']));
+      allow create: if request.auth != null;
       allow delete: if false;
 
-      // Pantry sub-collection
+      // Sub-collections
       match /pantry/{ingredientId} {
         allow read, write, delete: if isOwner(userId);
       }
-      
-      // Kitchen log sub-collection
       match /kitchen_log/{logId} {
         allow read, write: if isOwner(userId);
       }
     }
 
-    // === RECIPES COLLECTION ===
+    // === RECIPES & RECIPE_CACHE COLLECTIONS ===
     match /recipes/{recipeId} {
       allow read: if isAuthenticated();
-      allow create: if request.auth != null; // Dành cho Cloud Function
+      allow create: if request.auth != null;
       allow update, delete: if false;
     }
-
-    // === RECIPE_CACHE COLLECTION ===
     match /recipe_cache/{hashId} {
       allow read: if isAuthenticated();
-      allow write: if request.auth != null; // Dành cho Cloud Function
+      allow write: if request.auth != null;
     }
 
     // === POSTS COLLECTION ===
     match /posts/{postId} {
       allow read: if isAuthenticated();
-      
+
       function isValidPost() {
         let post = request.resource.data;
         return post.imageUrl is string
@@ -65,39 +57,43 @@ service cloud.firestore {
           && post.caption.size() <= 500
           && post.authorId is string
           && post.likes is list
-          && post.likes.size() == 0 // Khi tạo mới, likes phải là mảng rỗng
-          && post.commentCount is number 
-          && post.commentCount == 0 // commentCount khởi tạo là 0
-          && post.authorUsername is string // Thêm kiểm tra cho authorUsername
-          && post.authorAvatarUrl is string; // Thêm kiểm tra cho authorAvatarUrl
+          && post.likes.size() == 0
+          && post.commentCount is number
+          && post.commentCount == 0
+          && post.bookmarkCount is number
+          && post.bookmarkCount == 0
+          && post.authorUsername is string
+          && post.authorAvatarUrl is string;
       }
       
       allow create: if isAuthenticated()
         && isValidPost()
         && request.resource.data.authorId == request.auth.uid;
-      
-      allow update: if isAuthenticated() &&
-        (
-          // Cho phép chỉ cập nhật 'likes'
-          (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes'])) ||
+        
+      function isIncrementing(fieldName) {
+        // Hàm get() an toàn, trả về 0 nếu trường chưa tồn tại trên document cũ.
+        return request.resource.data[fieldName] == resource.data.get(fieldName, 0) + 1;
+      }
 
-          // HOẶC cho phép chỉ cập nhật 'commentCount' với điều kiện chặt chẽ hơn
-          (
-            request.resource.data.diff(resource.data).affectedKeys().hasOnly(['commentCount']) &&
-            (
-              // THÊM: Xử lý trường hợp tăng count (kể cả khi trường cũ chưa có)
-              // resource.data.get('commentCount', 0) sẽ trả về 0 nếu trường không tồn tại.
-              request.resource.data.commentCount == resource.data.get('commentCount', 0) + 1 ||
-          
-              // SỬA: Xử lý trường hợp giảm count (chỉ xảy ra khi trường cũ đã có giá trị)
-              request.resource.data.commentCount == resource.data.commentCount - 1
-            )
-          )
-        );
+      function isDecrementing(fieldName) {
+        // Chỉ cho phép giảm khi trường đã tồn tại và lớn hơn 0.
+        return resource.data[fieldName] > 0 && request.resource.data[fieldName] == resource.data[fieldName] - 1;
+      }
+
+      allow update: if isAuthenticated() && (
+        // Cho phép chỉ cập nhật 'likes'
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes']) ||
+        
+        // Cho phép chỉ cập nhật 'commentCount' và phải là tăng/giảm 1
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['commentCount']) && (isIncrementing('commentCount') || isDecrementing('commentCount'))) ||
+        
+        // Cho phép chỉ cập nhật 'bookmarkCount' và phải là tăng/giảm 1
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['bookmarkCount']) && (isIncrementing('bookmarkCount') || isDecrementing('bookmarkCount')))
+      );
 
       allow delete: if isAuthenticated() && resource.data.authorId == request.auth.uid;
 
-      // --- RULE MỚI CHO COMMENTS SUB-COLLECTION ---
+      // --- COMMENTS SUB-COLLECTION ---
       match /comments/{commentId} {
         function isCommentOwner() {
           return request.auth.uid == resource.data.authorId;
@@ -110,22 +106,14 @@ service cloud.firestore {
               && comment.authorId == request.auth.uid;
         }
 
-        // Ai cũng có quyền đọc comment
         allow read: if isAuthenticated();
-        // Chỉ người đã đăng nhập mới được tạo comment hợp lệ
         allow create: if isAuthenticated() && isValidComment();
-        // Chỉ chủ comment mới được sửa content
-        allow update: if isAuthenticated() 
-                  && isCommentOwner()
-                  && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['content']);
-        // Chỉ chủ comment mới được xóa
+        allow update: if isAuthenticated() && isCommentOwner() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['content']);
         allow delete: if isAuthenticated() && isCommentOwner();
       }
     }
 
     // === DEFAULT RULE ===
-    // QUAN TRỌNG: Luật này đảm bảo mọi collection không được định nghĩa ở trên
-    // sẽ bị chặn hoàn toàn.
     match /{document=**} {
       allow read, write: if false;
     }

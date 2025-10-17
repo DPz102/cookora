@@ -34,7 +34,16 @@ class MainShellProvider extends StatelessWidget {
       ],
       // Sử dụng BlocListener để lắng nghe UserBloc và kích hoạt các BLoC con
       child: BlocListener<UserBloc, UserState>(
-        listenWhen: (p, c) => p.profileStatus != c.profileStatus,
+        // listenWhen sẽ chỉ trả về true khi:
+        // 1. Người dùng chuyển từ trạng thái "chưa đăng nhập" sang "đã đăng nhập".
+        // 2. Người dùng chuyển từ trạng thái "đã đăng nhập" sang "chưa đăng nhập".
+        // Nó sẽ bỏ qua các cập nhật profile thông thường (như khi bookmark).
+        listenWhen: (previous, current) {
+          final wasLoggedIn =
+              previous.profileStatus is AsyncSuccess<UserEntity>;
+          final isLoggedIn = current.profileStatus is AsyncSuccess<UserEntity>;
+          return wasLoggedIn != isLoggedIn;
+        },
         listener: (context, state) {
           final profileStatus = state.profileStatus;
 

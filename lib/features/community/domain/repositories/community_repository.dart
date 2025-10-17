@@ -13,6 +13,9 @@ abstract class CommunityRepository {
   /// Lấy stream danh sách comment của một bài đăng.
   Stream<List<CommentEntity>> getCommentsStream({required String postId});
 
+  // Lấy chi tiết các bài viết dựa trên danh sách ID
+  Stream<List<PostEntity>> getPostsByIds(List<String> postIds);
+
   // Tạo một bài đăng mới
   Future<void> createPost({
     required String uid,

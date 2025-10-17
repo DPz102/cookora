@@ -12,6 +12,11 @@ _UserEntity _$UserEntityFromJson(Map<String, dynamic> json) => _UserEntity(
   username: json['username'] as String? ?? '',
   photoURL: json['photoURL'] as String? ?? '',
   createdAt: _timestampToDateTime(json['createdAt'] as Timestamp?),
+  savedPosts:
+      (json['savedPosts'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList() ??
+      const [],
 );
 
 Map<String, dynamic> _$UserEntityToJson(_UserEntity instance) =>
@@ -21,4 +26,5 @@ Map<String, dynamic> _$UserEntityToJson(_UserEntity instance) =>
       'username': instance.username,
       'photoURL': instance.photoURL,
       'createdAt': _dateTimeToTimestamp(instance.createdAt),
+      'savedPosts': instance.savedPosts,
     };

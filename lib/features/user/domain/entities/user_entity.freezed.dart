@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$UserEntity {
 
- String get uid; String get email; String get username; String get photoURL;@JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) DateTime? get createdAt;
+ String get uid; String get email; String get username; String get photoURL;@JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) DateTime? get createdAt; List<String> get savedPosts;
 /// Create a copy of UserEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $UserEntityCopyWith<UserEntity> get copyWith => _$UserEntityCopyWithImpl<UserEnt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserEntity&&(identical(other.uid, uid) || other.uid == uid)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.photoURL, photoURL) || other.photoURL == photoURL)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserEntity&&(identical(other.uid, uid) || other.uid == uid)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.photoURL, photoURL) || other.photoURL == photoURL)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&const DeepCollectionEquality().equals(other.savedPosts, savedPosts));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,uid,email,username,photoURL,createdAt);
+int get hashCode => Object.hash(runtimeType,uid,email,username,photoURL,createdAt,const DeepCollectionEquality().hash(savedPosts));
 
 @override
 String toString() {
-  return 'UserEntity(uid: $uid, email: $email, username: $username, photoURL: $photoURL, createdAt: $createdAt)';
+  return 'UserEntity(uid: $uid, email: $email, username: $username, photoURL: $photoURL, createdAt: $createdAt, savedPosts: $savedPosts)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $UserEntityCopyWith<$Res>  {
   factory $UserEntityCopyWith(UserEntity value, $Res Function(UserEntity) _then) = _$UserEntityCopyWithImpl;
 @useResult
 $Res call({
- String uid, String email, String username, String photoURL,@JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) DateTime? createdAt
+ String uid, String email, String username, String photoURL,@JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) DateTime? createdAt, List<String> savedPosts
 });
 
 
@@ -65,14 +65,15 @@ class _$UserEntityCopyWithImpl<$Res>
 
 /// Create a copy of UserEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? uid = null,Object? email = null,Object? username = null,Object? photoURL = null,Object? createdAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? uid = null,Object? email = null,Object? username = null,Object? photoURL = null,Object? createdAt = freezed,Object? savedPosts = null,}) {
   return _then(_self.copyWith(
 uid: null == uid ? _self.uid : uid // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,username: null == username ? _self.username : username // ignore: cast_nullable_to_non_nullable
 as String,photoURL: null == photoURL ? _self.photoURL : photoURL // ignore: cast_nullable_to_non_nullable
 as String,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,
+as DateTime?,savedPosts: null == savedPosts ? _self.savedPosts : savedPosts // ignore: cast_nullable_to_non_nullable
+as List<String>,
   ));
 }
 
@@ -157,10 +158,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String uid,  String email,  String username,  String photoURL, @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp)  DateTime? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String uid,  String email,  String username,  String photoURL, @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp)  DateTime? createdAt,  List<String> savedPosts)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserEntity() when $default != null:
-return $default(_that.uid,_that.email,_that.username,_that.photoURL,_that.createdAt);case _:
+return $default(_that.uid,_that.email,_that.username,_that.photoURL,_that.createdAt,_that.savedPosts);case _:
   return orElse();
 
 }
@@ -178,10 +179,10 @@ return $default(_that.uid,_that.email,_that.username,_that.photoURL,_that.create
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String uid,  String email,  String username,  String photoURL, @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp)  DateTime? createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String uid,  String email,  String username,  String photoURL, @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp)  DateTime? createdAt,  List<String> savedPosts)  $default,) {final _that = this;
 switch (_that) {
 case _UserEntity():
-return $default(_that.uid,_that.email,_that.username,_that.photoURL,_that.createdAt);case _:
+return $default(_that.uid,_that.email,_that.username,_that.photoURL,_that.createdAt,_that.savedPosts);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -198,10 +199,10 @@ return $default(_that.uid,_that.email,_that.username,_that.photoURL,_that.create
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String uid,  String email,  String username,  String photoURL, @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp)  DateTime? createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String uid,  String email,  String username,  String photoURL, @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp)  DateTime? createdAt,  List<String> savedPosts)?  $default,) {final _that = this;
 switch (_that) {
 case _UserEntity() when $default != null:
-return $default(_that.uid,_that.email,_that.username,_that.photoURL,_that.createdAt);case _:
+return $default(_that.uid,_that.email,_that.username,_that.photoURL,_that.createdAt,_that.savedPosts);case _:
   return null;
 
 }
@@ -213,7 +214,7 @@ return $default(_that.uid,_that.email,_that.username,_that.photoURL,_that.create
 @JsonSerializable()
 
 class _UserEntity implements UserEntity {
-  const _UserEntity({this.uid = '', this.email = '', this.username = '', this.photoURL = '', @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) this.createdAt});
+  const _UserEntity({this.uid = '', this.email = '', this.username = '', this.photoURL = '', @JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) this.createdAt, final  List<String> savedPosts = const []}): _savedPosts = savedPosts;
   factory _UserEntity.fromJson(Map<String, dynamic> json) => _$UserEntityFromJson(json);
 
 @override@JsonKey() final  String uid;
@@ -221,6 +222,13 @@ class _UserEntity implements UserEntity {
 @override@JsonKey() final  String username;
 @override@JsonKey() final  String photoURL;
 @override@JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) final  DateTime? createdAt;
+ final  List<String> _savedPosts;
+@override@JsonKey() List<String> get savedPosts {
+  if (_savedPosts is EqualUnmodifiableListView) return _savedPosts;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_savedPosts);
+}
+
 
 /// Create a copy of UserEntity
 /// with the given fields replaced by the non-null parameter values.
@@ -235,16 +243,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserEntity&&(identical(other.uid, uid) || other.uid == uid)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.photoURL, photoURL) || other.photoURL == photoURL)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserEntity&&(identical(other.uid, uid) || other.uid == uid)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.photoURL, photoURL) || other.photoURL == photoURL)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&const DeepCollectionEquality().equals(other._savedPosts, _savedPosts));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,uid,email,username,photoURL,createdAt);
+int get hashCode => Object.hash(runtimeType,uid,email,username,photoURL,createdAt,const DeepCollectionEquality().hash(_savedPosts));
 
 @override
 String toString() {
-  return 'UserEntity(uid: $uid, email: $email, username: $username, photoURL: $photoURL, createdAt: $createdAt)';
+  return 'UserEntity(uid: $uid, email: $email, username: $username, photoURL: $photoURL, createdAt: $createdAt, savedPosts: $savedPosts)';
 }
 
 
@@ -255,7 +263,7 @@ abstract mixin class _$UserEntityCopyWith<$Res> implements $UserEntityCopyWith<$
   factory _$UserEntityCopyWith(_UserEntity value, $Res Function(_UserEntity) _then) = __$UserEntityCopyWithImpl;
 @override @useResult
 $Res call({
- String uid, String email, String username, String photoURL,@JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) DateTime? createdAt
+ String uid, String email, String username, String photoURL,@JsonKey(fromJson: _timestampToDateTime, toJson: _dateTimeToTimestamp) DateTime? createdAt, List<String> savedPosts
 });
 
 
@@ -272,14 +280,15 @@ class __$UserEntityCopyWithImpl<$Res>
 
 /// Create a copy of UserEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? uid = null,Object? email = null,Object? username = null,Object? photoURL = null,Object? createdAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? uid = null,Object? email = null,Object? username = null,Object? photoURL = null,Object? createdAt = freezed,Object? savedPosts = null,}) {
   return _then(_UserEntity(
 uid: null == uid ? _self.uid : uid // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,username: null == username ? _self.username : username // ignore: cast_nullable_to_non_nullable
 as String,photoURL: null == photoURL ? _self.photoURL : photoURL // ignore: cast_nullable_to_non_nullable
 as String,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,
+as DateTime?,savedPosts: null == savedPosts ? _self._savedPosts : savedPosts // ignore: cast_nullable_to_non_nullable
+as List<String>,
   ));
 }
 

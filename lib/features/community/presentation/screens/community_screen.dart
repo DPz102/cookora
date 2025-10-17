@@ -65,6 +65,7 @@ class _CommunityView extends StatelessWidget {
       children: [
         SafeArea(
           child: CustomScrollView(
+            key: const PageStorageKey<String>('community_feed'),
             slivers: [
               SliverAppBar(
                 title: Text(
