@@ -9,7 +9,8 @@ let openai;
 let algoliaClient;
 
 // Xác định môi trường dựa vào FLAVOR hoặc project
-const IS_PROD = process.env.FLAVOR === "prod";
+const PROJECT_ID = process.env.GCLOUD_PROJECT || process.env.GCP_PROJECT;
+const IS_PROD = PROJECT_ID === "cookora-prod-8c05e";
 const ALGOLIA_APP_ID_SECRET = IS_PROD
   ? "ALGOLIA_APP_ID_PROD"
   : "ALGOLIA_APP_ID_DEV";
