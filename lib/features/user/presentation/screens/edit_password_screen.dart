@@ -111,6 +111,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                                 () => _isCurrentPasswordVisible =
                                     !_isCurrentPasswordVisible,
                               ),
+                              validator: Validators.validatePassword,
                             ),
                             SizedBox(height: 20.h),
                             _buildGlassmorphicPasswordField(
@@ -121,6 +122,11 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                                 () => _isNewPasswordVisible =
                                     !_isNewPasswordVisible,
                               ),
+                              validator: (value) =>
+                                  Validators.validateNewPassword(
+                                    value,
+                                    _currentPasswordController.text,
+                                  ),
                             ),
                             SizedBox(height: 12.h),
                             Text(
@@ -172,6 +178,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
     required String labelText,
     required bool isVisible,
     required VoidCallback onToggleVisibility,
+    String? Function(String?)? validator,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -216,7 +223,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
               color: colorScheme.inversePrimary.withAlpha(179),
             ), // 70% opacity
           ),
-          validator: Validators.validatePassword,
+          validator: validator ?? Validators.validatePassword,
           autovalidateMode: AutovalidateMode.onUserInteraction,
         ),
       ),

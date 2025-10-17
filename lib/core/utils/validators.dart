@@ -35,6 +35,25 @@ class Validators {
     return null;
   }
 
+  // Kiểm tra mật khẩu mới phải khác mật khẩu cũ
+  static String? validateNewPassword(
+    String? newPassword,
+    String? currentPassword,
+  ) {
+    // Validate cơ bản
+    final passwordError = validatePassword(newPassword);
+    if (passwordError != null) {
+      return passwordError;
+    }
+
+    // Kiểm tra mật khẩu mới phải khác cũ
+    if (newPassword == currentPassword) {
+      return 'Mật khẩu mới phải khác mật khẩu hiện tại.';
+    }
+
+    return null;
+  }
+
   // Kiểm tra các quy tắc cho username.
   static String? validateUsername(String? value) {
     final requiredError = validateRequired(value, 'Tên đăng nhập');

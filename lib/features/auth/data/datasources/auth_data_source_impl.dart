@@ -65,10 +65,27 @@ class AuthDataSourceImpl implements AuthDataSource {
   }) async {
     try {
       final user = _firebaseAuth.currentUser;
+
+      // Kiểm tra người dùng và email có tồn tại không
       if (user == null || user.email == null) {
         throw Exception('Hành động này yêu cầu đăng nhập lại.');
       }
 
+      // Validate mật khẩu mới phải khác cũ
+      if (currentPassword == newPassword) {
+        throw Exception('Mật khẩu mới phải khác mật khẩu hiện tại.');
+      }
+
+      // 1. Tạo "chứng thực" từ email và mật khẩu hiện tại
+      final cred = firebase.EmailAuthProvider.credential(
+        email: user.email!,
+        password: currentPassword,
+      );
+
+      // 2. Yêu cầu người dùng xác thực lại bằng chứng thực đó
+      await user.reauthenticateWithCredential(cred);
+
+      // 3. Nếu xác thực thành công, tiến hành đổi mật khẩu mới
       await user.updatePassword(newPassword);
     } catch (e) {
       rethrow;

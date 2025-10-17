@@ -2,44 +2,15 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:camera/camera.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:flutter/widgets.dart';
 
 part 'camera_event.dart';
 part 'camera_state.dart';
 part 'camera_bloc.freezed.dart';
 
-class CameraBloc extends Bloc<CameraEvent, CameraState>
-    with WidgetsBindingObserver {
+class CameraBloc extends Bloc<CameraEvent, CameraState> {
   CameraBloc() : super(const CameraState.initial()) {
     on<InitializeCamera>(_onInitializeCamera);
     on<DisposeCamera>(_onDisposeCamera);
-
-    // Bắt đầu lắng nghe vòng đời của app
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  // presentation/bloc/camera/camera_bloc.dart -> ĐÃ SỬA
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-
-    final currentCameraState = this.state;
-
-    // 1. Xử lý khi app không hoạt động:
-    if (state == AppLifecycleState.inactive) {
-      if (currentCameraState is CameraLoadSuccess) {
-        add(const DisposeCamera());
-      }
-      return;
-    }
-
-    // 2. Xử lý khi app hoạt động trở lại:
-    if (state == AppLifecycleState.resumed) {
-      if (this.state is CameraInitial) {
-        add(const InitializeCamera());
-      }
-    }
   }
 
   Future<void> _onInitializeCamera(
@@ -83,7 +54,6 @@ class CameraBloc extends Bloc<CameraEvent, CameraState>
   @override
   Future<void> close() {
     // Hủy lắng nghe và dispose controller khi Bloc bị đóng
-    WidgetsBinding.instance.removeObserver(this);
     add(const DisposeCamera());
     return super.close();
   }

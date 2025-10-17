@@ -179,7 +179,7 @@ class _ScanViewState extends State<_ScanView> {
                   'Không nhận diện được nguyên liệu nào.',
                   type: SnackBarType.info,
                 );
-                return Future.value(); // Không hiển thị dialog nếu không có kết quả
+                return Future.delayed(const Duration(milliseconds: 100));
               }
               return showDialog<void>(
                 context: context,
