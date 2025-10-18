@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:cookora/features/scan/domain/enums/scan_mode.dart';
+import 'package:cookora/features/scan/domain/models/camera_settings.dart';
 
 // Chuyển thành StatefulWidget để quản lý trạng thái nhấn nút
 class ScanFooter extends StatefulWidget {
   final ScanMode currentMode;
+  final bool isDisabled;
   final VoidCallback onTakePicture;
   final VoidCallback onPickFromGallery;
   final VoidCallback onCycleMode;
@@ -12,6 +13,7 @@ class ScanFooter extends StatefulWidget {
   const ScanFooter({
     super.key,
     required this.currentMode,
+    this.isDisabled = false,
     required this.onTakePicture,
     required this.onPickFromGallery,
     required this.onCycleMode,
@@ -31,39 +33,47 @@ class _ScanFooterState extends State<ScanFooter> {
     final colorScheme = theme.colorScheme;
 
     final takePictureButton = GestureDetector(
-      // Cập nhật trạng thái khi nhấn xuống, thả ra, hoặc hủy
-      onTapDown: (_) => setState(() => _isShutterPressed = true),
-      onTapUp: (_) => setState(() => _isShutterPressed = false),
-      onTapCancel: () => setState(() => _isShutterPressed = false),
-      onTap: widget.onTakePicture,
-      child: AnimatedScale(
-        // Dùng AnimatedScale để tạo hiệu ứng co giãn mượt mà
-        scale: _isShutterPressed ? 0.9 : 1.0,
-        duration: const Duration(milliseconds: 150),
-        child: SizedBox(
-          width: 80.r,
-          height: 80.r,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: colorScheme.inverseSurface,
-                    width: 4.w,
+      onTapDown: widget.isDisabled
+          ? null
+          : (_) => setState(() => _isShutterPressed = true),
+      onTapUp: widget.isDisabled
+          ? null
+          : (_) => setState(() => _isShutterPressed = false),
+      onTapCancel: widget.isDisabled
+          ? null
+          : () => setState(() => _isShutterPressed = false),
+      onTap: widget.isDisabled ? null : widget.onTakePicture,
+      child: Opacity(
+        opacity: widget.isDisabled ? 0.5 : 1.0,
+        child: AnimatedScale(
+          // Dùng AnimatedScale để tạo hiệu ứng co giãn mượt mà
+          scale: _isShutterPressed ? 0.9 : 1.0,
+          duration: const Duration(milliseconds: 150),
+          child: SizedBox(
+            width: 80.r,
+            height: 80.r,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: colorScheme.inverseSurface,
+                      width: 4.w,
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                width: 65.r,
-                height: 65.r,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: colorScheme.surface,
+                Container(
+                  width: 65.r,
+                  height: 65.r,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: colorScheme.surface,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -77,6 +87,7 @@ class _ScanFooterState extends State<ScanFooter> {
           child: Center(
             child: _FooterCircleButton(
               onPressed: widget.onPickFromGallery,
+
               child: Icon(
                 Icons.image_outlined,
                 size: 35.sp,
@@ -140,7 +151,7 @@ class _ModeSwitcher extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
-    final isIngredient = currentMode == ScanMode.ingredient;
+    final isIngredient = currentMode == ScanMode.ingredients;
     final icon = isIngredient
         ? Icons.inventory_2_outlined
         : Icons.menu_book_outlined;

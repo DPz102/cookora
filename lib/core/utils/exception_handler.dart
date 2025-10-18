@@ -1,10 +1,39 @@
 import 'dart:developer';
+import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 
 class ExceptionHandler {
   static Exception handle(Object e) {
     log('Exception Caught: ${e.runtimeType}', error: e);
+
+    // Xử lý lỗi từ Camera
+    if (e is CameraException) {
+      log('Camera Exception Code: ${e.code}');
+      switch (e.code) {
+        case 'CameraAccessDenied':
+          return Exception(
+            'Quyền truy cập camera bị từ chối. Vui lòng cấp quyền trong cài đặt ứng dụng.',
+          );
+        case 'CameraAccessRestricted':
+          return Exception(
+            'Truy cập camera bị hạn chế bởi chính sách của thiết bị.',
+          );
+        case 'CameraAccessDeniedWithoutPrompt':
+          return Exception(
+            'Vui lòng cấp quyền truy cập camera để sử dụng tính năng này.',
+          );
+        case 'NoCamera':
+          return Exception('Không tìm thấy camera nào trên thiết bị của bạn.');
+        case 'CameraInUse':
+          return Exception('Camera đang được sử dụng bởi một ứng dụng khác.');
+        default:
+          return Exception(
+            e.description ?? 'Đã xảy ra lỗi không mong muốn với camera.',
+          );
+      }
+    }
+
     // Xử lý lỗi từ Firebase Authentication
     if (e is FirebaseAuthException) {
       log('Firebase Auth Exception Code: ${e.code}');
@@ -83,6 +112,11 @@ class ExceptionHandler {
             'Đã có lỗi không mong muốn xảy ra đối với Firebase. Vui lòng thử lại.',
           );
       }
+    }
+    // Xử lý các Exception chung
+    else if (e is Exception) {
+      // Trả về chính message của Exception đó
+      return e;
     }
 
     // Xử lý lỗi không xác định

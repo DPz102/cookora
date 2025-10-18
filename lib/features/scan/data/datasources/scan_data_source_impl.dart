@@ -7,6 +7,7 @@ import 'package:uuid/uuid.dart';
 import 'package:image/image.dart' as img;
 
 import 'package:cookora/features/scan/data/datasources/scan_data_source.dart';
+import 'package:cookora/features/scan/domain/models/camera_settings.dart';
 
 class ScanDataSourceImpl implements ScanDataSource {
   final FirebaseFunctions _functions;
@@ -121,7 +122,7 @@ class ScanDataSourceImpl implements ScanDataSource {
 
       return convertedData;
     } catch (e) {
-      throw Exception('Lỗi khi xử lý ảnh: ${e.toString()}');
+      rethrow;
     }
   }
 
@@ -129,14 +130,14 @@ class ScanDataSourceImpl implements ScanDataSource {
   Future<Map<String, dynamic>> recognizeDishFromImage(File imageFile) async {
     try {
       // Gọi phương thức chung
-      final resultData = await _callScanGPT(imageFile, 'dish');
+      final resultData = await _callScanGPT(imageFile, ScanMode.dish.name);
 
       // Thêm ID vào kết quả
       resultData['id'] = _uuid.v4();
 
       return resultData;
     } catch (e) {
-      throw Exception('Lỗi khi nhận diện món ăn: ${e.toString()}');
+      rethrow;
     }
   }
 
@@ -146,7 +147,7 @@ class ScanDataSourceImpl implements ScanDataSource {
   ) async {
     try {
       // 1. Gọi Cloud Function
-      final data = await _callScanGPT(imageFile, 'ingredients');
+      final data = await _callScanGPT(imageFile, ScanMode.ingredients.name);
 
       // 2. Kiểm tra và trích xuất danh sách
       if (data['ingredients'] is List) {
@@ -164,7 +165,7 @@ class ScanDataSourceImpl implements ScanDataSource {
 
       return [];
     } catch (e) {
-      throw Exception('Lỗi khi nhận diện nguyên liệu: ${e.toString()}');
+      rethrow;
     }
   }
 }

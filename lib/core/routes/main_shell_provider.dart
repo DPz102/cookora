@@ -13,6 +13,7 @@ import 'package:cookora/features/kitchen_log/presentation/bloc/kitchen_log_bloc.
 import 'package:cookora/features/kitchen_log/presentation/bloc/kitchen_log_event.dart';
 import 'package:cookora/features/pantry/presentation/bloc/pantry_bloc.dart';
 import 'package:cookora/features/pantry/presentation/bloc/pantry_event.dart';
+import 'package:cookora/features/scan/presentation/bloc/camera/camera_bloc.dart';
 import 'package:cookora/features/community/presentation/bloc/community_bloc.dart';
 import 'package:cookora/features/community/presentation/bloc/community_event.dart';
 
@@ -31,6 +32,7 @@ class MainShellProvider extends StatelessWidget {
         BlocProvider.value(value: locator<SuggestionBloc>()),
         BlocProvider.value(value: locator<KitchenLogBloc>()),
         BlocProvider.value(value: locator<CommunityBloc>()),
+        BlocProvider.value(value: locator<CameraBloc>()),
       ],
       // Sử dụng BlocListener để lắng nghe UserBloc và kích hoạt các BLoC con
       child: BlocListener<UserBloc, UserState>(

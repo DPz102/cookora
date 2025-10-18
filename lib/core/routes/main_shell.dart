@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:cookora/core/widgets/glassmorphic_container.dart';
 import 'package:cookora/core/widgets/gradient_background.dart';
+
+import 'package:cookora/features/scan/presentation/bloc/camera/camera_bloc.dart';
 
 class _NavigationItem {
   const _NavigationItem({
@@ -55,8 +58,24 @@ class _MainShellState extends State<MainShell> {
     ),
   ];
 
+  static const int _scanTabIndex = 2; // Định nghĩa index của tab Scan
+
   void _onDestinationSelected(int index) {
-    final bool isReSelecting = index == widget.navigationShell.currentIndex;
+    // Lấy CameraBloc từ context
+    final cameraBloc = context.read<CameraBloc>();
+    final currentIndex = widget.navigationShell.currentIndex;
+
+    // Nếu người dùng đang ở tab Scan và chuyển đi
+    if (currentIndex == _scanTabIndex && index != _scanTabIndex) {
+      cameraBloc.add(const CameraEvent.dispose());
+    }
+    // Nếu người dùng chuyển đến tab Scan từ một tab khác
+    else if (currentIndex != _scanTabIndex && index == _scanTabIndex) {
+      cameraBloc.add(const CameraEvent.checkAndRequestPermission());
+    }
+
+    // Thực hiện chuyển tab
+    final bool isReSelecting = index == currentIndex;
     widget.navigationShell.goBranch(index, initialLocation: isReSelecting);
   }
 

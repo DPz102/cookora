@@ -55,12 +55,22 @@ extension CameraEventPatterns on CameraEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( InitializeCamera value)?  initialize,TResult Function( DisposeCamera value)?  dispose,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initialize value)?  initialize,TResult Function( _Dispose value)?  dispose,TResult Function( _PausePreview value)?  pausePreview,TResult Function( _ResumePreview value)?  resumePreview,TResult Function( _ToggleFlash value)?  toggleFlash,TResult Function( _CycleZoom value)?  cycleZoom,TResult Function( _CycleScanMode value)?  cycleScanMode,TResult Function( _TakePicture value)?  takePicture,TResult Function( _PickImage value)?  pickImage,TResult Function( _ResetCapture value)?  resetCapture,TResult Function( _CheckAndRequestPermission value)?  checkAndRequestPermission,TResult Function( _RetryInitialization value)?  retryInitialization,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case InitializeCamera() when initialize != null:
-return initialize(_that);case DisposeCamera() when dispose != null:
-return dispose(_that);case _:
+case _Initialize() when initialize != null:
+return initialize(_that);case _Dispose() when dispose != null:
+return dispose(_that);case _PausePreview() when pausePreview != null:
+return pausePreview(_that);case _ResumePreview() when resumePreview != null:
+return resumePreview(_that);case _ToggleFlash() when toggleFlash != null:
+return toggleFlash(_that);case _CycleZoom() when cycleZoom != null:
+return cycleZoom(_that);case _CycleScanMode() when cycleScanMode != null:
+return cycleScanMode(_that);case _TakePicture() when takePicture != null:
+return takePicture(_that);case _PickImage() when pickImage != null:
+return pickImage(_that);case _ResetCapture() when resetCapture != null:
+return resetCapture(_that);case _CheckAndRequestPermission() when checkAndRequestPermission != null:
+return checkAndRequestPermission(_that);case _RetryInitialization() when retryInitialization != null:
+return retryInitialization(_that);case _:
   return orElse();
 
 }
@@ -78,12 +88,22 @@ return dispose(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( InitializeCamera value)  initialize,required TResult Function( DisposeCamera value)  dispose,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initialize value)  initialize,required TResult Function( _Dispose value)  dispose,required TResult Function( _PausePreview value)  pausePreview,required TResult Function( _ResumePreview value)  resumePreview,required TResult Function( _ToggleFlash value)  toggleFlash,required TResult Function( _CycleZoom value)  cycleZoom,required TResult Function( _CycleScanMode value)  cycleScanMode,required TResult Function( _TakePicture value)  takePicture,required TResult Function( _PickImage value)  pickImage,required TResult Function( _ResetCapture value)  resetCapture,required TResult Function( _CheckAndRequestPermission value)  checkAndRequestPermission,required TResult Function( _RetryInitialization value)  retryInitialization,}){
 final _that = this;
 switch (_that) {
-case InitializeCamera():
-return initialize(_that);case DisposeCamera():
-return dispose(_that);case _:
+case _Initialize():
+return initialize(_that);case _Dispose():
+return dispose(_that);case _PausePreview():
+return pausePreview(_that);case _ResumePreview():
+return resumePreview(_that);case _ToggleFlash():
+return toggleFlash(_that);case _CycleZoom():
+return cycleZoom(_that);case _CycleScanMode():
+return cycleScanMode(_that);case _TakePicture():
+return takePicture(_that);case _PickImage():
+return pickImage(_that);case _ResetCapture():
+return resetCapture(_that);case _CheckAndRequestPermission():
+return checkAndRequestPermission(_that);case _RetryInitialization():
+return retryInitialization(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -100,12 +120,22 @@ return dispose(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( InitializeCamera value)?  initialize,TResult? Function( DisposeCamera value)?  dispose,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initialize value)?  initialize,TResult? Function( _Dispose value)?  dispose,TResult? Function( _PausePreview value)?  pausePreview,TResult? Function( _ResumePreview value)?  resumePreview,TResult? Function( _ToggleFlash value)?  toggleFlash,TResult? Function( _CycleZoom value)?  cycleZoom,TResult? Function( _CycleScanMode value)?  cycleScanMode,TResult? Function( _TakePicture value)?  takePicture,TResult? Function( _PickImage value)?  pickImage,TResult? Function( _ResetCapture value)?  resetCapture,TResult? Function( _CheckAndRequestPermission value)?  checkAndRequestPermission,TResult? Function( _RetryInitialization value)?  retryInitialization,}){
 final _that = this;
 switch (_that) {
-case InitializeCamera() when initialize != null:
-return initialize(_that);case DisposeCamera() when dispose != null:
-return dispose(_that);case _:
+case _Initialize() when initialize != null:
+return initialize(_that);case _Dispose() when dispose != null:
+return dispose(_that);case _PausePreview() when pausePreview != null:
+return pausePreview(_that);case _ResumePreview() when resumePreview != null:
+return resumePreview(_that);case _ToggleFlash() when toggleFlash != null:
+return toggleFlash(_that);case _CycleZoom() when cycleZoom != null:
+return cycleZoom(_that);case _CycleScanMode() when cycleScanMode != null:
+return cycleScanMode(_that);case _TakePicture() when takePicture != null:
+return takePicture(_that);case _PickImage() when pickImage != null:
+return pickImage(_that);case _ResetCapture() when resetCapture != null:
+return resetCapture(_that);case _CheckAndRequestPermission() when checkAndRequestPermission != null:
+return checkAndRequestPermission(_that);case _RetryInitialization() when retryInitialization != null:
+return retryInitialization(_that);case _:
   return null;
 
 }
@@ -122,11 +152,21 @@ return dispose(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initialize,TResult Function()?  dispose,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initialize,TResult Function()?  dispose,TResult Function()?  pausePreview,TResult Function()?  resumePreview,TResult Function()?  toggleFlash,TResult Function()?  cycleZoom,TResult Function()?  cycleScanMode,TResult Function()?  takePicture,TResult Function()?  pickImage,TResult Function()?  resetCapture,TResult Function()?  checkAndRequestPermission,TResult Function()?  retryInitialization,required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case InitializeCamera() when initialize != null:
-return initialize();case DisposeCamera() when dispose != null:
-return dispose();case _:
+case _Initialize() when initialize != null:
+return initialize();case _Dispose() when dispose != null:
+return dispose();case _PausePreview() when pausePreview != null:
+return pausePreview();case _ResumePreview() when resumePreview != null:
+return resumePreview();case _ToggleFlash() when toggleFlash != null:
+return toggleFlash();case _CycleZoom() when cycleZoom != null:
+return cycleZoom();case _CycleScanMode() when cycleScanMode != null:
+return cycleScanMode();case _TakePicture() when takePicture != null:
+return takePicture();case _PickImage() when pickImage != null:
+return pickImage();case _ResetCapture() when resetCapture != null:
+return resetCapture();case _CheckAndRequestPermission() when checkAndRequestPermission != null:
+return checkAndRequestPermission();case _RetryInitialization() when retryInitialization != null:
+return retryInitialization();case _:
   return orElse();
 
 }
@@ -144,11 +184,21 @@ return dispose();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initialize,required TResult Function()  dispose,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initialize,required TResult Function()  dispose,required TResult Function()  pausePreview,required TResult Function()  resumePreview,required TResult Function()  toggleFlash,required TResult Function()  cycleZoom,required TResult Function()  cycleScanMode,required TResult Function()  takePicture,required TResult Function()  pickImage,required TResult Function()  resetCapture,required TResult Function()  checkAndRequestPermission,required TResult Function()  retryInitialization,}) {final _that = this;
 switch (_that) {
-case InitializeCamera():
-return initialize();case DisposeCamera():
-return dispose();case _:
+case _Initialize():
+return initialize();case _Dispose():
+return dispose();case _PausePreview():
+return pausePreview();case _ResumePreview():
+return resumePreview();case _ToggleFlash():
+return toggleFlash();case _CycleZoom():
+return cycleZoom();case _CycleScanMode():
+return cycleScanMode();case _TakePicture():
+return takePicture();case _PickImage():
+return pickImage();case _ResetCapture():
+return resetCapture();case _CheckAndRequestPermission():
+return checkAndRequestPermission();case _RetryInitialization():
+return retryInitialization();case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -165,11 +215,21 @@ return dispose();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initialize,TResult? Function()?  dispose,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initialize,TResult? Function()?  dispose,TResult? Function()?  pausePreview,TResult? Function()?  resumePreview,TResult? Function()?  toggleFlash,TResult? Function()?  cycleZoom,TResult? Function()?  cycleScanMode,TResult? Function()?  takePicture,TResult? Function()?  pickImage,TResult? Function()?  resetCapture,TResult? Function()?  checkAndRequestPermission,TResult? Function()?  retryInitialization,}) {final _that = this;
 switch (_that) {
-case InitializeCamera() when initialize != null:
-return initialize();case DisposeCamera() when dispose != null:
-return dispose();case _:
+case _Initialize() when initialize != null:
+return initialize();case _Dispose() when dispose != null:
+return dispose();case _PausePreview() when pausePreview != null:
+return pausePreview();case _ResumePreview() when resumePreview != null:
+return resumePreview();case _ToggleFlash() when toggleFlash != null:
+return toggleFlash();case _CycleZoom() when cycleZoom != null:
+return cycleZoom();case _CycleScanMode() when cycleScanMode != null:
+return cycleScanMode();case _TakePicture() when takePicture != null:
+return takePicture();case _PickImage() when pickImage != null:
+return pickImage();case _ResetCapture() when resetCapture != null:
+return resetCapture();case _CheckAndRequestPermission() when checkAndRequestPermission != null:
+return checkAndRequestPermission();case _RetryInitialization() when retryInitialization != null:
+return retryInitialization();case _:
   return null;
 
 }
@@ -180,8 +240,8 @@ return dispose();case _:
 /// @nodoc
 
 
-class InitializeCamera implements CameraEvent {
-  const InitializeCamera();
+class _Initialize implements CameraEvent {
+  const _Initialize();
   
 
 
@@ -191,7 +251,7 @@ class InitializeCamera implements CameraEvent {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InitializeCamera);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Initialize);
 }
 
 
@@ -212,8 +272,8 @@ String toString() {
 /// @nodoc
 
 
-class DisposeCamera implements CameraEvent {
-  const DisposeCamera();
+class _Dispose implements CameraEvent {
+  const _Dispose();
   
 
 
@@ -223,7 +283,7 @@ class DisposeCamera implements CameraEvent {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DisposeCamera);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Dispose);
 }
 
 
@@ -242,7 +302,12 @@ String toString() {
 
 
 /// @nodoc
-mixin _$CameraState {
+
+
+class _PausePreview implements CameraEvent {
+  const _PausePreview();
+  
+
 
 
 
@@ -250,7 +315,7 @@ mixin _$CameraState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CameraState);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PausePreview);
 }
 
 
@@ -259,15 +324,386 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'CameraState()';
+  return 'CameraEvent.pausePreview()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _ResumePreview implements CameraEvent {
+  const _ResumePreview();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ResumePreview);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'CameraEvent.resumePreview()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _ToggleFlash implements CameraEvent {
+  const _ToggleFlash();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ToggleFlash);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'CameraEvent.toggleFlash()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _CycleZoom implements CameraEvent {
+  const _CycleZoom();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CycleZoom);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'CameraEvent.cycleZoom()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _CycleScanMode implements CameraEvent {
+  const _CycleScanMode();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CycleScanMode);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'CameraEvent.cycleScanMode()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _TakePicture implements CameraEvent {
+  const _TakePicture();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TakePicture);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'CameraEvent.takePicture()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _PickImage implements CameraEvent {
+  const _PickImage();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PickImage);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'CameraEvent.pickImage()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _ResetCapture implements CameraEvent {
+  const _ResetCapture();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ResetCapture);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'CameraEvent.resetCapture()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _CheckAndRequestPermission implements CameraEvent {
+  const _CheckAndRequestPermission();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CheckAndRequestPermission);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'CameraEvent.checkAndRequestPermission()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _RetryInitialization implements CameraEvent {
+  const _RetryInitialization();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RetryInitialization);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'CameraEvent.retryInitialization()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+mixin _$CameraState {
+
+// Quản lý trạng thái khởi tạo của CameraController
+ AsyncState<CameraController> get cameraStatus;// Giữ cài đặt hiện tại của camera
+ CameraSettings get settings;// Tín hiệu cho biết ảnh vừa được chụp hoặc chọn
+ XFile? get capturedImage;// Quản lý trạng thái có đang chụp hay không?
+ bool get isTakingPicture;
+/// Create a copy of CameraState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CameraStateCopyWith<CameraState> get copyWith => _$CameraStateCopyWithImpl<CameraState>(this as CameraState, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CameraState&&(identical(other.cameraStatus, cameraStatus) || other.cameraStatus == cameraStatus)&&(identical(other.settings, settings) || other.settings == settings)&&(identical(other.capturedImage, capturedImage) || other.capturedImage == capturedImage)&&(identical(other.isTakingPicture, isTakingPicture) || other.isTakingPicture == isTakingPicture));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,cameraStatus,settings,capturedImage,isTakingPicture);
+
+@override
+String toString() {
+  return 'CameraState(cameraStatus: $cameraStatus, settings: $settings, capturedImage: $capturedImage, isTakingPicture: $isTakingPicture)';
 }
 
 
 }
 
 /// @nodoc
-class $CameraStateCopyWith<$Res>  {
-$CameraStateCopyWith(CameraState _, $Res Function(CameraState) __);
+abstract mixin class $CameraStateCopyWith<$Res>  {
+  factory $CameraStateCopyWith(CameraState value, $Res Function(CameraState) _then) = _$CameraStateCopyWithImpl;
+@useResult
+$Res call({
+ AsyncState<CameraController> cameraStatus, CameraSettings settings, XFile? capturedImage, bool isTakingPicture
+});
+
+
+$AsyncStateCopyWith<CameraController, $Res> get cameraStatus;$CameraSettingsCopyWith<$Res> get settings;
+
+}
+/// @nodoc
+class _$CameraStateCopyWithImpl<$Res>
+    implements $CameraStateCopyWith<$Res> {
+  _$CameraStateCopyWithImpl(this._self, this._then);
+
+  final CameraState _self;
+  final $Res Function(CameraState) _then;
+
+/// Create a copy of CameraState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? cameraStatus = null,Object? settings = null,Object? capturedImage = freezed,Object? isTakingPicture = null,}) {
+  return _then(_self.copyWith(
+cameraStatus: null == cameraStatus ? _self.cameraStatus : cameraStatus // ignore: cast_nullable_to_non_nullable
+as AsyncState<CameraController>,settings: null == settings ? _self.settings : settings // ignore: cast_nullable_to_non_nullable
+as CameraSettings,capturedImage: freezed == capturedImage ? _self.capturedImage : capturedImage // ignore: cast_nullable_to_non_nullable
+as XFile?,isTakingPicture: null == isTakingPicture ? _self.isTakingPicture : isTakingPicture // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+/// Create a copy of CameraState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AsyncStateCopyWith<CameraController, $Res> get cameraStatus {
+  
+  return $AsyncStateCopyWith<CameraController, $Res>(_self.cameraStatus, (value) {
+    return _then(_self.copyWith(cameraStatus: value));
+  });
+}/// Create a copy of CameraState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$CameraSettingsCopyWith<$Res> get settings {
+  
+  return $CameraSettingsCopyWith<$Res>(_self.settings, (value) {
+    return _then(_self.copyWith(settings: value));
+  });
+}
 }
 
 
@@ -285,14 +721,11 @@ extension CameraStatePatterns on CameraState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( CameraInitial value)?  initial,TResult Function( CameraLoadInProgress value)?  loadInProgress,TResult Function( CameraLoadSuccess value)?  loadSuccess,TResult Function( CameraLoadFailure value)?  loadFailure,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _CameraState value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case CameraInitial() when initial != null:
-return initial(_that);case CameraLoadInProgress() when loadInProgress != null:
-return loadInProgress(_that);case CameraLoadSuccess() when loadSuccess != null:
-return loadSuccess(_that);case CameraLoadFailure() when loadFailure != null:
-return loadFailure(_that);case _:
+case _CameraState() when $default != null:
+return $default(_that);case _:
   return orElse();
 
 }
@@ -310,14 +743,11 @@ return loadFailure(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( CameraInitial value)  initial,required TResult Function( CameraLoadInProgress value)  loadInProgress,required TResult Function( CameraLoadSuccess value)  loadSuccess,required TResult Function( CameraLoadFailure value)  loadFailure,}){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _CameraState value)  $default,){
 final _that = this;
 switch (_that) {
-case CameraInitial():
-return initial(_that);case CameraLoadInProgress():
-return loadInProgress(_that);case CameraLoadSuccess():
-return loadSuccess(_that);case CameraLoadFailure():
-return loadFailure(_that);case _:
+case _CameraState():
+return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -334,14 +764,11 @@ return loadFailure(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( CameraInitial value)?  initial,TResult? Function( CameraLoadInProgress value)?  loadInProgress,TResult? Function( CameraLoadSuccess value)?  loadSuccess,TResult? Function( CameraLoadFailure value)?  loadFailure,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _CameraState value)?  $default,){
 final _that = this;
 switch (_that) {
-case CameraInitial() when initial != null:
-return initial(_that);case CameraLoadInProgress() when loadInProgress != null:
-return loadInProgress(_that);case CameraLoadSuccess() when loadSuccess != null:
-return loadSuccess(_that);case CameraLoadFailure() when loadFailure != null:
-return loadFailure(_that);case _:
+case _CameraState() when $default != null:
+return $default(_that);case _:
   return null;
 
 }
@@ -358,13 +785,10 @@ return loadFailure(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loadInProgress,TResult Function( CameraController controller)?  loadSuccess,TResult Function( String error)?  loadFailure,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( AsyncState<CameraController> cameraStatus,  CameraSettings settings,  XFile? capturedImage,  bool isTakingPicture)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case CameraInitial() when initial != null:
-return initial();case CameraLoadInProgress() when loadInProgress != null:
-return loadInProgress();case CameraLoadSuccess() when loadSuccess != null:
-return loadSuccess(_that.controller);case CameraLoadFailure() when loadFailure != null:
-return loadFailure(_that.error);case _:
+case _CameraState() when $default != null:
+return $default(_that.cameraStatus,_that.settings,_that.capturedImage,_that.isTakingPicture);case _:
   return orElse();
 
 }
@@ -382,13 +806,10 @@ return loadFailure(_that.error);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loadInProgress,required TResult Function( CameraController controller)  loadSuccess,required TResult Function( String error)  loadFailure,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( AsyncState<CameraController> cameraStatus,  CameraSettings settings,  XFile? capturedImage,  bool isTakingPicture)  $default,) {final _that = this;
 switch (_that) {
-case CameraInitial():
-return initial();case CameraLoadInProgress():
-return loadInProgress();case CameraLoadSuccess():
-return loadSuccess(_that.controller);case CameraLoadFailure():
-return loadFailure(_that.error);case _:
+case _CameraState():
+return $default(_that.cameraStatus,_that.settings,_that.capturedImage,_that.isTakingPicture);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -405,13 +826,10 @@ return loadFailure(_that.error);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loadInProgress,TResult? Function( CameraController controller)?  loadSuccess,TResult? Function( String error)?  loadFailure,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( AsyncState<CameraController> cameraStatus,  CameraSettings settings,  XFile? capturedImage,  bool isTakingPicture)?  $default,) {final _that = this;
 switch (_that) {
-case CameraInitial() when initial != null:
-return initial();case CameraLoadInProgress() when loadInProgress != null:
-return loadInProgress();case CameraLoadSuccess() when loadSuccess != null:
-return loadSuccess(_that.controller);case CameraLoadFailure() when loadFailure != null:
-return loadFailure(_that.error);case _:
+case _CameraState() when $default != null:
+return $default(_that.cameraStatus,_that.settings,_that.capturedImage,_that.isTakingPicture);case _:
   return null;
 
 }
@@ -422,197 +840,95 @@ return loadFailure(_that.error);case _:
 /// @nodoc
 
 
-class CameraInitial implements CameraState {
-  const CameraInitial();
+class _CameraState implements CameraState {
+  const _CameraState({this.cameraStatus = const AsyncInitial(), this.settings = const CameraSettings(), this.capturedImage, this.isTakingPicture = false});
   
 
-
-
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CameraInitial);
-}
-
-
-@override
-int get hashCode => runtimeType.hashCode;
-
-@override
-String toString() {
-  return 'CameraState.initial()';
-}
-
-
-}
-
-
-
-
-/// @nodoc
-
-
-class CameraLoadInProgress implements CameraState {
-  const CameraLoadInProgress();
-  
-
-
-
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CameraLoadInProgress);
-}
-
-
-@override
-int get hashCode => runtimeType.hashCode;
-
-@override
-String toString() {
-  return 'CameraState.loadInProgress()';
-}
-
-
-}
-
-
-
-
-/// @nodoc
-
-
-class CameraLoadSuccess implements CameraState {
-  const CameraLoadSuccess(this.controller);
-  
-
- final  CameraController controller;
+// Quản lý trạng thái khởi tạo của CameraController
+@override@JsonKey() final  AsyncState<CameraController> cameraStatus;
+// Giữ cài đặt hiện tại của camera
+@override@JsonKey() final  CameraSettings settings;
+// Tín hiệu cho biết ảnh vừa được chụp hoặc chọn
+@override final  XFile? capturedImage;
+// Quản lý trạng thái có đang chụp hay không?
+@override@JsonKey() final  bool isTakingPicture;
 
 /// Create a copy of CameraState
 /// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
+@override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$CameraLoadSuccessCopyWith<CameraLoadSuccess> get copyWith => _$CameraLoadSuccessCopyWithImpl<CameraLoadSuccess>(this, _$identity);
+_$CameraStateCopyWith<_CameraState> get copyWith => __$CameraStateCopyWithImpl<_CameraState>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CameraLoadSuccess&&(identical(other.controller, controller) || other.controller == controller));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CameraState&&(identical(other.cameraStatus, cameraStatus) || other.cameraStatus == cameraStatus)&&(identical(other.settings, settings) || other.settings == settings)&&(identical(other.capturedImage, capturedImage) || other.capturedImage == capturedImage)&&(identical(other.isTakingPicture, isTakingPicture) || other.isTakingPicture == isTakingPicture));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,controller);
+int get hashCode => Object.hash(runtimeType,cameraStatus,settings,capturedImage,isTakingPicture);
 
 @override
 String toString() {
-  return 'CameraState.loadSuccess(controller: $controller)';
+  return 'CameraState(cameraStatus: $cameraStatus, settings: $settings, capturedImage: $capturedImage, isTakingPicture: $isTakingPicture)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $CameraLoadSuccessCopyWith<$Res> implements $CameraStateCopyWith<$Res> {
-  factory $CameraLoadSuccessCopyWith(CameraLoadSuccess value, $Res Function(CameraLoadSuccess) _then) = _$CameraLoadSuccessCopyWithImpl;
-@useResult
+abstract mixin class _$CameraStateCopyWith<$Res> implements $CameraStateCopyWith<$Res> {
+  factory _$CameraStateCopyWith(_CameraState value, $Res Function(_CameraState) _then) = __$CameraStateCopyWithImpl;
+@override @useResult
 $Res call({
- CameraController controller
+ AsyncState<CameraController> cameraStatus, CameraSettings settings, XFile? capturedImage, bool isTakingPicture
 });
 
 
-
+@override $AsyncStateCopyWith<CameraController, $Res> get cameraStatus;@override $CameraSettingsCopyWith<$Res> get settings;
 
 }
 /// @nodoc
-class _$CameraLoadSuccessCopyWithImpl<$Res>
-    implements $CameraLoadSuccessCopyWith<$Res> {
-  _$CameraLoadSuccessCopyWithImpl(this._self, this._then);
+class __$CameraStateCopyWithImpl<$Res>
+    implements _$CameraStateCopyWith<$Res> {
+  __$CameraStateCopyWithImpl(this._self, this._then);
 
-  final CameraLoadSuccess _self;
-  final $Res Function(CameraLoadSuccess) _then;
+  final _CameraState _self;
+  final $Res Function(_CameraState) _then;
 
 /// Create a copy of CameraState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? controller = null,}) {
-  return _then(CameraLoadSuccess(
-null == controller ? _self.controller : controller // ignore: cast_nullable_to_non_nullable
-as CameraController,
+@override @pragma('vm:prefer-inline') $Res call({Object? cameraStatus = null,Object? settings = null,Object? capturedImage = freezed,Object? isTakingPicture = null,}) {
+  return _then(_CameraState(
+cameraStatus: null == cameraStatus ? _self.cameraStatus : cameraStatus // ignore: cast_nullable_to_non_nullable
+as AsyncState<CameraController>,settings: null == settings ? _self.settings : settings // ignore: cast_nullable_to_non_nullable
+as CameraSettings,capturedImage: freezed == capturedImage ? _self.capturedImage : capturedImage // ignore: cast_nullable_to_non_nullable
+as XFile?,isTakingPicture: null == isTakingPicture ? _self.isTakingPicture : isTakingPicture // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
-
-}
-
-/// @nodoc
-
-
-class CameraLoadFailure implements CameraState {
-  const CameraLoadFailure(this.error);
-  
-
- final  String error;
-
 /// Create a copy of CameraState
 /// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
+@override
 @pragma('vm:prefer-inline')
-$CameraLoadFailureCopyWith<CameraLoadFailure> get copyWith => _$CameraLoadFailureCopyWithImpl<CameraLoadFailure>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CameraLoadFailure&&(identical(other.error, error) || other.error == error));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,error);
-
-@override
-String toString() {
-  return 'CameraState.loadFailure(error: $error)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $CameraLoadFailureCopyWith<$Res> implements $CameraStateCopyWith<$Res> {
-  factory $CameraLoadFailureCopyWith(CameraLoadFailure value, $Res Function(CameraLoadFailure) _then) = _$CameraLoadFailureCopyWithImpl;
-@useResult
-$Res call({
- String error
-});
-
-
-
-
-}
-/// @nodoc
-class _$CameraLoadFailureCopyWithImpl<$Res>
-    implements $CameraLoadFailureCopyWith<$Res> {
-  _$CameraLoadFailureCopyWithImpl(this._self, this._then);
-
-  final CameraLoadFailure _self;
-  final $Res Function(CameraLoadFailure) _then;
-
-/// Create a copy of CameraState
+$AsyncStateCopyWith<CameraController, $Res> get cameraStatus {
+  
+  return $AsyncStateCopyWith<CameraController, $Res>(_self.cameraStatus, (value) {
+    return _then(_self.copyWith(cameraStatus: value));
+  });
+}/// Create a copy of CameraState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? error = null,}) {
-  return _then(CameraLoadFailure(
-null == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
-as String,
-  ));
+@override
+@pragma('vm:prefer-inline')
+$CameraSettingsCopyWith<$Res> get settings {
+  
+  return $CameraSettingsCopyWith<$Res>(_self.settings, (value) {
+    return _then(_self.copyWith(settings: value));
+  });
 }
-
-
 }
 
 // dart format on

@@ -2,7 +2,7 @@ import 'package:cookora/core/utils/exception_handler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:cookora/core/utils/async_state.dart';
-import 'package:cookora/features/scan/domain/enums/scan_mode.dart';
+import 'package:cookora/features/scan/domain/models/camera_settings.dart';
 
 import 'package:cookora/features/scan/domain/repositories/scan_repository.dart';
 import 'package:cookora/features/scan/presentation/bloc/scan/scan_event.dart';

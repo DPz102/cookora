@@ -142,7 +142,7 @@ Future<void> initializeDependencies() async {
     () => KitchenLogBloc(kitchenLogRepository: locator(), userBloc: locator()),
   );
   locator.registerFactory<ScanBloc>(() => ScanBloc(scanRepository: locator()));
-  locator.registerFactory<CameraBloc>(() => CameraBloc());
+  locator.registerLazySingleton<CameraBloc>(() => CameraBloc());
   locator.registerLazySingleton<CommunityBloc>(
     () => CommunityBloc(communityRepository: locator(), userBloc: locator()),
   );

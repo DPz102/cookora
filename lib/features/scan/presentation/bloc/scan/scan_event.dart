@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:cookora/features/scan/domain/enums/scan_mode.dart';
+import 'package:cookora/features/scan/domain/models/camera_settings.dart';
 
 part 'scan_event.freezed.dart';
 

@@ -1,6 +1,10 @@
 import 'dart:io';
 import 'dart:ui';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 // Core & DI
 import 'package:cookora/core/di/service_locator.dart';
@@ -10,9 +14,8 @@ import 'package:cookora/core/utils/snackbar_helper.dart';
 import 'package:cookora/features/kitchen_log/presentation/bloc/kitchen_log_bloc.dart';
 import 'package:cookora/features/pantry/presentation/bloc/pantry_bloc.dart';
 import 'package:cookora/features/scan/domain/entities/scan_result.dart';
-// Scan Feature - Bloc
-import 'package:cookora/features/scan/domain/enums/scan_mode.dart' as scan_enum;
 import 'package:cookora/features/scan/domain/models/camera_settings.dart';
+// Scan Feature - Bloc
 import 'package:cookora/features/scan/presentation/bloc/camera/camera_bloc.dart';
 import 'package:cookora/features/scan/presentation/bloc/scan/scan_bloc.dart';
 import 'package:cookora/features/scan/presentation/bloc/scan/scan_event.dart';
@@ -23,274 +26,230 @@ import 'package:cookora/features/scan/presentation/widgets/scan_footer.dart';
 import 'package:cookora/features/scan/presentation/widgets/camera_preview.dart';
 import 'package:cookora/features/scan/presentation/widgets/dish_result_dialog.dart';
 import 'package:cookora/features/scan/presentation/widgets/ingredient_result_dialog.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:image_picker/image_picker.dart';
 
 class ScanScreen extends StatelessWidget {
   const ScanScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => locator<ScanBloc>()),
-        BlocProvider(
-          create: (_) =>
-              locator<CameraBloc>()..add(const CameraEvent.initialize()),
-        ),
-      ],
+    return BlocProvider(
+      create: (_) => locator<ScanBloc>(),
       child: const _ScanView(),
     );
   }
 }
 
-class _ScanView extends StatefulWidget {
+class _ScanView extends StatelessWidget {
   const _ScanView();
-  @override
-  State<_ScanView> createState() => _ScanViewState();
-}
 
-class _ScanViewState extends State<_ScanView> {
-  final ImagePicker _picker = ImagePicker();
-  var _cameraSettings = const CameraSettings();
-
-  double _maxZoom = 1.0;
-  final List<double> _zoomLevels = [1.0, 2.0, 3.0];
-
-  void _toggleFlash(CameraController? controller) {
-    if (controller == null) return;
-
-    final newFlashMode = switch (_cameraSettings.flashMode) {
-      FlashMode.off => FlashMode.auto,
-      FlashMode.auto => FlashMode.torch,
-      _ => FlashMode.off,
-    };
-
-    setState(() {
-      _cameraSettings = _cameraSettings.copyWith(flashMode: newFlashMode);
-    });
-    controller.setFlashMode(newFlashMode);
-  }
-
-  void _cycleZoom(CameraController? controller) {
-    if (controller == null) return;
-
-    final currentIndex = _zoomLevels.indexOf(_cameraSettings.currentZoom);
-    final nextIndex = (currentIndex + 1) % _zoomLevels.length;
-    final newZoom = _zoomLevels[nextIndex];
-
-    final finalZoom = (newZoom <= _maxZoom) ? newZoom : 1.0;
-
-    setState(() {
-      _cameraSettings = _cameraSettings.copyWith(currentZoom: finalZoom);
-    });
-    controller.setZoomLevel(finalZoom);
-  }
-
-  void _cycleScanMode() {
-    final newMode = _cameraSettings.scanMode == scan_enum.ScanMode.ingredient
-        ? scan_enum.ScanMode.dish
-        : scan_enum.ScanMode.ingredient;
-    setState(() {
-      _cameraSettings = _cameraSettings.copyWith(scanMode: newMode);
-    });
-  }
-
-  void _onTakePicture(CameraController? controller) async {
-    if (controller == null ||
-        !controller.value.isInitialized ||
-        controller.value.isTakingPicture) {
-      return;
-    }
-
+  /// Xử lý việc hiển thị dialog kết quả sau khi scan thành công.
+  void _handleScanResult(BuildContext context, ScanResult result) async {
+    final cameraBloc = context.read<CameraBloc>();
     final scanBloc = context.read<ScanBloc>();
-    if (scanBloc.state.isScanning) return;
 
-    try {
-      if (_cameraSettings.flashMode == FlashMode.torch) {
-        await controller.setFlashMode(FlashMode.off);
-      }
-      final image = await controller.takePicture();
-      if (_cameraSettings.flashMode == FlashMode.torch) {
-        await controller.setFlashMode(FlashMode.torch);
-      }
+    // Tạm dừng camera preview trước khi hiển thị dialog
+    cameraBloc.add(const CameraEvent.pausePreview());
 
-      scanBloc.add(
-        ScanEvent.recognizeImage(
-          imageFile: File(image.path),
-          mode: _cameraSettings.scanMode,
+    // Hiển thị dialog tương ứng với kết quả
+    await result.when(
+      dish: (recipe) => showDialog<void>(
+        context: context,
+        barrierDismissible: false, // Ngăn đóng dialog khi nhấn ra ngoài
+        builder: (_) => BlocProvider.value(
+          value: context.read<KitchenLogBloc>(),
+          child: DishResultDialog(recipe: recipe),
         ),
-      );
-    } catch (e) {
-      if (mounted) {
-        context.showSnackBar('Lỗi khi chụp ảnh: $e', type: SnackBarType.error);
-      }
-    }
-  }
-
-  void _onPickFromGallery() async {
-    final scanBloc = context.read<ScanBloc>();
-    if (scanBloc.state.isScanning) return;
-
-    try {
-      final image = await _picker.pickImage(source: ImageSource.gallery);
-      if (image != null && mounted) {
-        scanBloc.add(
-          ScanEvent.recognizeImage(
-            imageFile: File(image.path),
-            mode: _cameraSettings.scanMode,
+      ),
+      ingredients: (results) {
+        if (results.isEmpty) {
+          context.showSnackBar(
+            'Không nhận diện được nguyên liệu nào.',
+            type: SnackBarType.info,
+          );
+          return Future.delayed(const Duration(milliseconds: 100));
+        }
+        return showDialog<void>(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => BlocProvider.value(
+            value: context.read<PantryBloc>(),
+            child: IngredientResultDialog(results: results),
           ),
         );
-      }
-    } catch (e) {
-      if (mounted) {
-        context.showSnackBar('Lỗi khi chọn ảnh: $e', type: SnackBarType.error);
-      }
+      },
+    );
+
+    // Sau khi dialog đóng, tiếp tục preview và reset trạng thái scan
+    if (context.mounted) {
+      cameraBloc.add(const CameraEvent.resumePreview());
+      scanBloc.add(const ScanEvent.reset());
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final scanBloc = context.read<ScanBloc>();
     final cameraBloc = context.read<CameraBloc>();
-    final colorScheme = Theme.of(context).colorScheme;
+    final scanBloc = context.read<ScanBloc>();
 
-    return BlocListener<ScanBloc, ScanState>(
-      listener: (context, state) async {
-        final status = state.scanStatus;
-        if (status is AsyncSuccess<ScanResult>) {
-          cameraBloc.add(const CameraEvent.dispose());
-
-          final scanResult = status.data;
-
-          await scanResult.when(
-            dish: (recipe) => showDialog<void>(
-              context: context,
-              builder: (_) => BlocProvider.value(
-                value: context.read<KitchenLogBloc>(),
-                child: DishResultDialog(recipe: recipe),
-              ),
-            ),
-            ingredients: (results) {
-              if (results.isEmpty) {
-                context.showSnackBar(
-                  'Không nhận diện được nguyên liệu nào.',
-                  type: SnackBarType.info,
-                );
-                return Future.delayed(const Duration(milliseconds: 100));
-              }
-              return showDialog<void>(
-                context: context,
-                builder: (_) => BlocProvider.value(
-                  value: context.read<PantryBloc>(),
-                  child: IngredientResultDialog(results: results),
+    return MultiBlocListener(
+      listeners: [
+        // Lắng nghe tín hiệu có ảnh mới từ CameraBloc
+        BlocListener<CameraBloc, CameraState>(
+          listenWhen: (p, c) =>
+              p.capturedImage != c.capturedImage && c.capturedImage != null,
+          listener: (context, state) {
+            final imageFile = state.capturedImage;
+            if (imageFile != null) {
+              // Khi có ảnh mới, kích hoạt ScanBloc để xử lý
+              scanBloc.add(
+                ScanEvent.recognizeImage(
+                  imageFile: File(imageFile.path),
+                  mode: state.settings.scanMode,
                 ),
               );
-            },
-          );
+              // Reset tín hiệu để không trigger lại
+              cameraBloc.add(const CameraEvent.resetCapture());
+            }
+          },
+        ),
+        // Lắng nghe kết quả hoặc lỗi từ ScanBloc
+        BlocListener<ScanBloc, ScanState>(
+          listenWhen: (p, c) => p.scanStatus != c.scanStatus,
+          listener: (context, state) {
+            final status = state.scanStatus;
 
-          if (mounted) {
-            scanBloc.add(const ScanEvent.reset());
-            cameraBloc.add(const CameraEvent.initialize());
-          }
-        } else if (status is AsyncFailure) {
-          context.showSnackBar(
-            (status as AsyncFailure).error,
-            type: SnackBarType.error,
-          );
-          if (mounted) {
-            scanBloc.add(const ScanEvent.reset());
-            cameraBloc.add(const CameraEvent.initialize());
-          }
-        }
-      },
+            if (status is AsyncSuccess<ScanResult>) {
+              _handleScanResult(context, status.data);
+            } else if (status is AsyncFailure) {
+              context.showSnackBar(
+                (status as AsyncFailure).error,
+                type: SnackBarType.error,
+              );
+              // Reset trạng thái và tiếp tục preview nếu có lỗi
+              scanBloc.add(const ScanEvent.reset());
+              cameraBloc.add(const CameraEvent.resumePreview());
+            }
+          },
+        ),
+      ],
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
-          child: BlocBuilder<CameraBloc, CameraState>(
-            builder: (context, cameraState) {
-              return cameraState.when(
-                initial: () => Center(
-                  child: CircularProgressIndicator(color: colorScheme.surface),
-                ),
-                loadInProgress: () => Center(
-                  child: CircularProgressIndicator(color: colorScheme.surface),
-                ),
-                loadFailure: (error) => Center(
-                  child: Text(
-                    'Lỗi Camera: $error',
-                    style: TextStyle(color: colorScheme.surface),
-                  ),
-                ),
-                loadSuccess: (controller) {
-                  controller.getMaxZoomLevel().then((max) => _maxZoom = max);
-                  return BlocBuilder<ScanBloc, ScanState>(
-                    builder: (context, scanState) {
-                      final isScanning = scanState.scanStatus is AsyncLoading;
+          child:
+              BlocSelector<
+                CameraBloc,
+                CameraState,
+                (AsyncState<CameraController>, CameraSettings)
+              >(
+                selector: (state) => (state.cameraStatus, state.settings),
+                builder: (context, tuple) {
+                  final cameraStatus = tuple.$1;
+                  final settings = tuple.$2;
 
-                      return Stack(
+                  // Kiểm tra trạng thái
+                  final isScanning = context.select(
+                    (ScanBloc bloc) => bloc.state.scanStatus is AsyncLoading,
+                  );
+                  final isTakingPicture = context.select(
+                    (CameraBloc bloc) => bloc.state.isTakingPicture,
+                  );
+                  /*
+                  final isLoading =
+                      cameraStatus is AsyncLoading ||
+                      cameraStatus is AsyncInitial;
+                  */
+                  final isProcessing =
+                      isScanning || isTakingPicture; //|| isLoading;
+
+                  final error = switch (cameraStatus) {
+                    AsyncFailure(:final error) => error,
+                    _ => null,
+                  };
+
+                  final controller = switch (cameraStatus) {
+                    AsyncSuccess<CameraController>(:final data) => data,
+                    _ => null,
+                  };
+
+                  return Stack(
+                    children: [
+                      Column(
                         children: [
-                          // Lớp 1: Giao diện chính
-                          Column(
-                            children: [
-                              ScanHeader(
-                                flashMode: _cameraSettings.flashMode,
-                                currentZoom: _cameraSettings.currentZoom,
-                                onToggleFlash: () => _toggleFlash(controller),
-                                onCycleZoom: () => _cycleZoom(controller),
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 20.w,
-                                  ),
-                                  child: isScanning
-                                      ? const SizedBox.shrink()
-                                      : CameraPreviewWidget(
-                                          controller: controller,
-                                        ),
-                                ),
-                              ),
-                              // Chỉ hiển thị footer khi không scanning
-                              if (!isScanning)
-                                ScanFooter(
-                                  currentMode: _cameraSettings.scanMode,
-                                  onTakePicture: () =>
-                                      _onTakePicture(controller),
-                                  onPickFromGallery: _onPickFromGallery,
-                                  onCycleMode: _cycleScanMode,
-                                ),
-                            ],
+                          ScanHeader(
+                            flashMode: settings.flashMode,
+                            currentZoom: settings.currentZoom,
+                            onToggleFlash: () =>
+                                cameraBloc.add(const CameraEvent.toggleFlash()),
+                            onCycleZoom: () =>
+                                cameraBloc.add(const CameraEvent.cycleZoom()),
                           ),
-
-                          // Lớp 2: Lớp phủ loading
-                          if (isScanning)
-                            Positioned.fill(
-                              child: BackdropFilter(
-                                filter: ImageFilter.blur(
-                                  sigmaX: 10,
-                                  sigmaY: 10,
-                                ),
-                                child: Container(
-                                  color: Colors.black.withAlpha(50),
-                                  child: Center(
-                                    child: CircularProgressIndicator(
-                                      color: colorScheme.surface,
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20.w),
+                              child: isProcessing
+                                  ? const Center()
+                                  : CameraPreviewWidget(
+                                      controller: controller,
+                                      error: error,
+                                      onRetry: () {
+                                        cameraBloc.add(
+                                          const CameraEvent.retryInitialization(),
+                                        );
+                                      },
+                                      onTap: () => cameraBloc.add(
+                                        const CameraEvent.cycleZoom(),
+                                      ),
+                                      onDoubleTap: () => cameraBloc.add(
+                                        const CameraEvent.toggleFlash(),
+                                      ),
                                     ),
-                                  ),
+                            ),
+                          ),
+                          if (!isProcessing)
+                            ScanFooter(
+                              currentMode: settings.scanMode,
+                              isDisabled: isProcessing,
+                              onTakePicture: () {
+                                HapticFeedback.mediumImpact();
+                                if (controller != null && error == null) {
+                                  HapticFeedback.mediumImpact();
+                                  cameraBloc.add(
+                                    const CameraEvent.takePicture(),
+                                  );
+                                }
+                              },
+                              onPickFromGallery: () {
+                                HapticFeedback.lightImpact();
+                                cameraBloc.add(const CameraEvent.pickImage());
+                              },
+                              onCycleMode: () {
+                                HapticFeedback.selectionClick();
+                                cameraBloc.add(
+                                  const CameraEvent.cycleScanMode(),
+                                );
+                              },
+                            ),
+                        ],
+                      ),
+
+                      if (isProcessing)
+                        Positioned.fill(
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                            child: Container(
+                              color: Colors.black.withAlpha(50),
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: Theme.of(context).colorScheme.surface,
                                 ),
                               ),
                             ),
-                        ],
-                      );
-                    },
+                          ),
+                        ),
+                    ],
                   );
                 },
-              );
-            },
-          ),
+              ),
         ),
       ),
     );
